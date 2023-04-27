@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_entsoE_data.R
 \name{get_entsoE_data}
 \alias{get_entsoE_data}
-\title{Title}
+\title{Load Data Acquisition via API Request to the ENTSO-E Transparency Platform}
 \usage{
 get_entsoE_data(
   start_year,
@@ -12,8 +12,18 @@ get_entsoE_data(
 )
 }
 \arguments{
-\item{api_key}{}
+\item{start_year}{The starting year for which load data will be requested.}
+
+\item{end_year}{The final year for which load data will be requested.}
+
+\item{country}{The country name for which load data will be requested.}
+
+\item{api_key}{A valid API key for the ENTSO-E Transparency Platform. If none is provided one of the deposited keys will be used.}
 }
 \description{
-Title
+something
+}
+\examples{
+get_entsoE_data(2017,2021,"France")
+
 }

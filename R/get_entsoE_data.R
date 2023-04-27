@@ -1,14 +1,18 @@
-#' Title
+#' Load Data Acquisition via API Request to the ENTSO-E Transparency Platform
 #'
-#' @param start_year
-#' @param end_year
-#' @param country
-#' @param api_key
+#' something
+#' @param start_year  The starting year for which load data will be requested.
+#' @param end_year  The final year for which load data will be requested.
+#' @param country  The country name for which load data will be requested.
+#' @param api_key  A valid API key for the ENTSO-E Transparency Platform. If none is provided one of the deposited keys will be used.
 #'
 #' @return
 #' @export
 #'
 #' @examples
+#' get_entsoE_data(2017,2021,"France")
+#'
+
 get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4302-b444-5042ab55d8ef"){
 
   # Convert country names to iso2c code ----
