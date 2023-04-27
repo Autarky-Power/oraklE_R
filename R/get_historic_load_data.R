@@ -1,0 +1,105 @@
+#' Title
+#'
+#' @param longterm
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_historic_load_data <- function(longterm){
+
+
+  country=unique(longterm$country)
+  if (country=="UK"){country="GB"}
+
+  entsodata <-historic_entsodata1
+
+  colnames(entsodata)[1:5]<- c("country","year","month","day","coverage_ratio")
+
+
+  data <- entsodata[entsodata$country== country,]
+
+  y <- vector(mode = "list", length = 0)
+  x_year <- vector(mode = "list", length = 0)
+  year_list <- vector(mode = "list", length = 0)
+  x_coverage <- vector(mode = "list", length = 0)
+  coverage_list <- vector(mode = "list", length = 0)
+
+
+  for (i in 1:nrow(data)){
+    x<- t(data[i,6:29])
+    y<- c(y,x)
+    x_year[1:24]<- data[i,2]
+    year_list <- c(year_list,x_year)
+    x_coverage[1:24]<- data[i,5]
+    coverage_list <- c(coverage_list,x_coverage)
+  }
+
+  data1 <- as.data.frame(t(y))
+  data1 <- as.data.frame(as.numeric(t(data1)))
+
+  colnames(data1)<- "load"
+  data1$year <- as.numeric(year_list)
+  data1$coverage_ratio <- as.numeric(coverage_list)
+  data1$load_scaled_with_coverage_ratio <- data1$load /(data1$coverage/100)
+
+  year_list <- unique(data1$year)
+  for (year in year_list){
+    if (nrow(data1[data1$year==year,])<8000){
+      data1 <- data1[!data1$year==year, ]
+    }
+  }
+  year_list <- unique(data1$year)
+
+  entsodata2 <- historic_entsodata2
+
+  data2 <- entsodata2[entsodata2$CountryCode== country,]
+  data2$year <- lubridate::year(data2$DateUTC)
+
+  year_list2 <- unique(data2$year)
+  for (year in year_list2){
+
+    if (nrow(data2[data2$year==year,])<8000){
+      data2 <- data2[!data2$year==year, ]
+    }
+  }
+  year_list2 <- unique(data2$year)
+
+  if (2015 %in% year_list & 2015 %in% year_list2){
+    year_list <- year_list[year_list != 2015]
+  }
+
+  yearly_load_df <- data.frame(c(year_list,year_list2))
+  colnames(yearly_load_df) <- "year"
+  yearly_load_df$load <-0
+  yearly_load_df$load_scaled_with_coverage_ratio <-0
+
+
+  for (year in year_list){
+    yearly_load_df$load[yearly_load_df$year==year] <- mean(data1$load[data1$year==year],na.rm = TRUE)
+    yearly_load_df$load_scaled_with_coverage_ratio[yearly_load_df$year==year] <- mean(data1$load_scaled_with_coverage_ratio[data1$year==year],na.rm = TRUE)
+  }
+  for (year in year_list2){
+    yearly_load_df$load[yearly_load_df$year==year] <- mean(data2$Value[data2$year==year],na.rm = TRUE)
+    yearly_load_df$load_scaled_with_coverage_ratio[yearly_load_df$year==year] <- mean(data2$Value_ScaleTo100[data2$year==year],na.rm = TRUE)
+  }
+
+  if (2017 %in% longterm$year){
+    distance1 = sqrt((longterm$avg_hourly_demand[longterm$year==2017]-
+                        yearly_load_df$load[yearly_load_df$year==2017])^2)
+    distance2 =sqrt((longterm$avg_hourly_demand[longterm$year==2017]-
+                       yearly_load_df$load_scaled_with_coverage_ratio[yearly_load_df$year==2017])^2)
+    all_years <- c(unique(yearly_load_df$year[!yearly_load_df$year==2017]),unique(longterm$year))
+
+    if (distance1 <= distance2){
+      all_demand <- c(yearly_load_df$load[!yearly_load_df$year==2017],longterm$avg_hourly_demand)
+    }else{all_demand <- c(yearly_load_df$load_scaled_with_coverage_ratio[!yearly_load_df$year==2017],longterm$avg_hourly_demand)}
+  }else{
+    all_years <- c(unique(yearly_load_df$year),unique(longterm$year))
+    all_demand <- c(yearly_load_df$load,longterm$avg_hourly_demand)
+  }
+  longterm_full <- data.frame(all_years,all_demand)
+  colnames(longterm_full) <- c("year","avg_hourly_demand")
+  longterm_full<- data.frame(country = country, longterm_full)
+  return(longterm_full)
+}
