@@ -1,12 +1,14 @@
-#' Load Data Acquisition via API Request to the ENTSO-E Transparency Platform
+#' Load Data Acquisition from the ENTSO-E Transparency Platform
 #'
-#' something
+#' Makes various API Requests to the Transparency Platform of the European Network of
+#' Transmission System Operators for Electricity (ENTSO-E) and stores the results in a data frame. https://transparency.entsoe.eu/
+#'
 #' @param start_year  The starting year for which load data will be requested.
 #' @param end_year  The final year for which load data will be requested.
 #' @param country  The country name for which load data will be requested.
 #' @param api_key  A valid API key for the ENTSO-E Transparency Platform. If none is provided one of the deposited keys will be used.
 #'
-#' @return
+#' @return Data Frame with the Date, Load, Unit, Year, Time Resolution, ISO2C Country Code
 #' @export
 #'
 #' @examples
@@ -15,6 +17,7 @@
 
 get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4302-b444-5042ab55d8ef"){
 
+  Sys.setlocale("LC_TIME", "English")
   # Convert country names to iso2c code ----
   if (country != "United Kingdom"){
     country=countrycode::countrycode(country, "country.name","iso2c")
@@ -100,8 +103,8 @@ get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4
       time_resolution_minutes <- paste(as.integer(substr(time_resolution, 3, 4)),"mins")
 
       ts_data <- as.data.frame(seq(start_date,end_date,by=time_resolution_minutes))
-      colnames(ts_data) <- "Date"
-      ts_data <- ts_data[-length(ts_data$Date),,drop=F]
+      colnames(ts_data) <- "date"
+      ts_data <- ts_data[-length(ts_data$date),,drop=F]
       ts_data$load <- load
 
       ts_list[[j]] <- ts_data
@@ -119,7 +122,7 @@ get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4
   all_data = do.call(what = rbind, args = data_list)
 
 
-  all_data$year <- lubridate::year(all_data$Date)
+  all_data$year <- lubridate::year(all_data$date)
   all_data$time_interval <- time_resolution_minutes
   all_data$country <- country
 

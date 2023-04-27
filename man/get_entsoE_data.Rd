@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_entsoE_data.R
 \name{get_entsoE_data}
 \alias{get_entsoE_data}
-\title{Load Data Acquisition via API Request to the ENTSO-E Transparency Platform}
+\title{Load Data Acquisition from the ENTSO-E Transparency Platform}
 \usage{
 get_entsoE_data(
   start_year,
@@ -20,8 +20,12 @@ get_entsoE_data(
 
 \item{api_key}{A valid API key for the ENTSO-E Transparency Platform. If none is provided one of the deposited keys will be used.}
 }
+\value{
+Data Frame with the Date, Load, Unit, Year, Time Resolution, ISO2C Country Code
+}
 \description{
-something
+Makes various API Requests to the Transparency Platform of the European Network of
+Transmission System Operators for Electricity (ENTSO-E) and stores the results in a data frame. https://transparency.entsoe.eu/
 }
 \examples{
 get_entsoE_data(2017,2021,"France")

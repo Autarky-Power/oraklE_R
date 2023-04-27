@@ -1,4 +1,4 @@
-#' Title
+#' Adding average
 #'
 #' @param longterm
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_historic_load_data.R
 \name{get_historic_load_data}
 \alias{get_historic_load_data}
-\title{Title}
+\title{Adding average}
 \usage{
 get_historic_load_data(longterm)
 }
@@ -10,5 +10,5 @@ get_historic_load_data(longterm)
 \item{longterm}{}
 }
 \description{
-Title
+Adding average
 }

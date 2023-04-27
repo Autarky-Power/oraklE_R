@@ -2,13 +2,26 @@
 % Please edit documentation in R/fill_missing_data.R
 \name{fill_missing_data}
 \alias{fill_missing_data}
-\title{Title}
+\title{Replace NA's in the load data set}
 \usage{
-fill_missing_data(entsoe_data)
+fill_missing_data(load_data)
 }
 \arguments{
-\item{entsoe_data}{}
+\item{load_data}{Data Frame with load data. Data Frame must contain the following columns:
+"date" consisting of the datetime values,
+"load" consisting of the load values,
+"unit" indicating the measured unit (e.g. MW),
+"country" indicating the country's ISO2C code}
+}
+\value{
+Data Frame with filled up load values, date, unit, year, time resolution, ISO2C Country Code
 }
 \description{
-Title
+This function replaces NA values with the values of the data set one week ago at the same time point.
+The function is mainly written to deal with small gaps in the data set obtained with get_entsoE_data(). If the function is to be used with other data sets
+the input needs to contain the necessary data and comply with the column naming.
+}
+\examples{
+fill_missing_data("data_set_obtained_from_get_entsoE_data()_with_missing_values")
+
 }
