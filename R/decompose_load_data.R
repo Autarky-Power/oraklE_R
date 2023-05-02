@@ -68,7 +68,7 @@ orakle.decompose_load_data <- function(all_data){
       midterm$avg_hourly_demand[i] <- mean(all_data$load[((i-1)*24+1):(i*24)],na.rm = T)
     }
     midterm$date <- as.POSIXct(midterm$date, format="%Y-%m-%d",origin = "1970-01-01")
-    midterm$date <-as.date(midterm$date, format="%Y-%m-%d","CET")
+    midterm$date <-as.Date(midterm$date, format="%Y-%m-%d","CET")
     midterm$country<- country}else{
       midterm <- data.frame(matrix(nrow=nrow(ordered_data),ncol=7))
       midterm[,1:7] <- ordered_data[,c(8,1:6)]
