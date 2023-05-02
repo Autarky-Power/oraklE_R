@@ -11,7 +11,7 @@ orakle.decompose_load_data <- function(all_data){
   library(ggplot2)
   library(patchwork)
 
-  resolution <- as.numeric(difftime(all_data$Date[2], all_data$Date[1],units="hours"))
+  resolution <- as.numeric(difftime(all_data$date[2], all_data$date[1],units="hours"))
 
   if (resolution <= 1){
     timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(all_data$year))),'-01-01 00:00')),
@@ -22,14 +22,14 @@ orakle.decompose_load_data <- function(all_data){
   }
 
   ordered_data <- as.data.frame(timepoint)
-  colnames(ordered_data)<- "Date"
-  ordered_data$year <- lubridate::year(ordered_data$Date)
-  ordered_data$month <- lubridate::month(ordered_data$Date)
-  ordered_data$day <- lubridate::day(ordered_data$Date)
-  ordered_data$wday <- lubridate::wday(ordered_data$Date,label = T,locale = "English")
+  colnames(ordered_data)<- "date"
+  ordered_data$year <- lubridate::year(ordered_data$date)
+  ordered_data$month <- lubridate::month(ordered_data$date)
+  ordered_data$day <- lubridate::day(ordered_data$date)
+  ordered_data$wday <- lubridate::wday(ordered_data$date,label = T,locale = "English")
   suppressWarnings(
     if (resolution <= 1){
-      ordered_data$hour <- lubridate::hour(ordered_data$Date)
+      ordered_data$hour <- lubridate::hour(ordered_data$date)
       if (all_data$time_interval[1] == "15 mins"){
         ordered_data$load <- colMeans(matrix(all_data$load, nrow=4))
       } else if (all_data$time_interval[1] == "30 mins"){
@@ -61,14 +61,14 @@ orakle.decompose_load_data <- function(all_data){
     }
 
     for (i in 1:nrow(midterm)){
-      midterm$date[i] <- all_data$Date[((i-1)*24+1)]
+      midterm$date[i] <- all_data$date[((i-1)*24+1)]
       midterm$month[i] <- all_data$month[((i-1)*24+1)]
       midterm$day[i] <- all_data$day[((i-1)*24+1)]
       midterm$wday[i] <- all_data$wday[((i-1)*24+1)]
       midterm$avg_hourly_demand[i] <- mean(all_data$load[((i-1)*24+1):(i*24)],na.rm = T)
     }
     midterm$date <- as.POSIXct(midterm$date, format="%Y-%m-%d",origin = "1970-01-01")
-    midterm$date <-as.Date(midterm$date, format="%Y-%m-%d","CET")
+    midterm$date <-as.date(midterm$date, format="%Y-%m-%d","CET")
     midterm$country<- country}else{
       midterm <- data.frame(matrix(nrow=nrow(ordered_data),ncol=7))
       midterm[,1:7] <- ordered_data[,c(8,1:6)]
@@ -87,7 +87,7 @@ orakle.decompose_load_data <- function(all_data){
     colnames(shortterm) <- "country"
 
     shortterm$country <- country
-    shortterm$date <- all_data$Date
+    shortterm$date <- all_data$date
     shortterm$year <- all_data$year
     shortterm$month <- all_data$month
     shortterm$day <- all_data$day
