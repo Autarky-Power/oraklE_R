@@ -22,7 +22,7 @@ The function is mainly written to deal with small gaps in the data set obtained 
 the input needs to contain the necessary data and comply with the column naming.
 }
 \examples{
-print(5)
+no_missing_data <- fill_missing_data(example_data)
 
 
 }

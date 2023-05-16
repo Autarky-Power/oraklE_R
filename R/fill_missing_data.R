@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-#' print(5)
+#' no_missing_data <- fill_missing_data(example_data)
 #'
 #'
 fill_missing_data <- function(load_data){
