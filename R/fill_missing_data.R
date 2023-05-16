@@ -14,9 +14,10 @@
 #' @export
 #'
 #' @examples
-#' no_missing_data <- fill_missing_data(example_data)
-#'
-#'
+#' nrow(example_load_data)
+#' no_missing_data <- fill_missing_data(example_load_data)
+#' nrow(no_missing_data)
+
 fill_missing_data <- function(load_data){
 
   timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(lubridate::year(load_data$date)))),'-01-01 00:00'),tz="UTC"),
