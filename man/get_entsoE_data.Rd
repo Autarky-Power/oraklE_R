@@ -28,6 +28,5 @@ Makes various API Requests to the Transparency Platform of the European Network 
 Transmission System Operators for Electricity (ENTSO-E) and stores the results in a data frame. https://transparency.entsoe.eu/
 }
 \examples{
-get_entsoE_data(2017,2021,"France")
-
+example_load_data <- get_entsoE_data(2017,2021,"France")
 }

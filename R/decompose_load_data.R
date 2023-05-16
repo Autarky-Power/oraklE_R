@@ -1,24 +1,26 @@
-#' Title
+#' Trend and seasonality decomposition
 #'
-#' @param all_data
+#' Decomposes the load data into a yearly long-term, trend a daily mid-term seasonality and an hourly short-term
+#' seasonality. If the data is only in daily resolution no hourly seasonality is calculated. The results are returned as a list of dataframes.
+#' @param load_data A dataframe object with load,date,unit and country columns
 #'
-#' @return
+#' @return list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
 #' @export
 #'
-#' @examples
-orakle.decompose_load_data <- function(all_data){
+#' @examples a <- 5
+decompose_load_data <- function(load_data){
 
   library(ggplot2)
   library(patchwork)
 
-  resolution <- as.numeric(difftime(all_data$date[2], all_data$date[1],units="hours"))
+  resolution <- as.numeric(difftime(load_data$date[2], load_data$date[1],units="hours"))
 
   if (resolution <= 1){
-    timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(all_data$year))),'-01-01 00:00')),
-                     as.POSIXct(paste0(as.character(max(unique(all_data$year))),'-12-31 23:00')),by="hour")
+    timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))),'-01-01 00:00')),
+                     as.POSIXct(paste0(as.character(max(unique(load_data$year))),'-12-31 23:00')),by="hour")
   } else{
-    timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(all_data$year))),'-01-01')),
-                     as.POSIXct(paste0(as.character(max(unique(all_data$year))),'-12-31')),by="day")
+    timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))),'-01-01')),
+                     as.POSIXct(paste0(as.character(max(unique(load_data$year))),'-12-31')),by="day")
   }
 
   ordered_data <- as.data.frame(timepoint)
@@ -30,16 +32,18 @@ orakle.decompose_load_data <- function(all_data){
   suppressWarnings(
     if (resolution <= 1){
       ordered_data$hour <- lubridate::hour(ordered_data$date)
-      if (all_data$time_interval[1] == "15 mins"){
-        ordered_data$load <- colMeans(matrix(all_data$load, nrow=4))
-      } else if (all_data$time_interval[1] == "30 mins"){
-        ordered_data$load <- colMeans(matrix(all_data$load, nrow=2))
+      if (load_data$time_interval[1] == "15 mins"){
+        ordered_data$load <- colMeans(matrix(load_data$load, nrow=4))
+      } else if (load_data$time_interval[1] == "30 mins"){
+        ordered_data$load <- colMeans(matrix(load_data$load, nrow=2))
       }else{
-        ordered_data$load <- all_data$load
-      }} else{ordered_data$load <- all_data$load}
+        ordered_data$load <- load_data$load
+      }} else{ordered_data$load <- load_data$load}
   )
-  ordered_data$unit <- unique(all_data$unit)
-  ordered_data$country <- unique(all_data$country)
+  if ("unit" %in% colnames(load_data)){
+    ordered_data$unit <- unique(load_data$unit)}
+
+  ordered_data$country <- unique(load_data$country)
 
   all_data <- ordered_data
   all_data <- all_data[! (all_data$month==2 & all_data$day==29),]

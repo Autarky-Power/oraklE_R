@@ -12,8 +12,8 @@
 #' @export
 #'
 #' @examples
-#' get_entsoE_data(2017,2021,"France")
-#'
+#' example_load_data <- get_entsoE_data(2017,2021,"France")
+
 
 get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4302-b444-5042ab55d8ef"){
 

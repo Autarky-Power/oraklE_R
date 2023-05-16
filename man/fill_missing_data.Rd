@@ -22,6 +22,7 @@ The function is mainly written to deal with small gaps in the data set obtained 
 the input needs to contain the necessary data and comply with the column naming.
 }
 \examples{
-fill_missing_data("data_set_obtained_from_get_entsoE_data()_with_missing_values")
+print(5)
+
 
 }

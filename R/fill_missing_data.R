@@ -3,6 +3,7 @@
 #' This function replaces NA values with the values of the data set one week ago at the same time point.
 #' The function is mainly written to deal with small gaps in the data set obtained with get_entsoE_data(). If the function is to be used with other data sets
 #' the input needs to contain the necessary data and comply with the column naming.
+
 #' @param load_data Data Frame with load data. Data Frame must contain the following columns:
 #' "date" consisting of the datetime values,
 #' "load" consisting of the load values,
@@ -13,7 +14,8 @@
 #' @export
 #'
 #' @examples
-#' fill_missing_data("data_set_obtained_from_get_entsoE_data()_with_missing_values")
+#' print(5)
+#'
 #'
 fill_missing_data <- function(load_data){
 
@@ -46,4 +48,5 @@ fill_missing_data <- function(load_data){
 
   return (complete_data)
 }
+
 
