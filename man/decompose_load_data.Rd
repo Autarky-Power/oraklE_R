@@ -17,5 +17,5 @@ Decomposes the load data into a yearly long-term, trend a daily mid-term seasona
 seasonality. If the data is only in daily resolution no hourly seasonality is calculated. The results are returned as a list of dataframes.
 }
 \examples{
-a <- 5
+decomposed_load_data <- decompose_load_data(example_load_data)
 }

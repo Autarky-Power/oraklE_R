@@ -7,7 +7,7 @@
 #' @return list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
 #' @export
 #'
-#' @examples a <- 5
+#' @examples decomposed_load_data <- decompose_load_data(example_load_data)
 decompose_load_data <- function(load_data){
 
   library(ggplot2)
