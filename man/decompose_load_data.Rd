@@ -7,15 +7,14 @@
 decompose_load_data(load_data)
 }
 \arguments{
-\item{load_data}{A dataframe object with load,date,unit and country columns}
+\item{load_data}{A dataframe object with "load", "date", "unit", and "country" columns}
 }
 \value{
-list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
+A list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
 }
 \description{
-Decomposes the load data into a yearly long-term, trend a daily mid-term seasonality and an hourly short-term
-seasonality. If the data is only in daily resolution no hourly seasonality is calculated. The results are returned as a list of dataframes.
+This function decomposes the load data into three components: a yearly long-term trend, a daily mid-term seasonality, and an hourly short-term seasonality. If the data is available only at a daily resolution, the calculation of hourly seasonality is skipped. The results of the decomposition are returned as a list of dataframes.
 }
 \examples{
-decomposed_load_data <- decompose_load_data(example_load_data)
+decomposed_load_data_example <- decompose_load_data(no_missing_data_example)
 }

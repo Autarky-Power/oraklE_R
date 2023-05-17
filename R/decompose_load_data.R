@@ -1,13 +1,14 @@
 #' Trend and seasonality decomposition
 #'
-#' Decomposes the load data into a yearly long-term, trend a daily mid-term seasonality and an hourly short-term
-#' seasonality. If the data is only in daily resolution no hourly seasonality is calculated. The results are returned as a list of dataframes.
-#' @param load_data A dataframe object with load,date,unit and country columns
+#' This function decomposes the load data into three components: a yearly long-term trend, a daily mid-term seasonality, and an hourly short-term seasonality. If the data is available only at a daily resolution, the calculation of hourly seasonality is skipped. The results of the decomposition are returned as a list of dataframes.
 #'
-#' @return list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
+#' @param load_data A dataframe object with "load", "date", "unit", and "country" columns
+#'
+#' @return A list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
 #' @export
 #'
-#' @examples decomposed_load_data <- decompose_load_data(example_load_data)
+#' @examples decomposed_load_data_example <- decompose_load_data(no_missing_data_example)
+
 decompose_load_data <- function(load_data){
 
   library(ggplot2)

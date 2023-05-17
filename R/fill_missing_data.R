@@ -1,8 +1,7 @@
-#' Replace NA's in the load data set
+#' Replace missing values in the load data set
 #'
-#' This function replaces NA values with the values of the data set one week ago at the same time point.
-#' The function is mainly written to deal with small gaps in the data set obtained with get_entsoE_data(). If the function is to be used with other data sets
-#' the input needs to contain the necessary data and comply with the column naming.
+#' The purpose of this function is to substitute missing values with the corresponding values from the dataset, exactly one week prior at the same time point. For example, if there is no load value available for May 12th at 20:00, the value recorded on May 7th at 20:00 will be used as a replacement.
+#' This function is primarily designed to handle minor gaps in the dataset acquired using the "get_entsoE_data()" function. To use this function with other datasets, it is important that the input data frame adheres to the required column naming conventions.
 
 #' @param load_data Data Frame with load data. Data Frame must contain the following columns:
 #' "date" consisting of the datetime values,
@@ -15,8 +14,10 @@
 #'
 #' @examples
 #' nrow(example_load_data)
-#' no_missing_data <- fill_missing_data(example_load_data)
-#' nrow(no_missing_data)
+#' example_load_data[858:862,]
+#' no_missing_data_example <- fill_missing_data(example_load_data)
+#' nrow(no_missing_data_example)
+#' no_missing_data_example[858:876,]
 
 fill_missing_data <- function(load_data){
 

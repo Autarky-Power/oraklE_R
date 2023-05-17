@@ -120,8 +120,6 @@ get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4
 
   # Combine all years
   all_data = do.call(what = rbind, args = data_list)
-
-
   all_data$year <- lubridate::year(all_data$date)
   all_data$time_interval <- time_resolution_minutes
   all_data$country <- country
