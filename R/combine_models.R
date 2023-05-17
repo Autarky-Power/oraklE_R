@@ -13,7 +13,7 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
   library(ggplot2)
   library(patchwork)
   combined_model_results <- short_term_data_predicted[,1:8]
-
+  country = unique(longterm_all_data_predicted$country)
   combined_model_results$long_term_model <- 0
   for (year in unique(combined_model_results$year)){
     combined_model_results$long_term_model[combined_model_results$year==year]  <-
