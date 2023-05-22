@@ -7,7 +7,10 @@
 #' @export
 #'
 #' @examples
-#'
+#' working_directory <- getwd()
+#' setwd(tempdir())
+#' midterm_model_data_example <- orakle.mid_term_lm(midterm_all_data_example$midterm)
+#' setwd(working_directory)
 mid_term_lm <- function(midterm_all_data, training_set_ratio=0.2){
   month_list=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec")
 

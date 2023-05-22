@@ -13,7 +13,10 @@ get_weather_data(midterm)
 Title
 }
 \examples{
+working_directory <- getwd()
+setwd(tempdir())
 midterm_all_example <- get_weather_data(midterm_holidays_example)
 midterm_all_example$midterm
 midterm_all_example$temperature_data
+setwd(working_directory)
 }

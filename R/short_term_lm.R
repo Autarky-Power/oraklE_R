@@ -7,7 +7,11 @@
 #' @export
 #'
 #' @examples
-orakle.shortterm_lm <- function(short_term_data, training_set_ratio=0.2){
+#' working_directory <- getwd()
+#' setwd(tempdir())
+#' shortterm_model_data_example <- short_term_lm(shortterm_holidays_example)
+#' setwd(working_directory)
+short_term_lm <- function(short_term_data, training_set_ratio=0.2){
   library(ggplot2)
   library(patchwork)
 
@@ -45,10 +49,10 @@ orakle.shortterm_lm <- function(short_term_data, training_set_ratio=0.2){
   test_data=short_term_data[(training_set+1):nrow(short_term_data),]
 
   # compute models and store results
-
-
-  if (! file.exists(paste0("./",country,"./models/"))){
-    dir.create(paste0("./",country,"./models/"))}
+  if (! file.exists(country)){
+    dir.create(country)}
+  if (! file.exists(paste0("./",country,"/models"))){
+    dir.create(paste0("./",country,"/models"))}
   if (! file.exists(paste0("./",country,"./models/shortterm_lm"))){
     dir.create(paste0("./",country,"./models/shortterm_lm"))}
 
@@ -61,7 +65,7 @@ orakle.shortterm_lm <- function(short_term_data, training_set_ratio=0.2){
       x <- training_data[which(training_data$month == i & training_data$wday == wday[j]),]
       xreg <- as.matrix(x[,c((columns_original_df):(columns_original_df+24))])
 
-      fit1 <- lm(hourly_demand_trend_and_season_corrected ~ xreg[,1:24], data=x)
+      fit1 <- lm(hourly_demand_trend_and_season_corrected ~ xreg[,1:25], data=x)
 
       name=paste0("month",i,wday[j])
       modelname=paste0("./",country,"/models/shortterm_lm/",name,".Rdata")

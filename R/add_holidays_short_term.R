@@ -6,7 +6,9 @@
 #' @export
 #'
 #' @examples
-orakle.add_holidays_short_term<- function(shortterm){
+#' shortterm_holidays_example <- add_holidays_short_term(decomposed_load_example$shortterm)
+#' shortterm_holidays_example[,c(1,2,11)]
+add_holidays_short_term<- function(shortterm){
 
   years=unique(shortterm$year)
   country= (unique(shortterm$country))
