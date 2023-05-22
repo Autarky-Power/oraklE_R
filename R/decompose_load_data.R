@@ -7,7 +7,7 @@
 #' @return A list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
 #' @export
 #'
-#' @examples decomposed_load_data_example <- decompose_load_data(no_missing_data_example)
+#' @examples decomposed_load_example <- decompose_load_data(no_missing_data_example)
 
 decompose_load_data <- function(load_data){
 

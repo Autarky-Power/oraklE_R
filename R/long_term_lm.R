@@ -34,6 +34,9 @@ orakle.long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquan
     }}
   row.names(combinations) <- NULL
 
+  if (nrow(combinations) < testquant){
+    testquant <- nrow(combinations)
+  }
 
   rdm=421
   ctrl <- caret::trainControl(method = "repeatedcv", number = 5, repeats = 5)
