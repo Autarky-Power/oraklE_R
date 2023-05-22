@@ -6,6 +6,8 @@
 #' @export
 #'
 #' @examples
+#' longterm_all_data_example <- get_macro_economic_data(longterm_example)
+#' longterm_all_data_example
 get_macro_economic_data <- function(longterm){
 
   country=unique(longterm$country)

@@ -18,7 +18,7 @@ It calculates the hourly average load for each year and appends the results to t
 }
 \examples{
 print("Input dataframe should be in the following form:")
-decomposed_load_data_example$longterm
-long_term_example <- get_historic_load_data(decomposed_load_data_example$longterm)
+decomposed_load_example$longterm
+long_term_example <- get_historic_load_data(decomposed_load_example$longterm)
 long_term_example
 }

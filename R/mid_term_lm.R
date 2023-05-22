@@ -7,7 +7,8 @@
 #' @export
 #'
 #' @examples
-orakle.mid_term_lm <- function(midterm_all_data, training_set_ratio=0.2){
+#'
+mid_term_lm <- function(midterm_all_data, training_set_ratio=0.2){
   month_list=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec")
 
   for (i in 1:length(month_list)){

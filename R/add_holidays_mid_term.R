@@ -6,7 +6,9 @@
 #' @export
 #'
 #' @examples
-orakle.add_holidays_mid_term<- function(midterm){
+#' midterm_holidays_example <- add_holidays_mid_term(decomposed_load_example$midterm)
+#' midterm_holidays_example
+add_holidays_mid_term<- function(midterm){
 
   years=unique(midterm$year)
   country= (unique(midterm$country))

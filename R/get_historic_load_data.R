@@ -9,8 +9,8 @@
 #'
 #' @examples
 #' print("Input dataframe should be in the following form:")
-#' decomposed_load_data_example$longterm
-#' long_term_example <- get_historic_load_data(decomposed_load_data_example$longterm)
+#' decomposed_load_example$longterm
+#' long_term_example <- get_historic_load_data(decomposed_load_example$longterm)
 #' long_term_example
 get_historic_load_data <- function(longterm){
 

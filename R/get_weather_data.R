@@ -6,7 +6,10 @@
 #' @export
 #'
 #' @examples
-orakle.get_weather_data <- function(midterm){
+#' midterm_all_example <- get_weather_data(midterm_holidays_example)
+#' midterm_all_example$midterm
+#' midterm_all_example$temperature_data
+get_weather_data <- function(midterm){
 
   country=unique(midterm$country)
   start_year=min(unique(midterm$year))
