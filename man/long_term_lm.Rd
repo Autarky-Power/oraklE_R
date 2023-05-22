@@ -13,5 +13,8 @@ long_term_lm(longterm_all_data, training_set_ratio = 0.1, testquant = 500)
 Title
 }
 \examples{
+working_directory <- getwd()
+setwd(tempdir())
 longterm_model_data_example <- long_term_lm(longterm_all_data_example)
+setwd(working_directory)
 }
