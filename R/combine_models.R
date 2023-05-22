@@ -8,6 +8,8 @@
 #' @export
 #'
 #' @examples
+#' combined_model_results_example <- combine_models(longterm_model_data_example,midterm_model_data_example,shortterm_model_data_example)
+
 combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicted,short_term_data_predicted){
 
   library(ggplot2)
