@@ -15,6 +15,12 @@
 
 long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500){
 
+  if(! "avg_hourly_demand" %in% colnames(longterm_all_data)){
+    stop("No column named \"avg_hourly_demand\"")
+  }
+  if(FALSE %in%  lapply(longterm_all_data[,4:ncol(longterm_all_data)],is.numeric)){
+    stop("Not all macroeconomic variables are numeric")
+  }
 
   training_set=nrow(longterm_all_data)- round(nrow(longterm_all_data)*training_set_ratio)
   training_data=longterm_all_data[1:training_set,]
@@ -86,21 +92,18 @@ long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500
   best_index_RMSE = results$index[results["RMSE_k_fold"] == min(results["RMSE_k_fold"],na.rm = T)]
   best_value_RMSE = results[best_index_RMSE, "RMSE_k_fold"]
   limit_RMSE = best_value_RMSE * 1.5
-  message(paste("\n\nLowest RMSE of",round(best_value_RMSE),"for model no.",best_index_RMSE,". RMSE limit is set to"
-                ,round(limit_RMSE)))
+
 
   best_index_MAE = results$index[results["MAE_k_fold"] == min(results["MAE_k_fold"],na.rm = T)]
   best_value_MAE = results[best_index_MAE, "MAE_k_fold"]
   limit_MAE = best_value_MAE * 1.5
-  message(paste("Lowest MAE of",round(best_value_MAE),"for model no.",best_index_MAE,". MAE limit is set to"
-                ,round(limit_MAE)))
+
 
   best_index_Rsquare = results$index[results["Rsquare_k_fold"] == max(results["Rsquare_k_fold"],na.rm = T)]
 
   best_value_Rsquare = results[best_index_Rsquare, "Rsquare_k_fold"]
   limit_Rsquare = best_value_Rsquare / 1.3
-  message(paste("Highest Rsquare of",round(best_value_Rsquare,3),"for model no.",best_index_Rsquare,". Rsquare limit is set to"
-                ,round(limit_Rsquare,3)))
+
 
   mask_RMSE = results["RMSE_k_fold"] <= limit_RMSE
   mask_MAE = results["MAE_k_fold"] <= limit_MAE
@@ -130,32 +133,50 @@ long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500
     },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
   }
 
-
   ordered_dist <- dist[order(dist$distance),]
 
   if (testquant>500){
     best_model_num <- ordered_dist$model_no[which.min(ordered_dist$max_single_distance[1:50])]
+    best_model1 <- ordered_dist$model_no[ordered_dist$max_single_distance==sort(ordered_dist$max_single_distance[1:50], FALSE)[1]]
+    best_model2 <- ordered_dist$model_no[ordered_dist$max_single_distance==sort(ordered_dist$max_single_distance[1:50], FALSE)[2]]
+    best_model3 <- ordered_dist$model_no[ordered_dist$max_single_distance==sort(ordered_dist$max_single_distance[1:50], FALSE)[3]]
+    best_models <-c(best_model1,best_model2,best_model3)
   }else{
-    best_model_num <- ordered_dist$model_no[which.min(ordered_dist$max_single_distance[1:5])]
+    best_model1 <- ordered_dist$model_no[ordered_dist$max_single_distance==sort(ordered_dist$max_single_distance[1:5], FALSE)[1]]
+    best_model2 <- ordered_dist$model_no[ordered_dist$max_single_distance==sort(ordered_dist$max_single_distance[1:5], FALSE)[2]]
+    best_model3 <- ordered_dist$model_no[ordered_dist$max_single_distance==sort(ordered_dist$max_single_distance[1:5], FALSE)[3]]
+    best_models <-c(best_model1,best_model2,best_model3)
   }
 
-  x=combinations[best_model_num,]
-  x=x[,2:(ncol(combinations)-5)]
-  variables=colnames(x)[complete.cases(t(x))]
-  f <- as.formula(paste("avg_hourly_demand", paste(variables, collapse = " + "),
-                        sep = " ~ "))
+  longterm_all_data$longterm_model_predictions1 <- 0
+  longterm_all_data$longterm_model_predictions2 <- 0
+  longterm_all_data$longterm_model_predictions3 <- 0
+
+  i = 1
+  for (model in best_models){
+    x=combinations[model,]
+    x=x[,2:(ncol(combinations)-5)]
+    variables=colnames(x)[complete.cases(t(x))]
+    f <- as.formula(paste("avg_hourly_demand", paste(variables, collapse = " + "),
+                          sep = " ~ "))
+    print_vars <- paste(variables,collapse = ", ")
+    print(paste("Best model",i,"depends on:",print_vars))
+
 
   best_lm_model<- lm(f,data=training_data)
   results<- predict(best_lm_model,longterm_all_data)
+  longterm_all_data[,(ncol(longterm_all_data)-3+i)] <- results
   country<- unique(longterm_all_data$country)
+
   lt_plot <- ggplot(longterm_all_data)+geom_line(aes(year,avg_hourly_demand,color="actual"))+
     geom_line(aes(year,results,color="fitted"))+xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
     geom_vline(xintercept=longterm_all_data$year[training_set],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
-    ggtitle(paste("Long Term Model Results -",country,"\n"))+
+    ggtitle(paste("Long Term Model Results -",country),subtitle = paste("Model",i,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
+          plot.subtitle = element_text(size = rel(1), hjust = 0.5),
           text = element_text(),
           panel.background = element_rect(colour = NA),
           plot.background = element_rect(colour = NA),
@@ -183,9 +204,10 @@ long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500
     geom_vline(xintercept=longterm_all_data$year[training_set],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
-    ggtitle(paste("Long Term Model Results -",country,"\n"))+
+    ggtitle(paste("Long Term Model Results -",country),subtitle = paste("Model",i,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
+          plot.subtitle = element_text(size = rel(1), hjust = 0.5),
           text = element_text(),
           panel.background = element_rect(colour = NA),
           plot.background = element_rect(colour = NA),
@@ -212,8 +234,8 @@ long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500
     theme(axis.text=element_text(size=20))+
     theme(plot.title = element_text(size=26))
 
-
   print(lt_plot)
+
 
   if (! file.exists(country)){
     dir.create(country)}
@@ -225,12 +247,15 @@ long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500
     dir.create(paste0("./",country,"/plots"))}
   if (! file.exists(paste0("./",country,"/models/longterm"))){
     dir.create(paste0("./",country,"/models/longterm"))}
-  save(best_lm_model,file=paste0("./",country,"/models/longterm/best_lm_model.Rdata"))
+  save(best_lm_model,file=paste0("./",country,"/models/longterm/best_lm_model",i,".Rdata"))
 
-  ggsave(file=paste0("./",country,"/plots/Long_term_results.png"), plot=lt_plot2, width=12, height=8)
-  longterm_all_data$longterm_model_predictions <- results
+  ggsave(file=paste0("./",country,"/plots/Long_term_results",i,".png"), plot=lt_plot2, width=12, height=8)
+
+  i=i+1
+  }
+  longterm_all_data$training_set_end = max(training_data$year,na.rm = T)
   write.csv(longterm_all_data,paste0("./",country,"/data/long_term_all_data.csv"),row.names = F)
 
-  longterm_all_data$training_set_ratio = training_set_ratio
+
   return(longterm_all_data)
 }

@@ -13,7 +13,15 @@
 #' long_term_example <- get_historic_load_data(decomposed_load_example$longterm)
 #' long_term_example
 get_historic_load_data <- function(longterm){
-
+  if(! "country" %in% colnames(longterm)){
+    stop("No column named \"country\"")
+  }
+  if(! "avg_hourly_demand" %in% colnames(longterm)){
+    stop("No column named \"avg_hourly_demand\"")
+  }
+  if(! "year" %in% colnames(longterm_all_data)){
+    stop("No column named \"year\"")
+  }
 
   country=unique(longterm$country)
   if (country=="UK"){country="GB"}

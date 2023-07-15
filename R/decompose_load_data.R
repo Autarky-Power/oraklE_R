@@ -6,13 +6,14 @@
 #'
 #' @return A list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
 #' @export
+#' @import ggplot2
 #'
 #' @examples decomposed_load_example <- decompose_load_data(no_missing_data_example)
 
 decompose_load_data <- function(load_data){
 
-  library(ggplot2)
-  library(patchwork)
+  #library(ggplot2)
+
 
   resolution <- as.numeric(difftime(load_data$date[2], load_data$date[1],units="hours"))
 
@@ -128,12 +129,12 @@ decompose_load_data <- function(load_data){
 
 
   if (resolution <= 1){
-    all_plots <- trend_plot / midterm_seasonality_plot / shortterm_seasonality_plot
+    all_plots <- patchwork::wrap_plots(trend_plot,midterm_seasonality_plot,shortterm_seasonality_plot,ncol=1)
     print(all_plots)
 
     return(list("longterm"=longterm, "midterm"=midterm, "shortterm"=shortterm))
   } else{
-    all_plots <- trend_plot / midterm_seasonality_plot
+    all_plots <- patchwork::wrap_plots(trend_plot , midterm_seasonality_plot, ncol=1)
     print(all_plots)
 
     return(list("longterm"=longterm, "midterm"=midterm))
