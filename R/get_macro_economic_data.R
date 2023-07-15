@@ -74,7 +74,7 @@ get_macro_economic_data <- function(longterm){
   data_gni=jsonlite::fromJSON(rawToChar(res_gni$content))
   df_gni<- as.data.frame(data_gni[2])
   df_gni<- df_gni[order(df_gni$date),]
-h
+
   longterm$GNI <- df_gni$value
 
 
