@@ -19,7 +19,7 @@ get_historic_load_data <- function(longterm){
   if(! "avg_hourly_demand" %in% colnames(longterm)){
     stop("No column named \"avg_hourly_demand\"")
   }
-  if(! "year" %in% colnames(longterm_all_data)){
+  if(! "year" %in% colnames(longterm)){
     stop("No column named \"year\"")
   }
 
