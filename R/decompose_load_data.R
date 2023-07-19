@@ -12,8 +12,6 @@
 
 decompose_load_data <- function(load_data){
 
-  #library(ggplot2)
-
 
   resolution <- as.numeric(difftime(load_data$date[2], load_data$date[1],units="hours"))
 
@@ -31,16 +29,17 @@ decompose_load_data <- function(load_data){
   ordered_data$month <- lubridate::month(ordered_data$date)
   ordered_data$day <- lubridate::day(ordered_data$date)
   ordered_data$wday <- lubridate::wday(ordered_data$date,label = T,locale = "English")
+
   suppressWarnings(
-    if (resolution <= 1){
+    if (resolution <1){
       ordered_data$hour <- lubridate::hour(ordered_data$date)
-      if (load_data$time_interval[1] == "15 mins"){
+      if(load_data$time_interval[1] == 15){
         ordered_data$load <- colMeans(matrix(load_data$load, nrow=4))
-      } else if (load_data$time_interval[1] == "30 mins"){
+      }
+      if(load_data$time_interval[1] == 30){
         ordered_data$load <- colMeans(matrix(load_data$load, nrow=2))
-      }else{
-        ordered_data$load <- load_data$load
-      }} else{ordered_data$load <- load_data$load}
+      }
+      }else{ordered_data$load <- load_data$load}
   )
   if ("unit" %in% colnames(load_data)){
     ordered_data$unit <- unique(load_data$unit)}

@@ -29,7 +29,7 @@
 fill_missing_data <- function(load_data){
 
   timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(lubridate::year(load_data$date)))),'-01-01 00:00'),tz="UTC"),
-                   as.POSIXct(paste0(as.character(max(unique(lubridate::year(load_data$date)))),'-12-31 23:00'),tz="UTC"),
+                   as.POSIXct(paste0(as.character(max(unique(lubridate::year(load_data$date)))),'-12-31 23:59'),tz="UTC"),
                    by=difftime(load_data$date[2],load_data$date[1]))
 
   complete_data <- as.data.frame(timepoint)
