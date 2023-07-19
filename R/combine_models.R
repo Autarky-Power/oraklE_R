@@ -58,6 +58,12 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
     ACCURACY\nTraining Set:",round((1-training_mape)*100,2),"%\nTest Set:    ",round((1-test_mape)*100,2),"%\n
     RMSE\nTraining Set:",round(training_rmse,1),"MW\nTest Set:    ",round(test_rmse,1),"MW\n\n")
 
+  results <- as.data.frame(matrix(nrow=2,ncol = 4))
+  colnames(results)<- c("MAPE","RSQUARE","ACCURACY","RMSE")
+  rownames(results)<- c("training set","test set")
+  results[1,] <- c(round(training_mape,4),round(RSQUARE_training,4),round((1-training_mape)*100,2),round(training_rmse,1))
+  results[2,] <- c(round(test_mape,4),round(RSQUARE_test,4),round((1-test_mape)*100,2),round(test_rmse,1))
+
 
   full_plot <- ggplot(combined_model_results)+geom_line(aes(date,hourly_demand,color="actual"))+
     geom_line(aes(date,complete_model,color="fitted"))+xlab("\nYear")+ylab("Hourly Demand\n [MW]\n")+
@@ -128,6 +134,10 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
 
   if (! file.exists(country)){
     dir.create(country)}
+  if (! file.exists(paste0("./",country,"/data"))){
+    dir.create(paste0("./",country,"/data"))}
+  write.csv(results,paste0("./",country,"/data/final_model_metrics.csv"))
+
   if (! file.exists(paste0("./",country,"/plots"))){
     dir.create(paste0("./",country,"/plots"))}
 
