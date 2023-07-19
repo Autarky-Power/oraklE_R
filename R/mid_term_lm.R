@@ -120,6 +120,8 @@ mid_term_lm <- function(midterm_all_data, training_set_ratio=0.2){
     index[i] <- min(as.numeric(rownames(midterm_all_data[midterm_all_data$year==years[i],])))
   }
 
+  lowest_real_values <- min(midterm_all_data$seasonal_avg_hourly_demand)
+  midterm_all_data$midterm_model_fit[midterm_all_data$midterm_model_fit<lowest_real_values] <- lowest_real_values
 
   mt_plot <- ggplot(midterm_all_data)+geom_line(aes(1:nrow(midterm_all_data),seasonal_avg_hourly_demand,color="actual"))+
     geom_line(aes(1:nrow(midterm_all_data),midterm_model_fit,color="fitted"))+
