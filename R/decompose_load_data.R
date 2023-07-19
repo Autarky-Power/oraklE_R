@@ -31,13 +31,16 @@ decompose_load_data <- function(load_data){
   ordered_data$wday <- lubridate::wday(ordered_data$date,label = T,locale = "English")
 
   suppressWarnings(
-    if (resolution <1){
+    if (resolution <=1){
       ordered_data$hour <- lubridate::hour(ordered_data$date)
       if(load_data$time_interval[1] == 15){
         ordered_data$load <- colMeans(matrix(load_data$load, nrow=4))
       }
       if(load_data$time_interval[1] == 30){
         ordered_data$load <- colMeans(matrix(load_data$load, nrow=2))
+      }
+      if(load_data$time_interval[1] == 60){
+        ordered_data$load <- load_data$load
       }
       }else{ordered_data$load <- load_data$load}
   )
