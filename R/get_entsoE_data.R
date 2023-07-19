@@ -47,6 +47,7 @@ get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4
                   "Cyprus","CY","10YCY-1001A0003J",
                   "Czech Republic","CZ","10YCZ-CEPS-----N",
                   "Spain","ES","10YES-REE------0",
+                  "Italy","IT","10YIT-GRTN-----B",
                   "Finland","FI","10YFI-1--------U",
                   "France","FR","10YFR-RTE------C",
                   "Greece","GR","10YGR-HTSO-----Y",
