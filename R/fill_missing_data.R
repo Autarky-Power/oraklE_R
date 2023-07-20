@@ -37,12 +37,14 @@ fill_missing_data <- function(load_data){
 
   complete_data$load <- 0
   complete_data$load[complete_data$date %in% load_data$date] <- load_data$load
-  missing_data_index <- as.numeric(row.names(complete_data[which(complete_data$load==0),]))
   interval_minutes <- as.numeric(difftime(load_data$date[2],load_data$date[1],units="mins"))
   interval_one_week_ago <- 60/interval_minutes*24*7
-  complete_data$load[missing_data_index]<- complete_data$load[missing_data_index - interval_one_week_ago]
-  missing_data_index2 <- as.numeric(row.names(complete_data[which(complete_data$load==0),]))
-  complete_data$load[missing_data_index2]<- complete_data$load[missing_data_index2 - interval_one_week_ago]
+  while (length(as.numeric(row.names(complete_data[which(complete_data$load==0),])))>0){
+    print("yes")
+    missing_data_index <- as.numeric(row.names(complete_data[which(complete_data$load==0),]))
+    complete_data$load[missing_data_index]<- complete_data$load[missing_data_index - interval_one_week_ago]
+  }
+
 
   if ("unit" %in% colnames(load_data)){
   complete_data$unit <- unique(load_data$unit)}
