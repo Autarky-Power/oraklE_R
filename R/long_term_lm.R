@@ -22,6 +22,8 @@ long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500
     stop("Not all macroeconomic variables are numeric")
   }
 
+  longterm_all_data <- longterm_all_data[longterm_all_data$avg_hourly_demand >0,]
+
   training_set=nrow(longterm_all_data)- round(nrow(longterm_all_data)*training_set_ratio)
   training_data=longterm_all_data[1:training_set,]
   test_data=longterm_all_data[(training_set+1):nrow(longterm_all_data),]
