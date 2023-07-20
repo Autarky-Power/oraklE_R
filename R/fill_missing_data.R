@@ -40,7 +40,6 @@ fill_missing_data <- function(load_data){
   interval_minutes <- as.numeric(difftime(load_data$date[2],load_data$date[1],units="mins"))
   interval_one_week_ago <- 60/interval_minutes*24*7
   while (length(as.numeric(row.names(complete_data[which(complete_data$load==0),])))>0){
-    print("yes")
     missing_data_index <- as.numeric(row.names(complete_data[which(complete_data$load==0),]))
     complete_data$load[missing_data_index]<- complete_data$load[missing_data_index - interval_one_week_ago]
   }
