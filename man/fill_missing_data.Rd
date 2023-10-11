@@ -21,6 +21,7 @@ The purpose of this function is to substitute missing values with the correspond
 This function is primarily designed to handle minor gaps in the dataset acquired using the "get_entsoE_data()" function. To use this function with other datasets, it is important that the input data frame adheres to the required column naming conventions.
 }
 \examples{
+library(ggplot2)
 no_missing_data_example <- fill_missing_data(example_load_data)
 example_df<- as.data.frame(seq.POSIXt(example_load_data$date[841],example_load_data$date[870],"hour"))
 example_df$before <- NA

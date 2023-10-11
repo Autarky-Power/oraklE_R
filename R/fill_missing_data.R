@@ -13,6 +13,7 @@
 #' @export
 #'
 #' @examples
+#' library(ggplot2)
 #' no_missing_data_example <- fill_missing_data(example_load_data)
 #' example_df<- as.data.frame(seq.POSIXt(example_load_data$date[841],example_load_data$date[870],"hour"))
 #' example_df$before <- NA

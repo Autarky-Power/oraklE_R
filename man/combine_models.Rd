@@ -17,6 +17,3 @@ combine_models(
 \description{
 Title
 }
-\examples{
-combined_model_results_example <- combine_models(longterm_model_data_example,midterm_model_data_example,shortterm_model_data_example)
-}
