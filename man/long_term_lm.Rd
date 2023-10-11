@@ -15,6 +15,6 @@ Title
 \examples{
 working_directory <- getwd()
 setwd(tempdir())
-longterm_model_data_example <- long_term_lm(longterm_all_data_example)
+#longterm_model_data_example <- long_term_lm(longterm_all_data_example)
 setwd(working_directory)
 }

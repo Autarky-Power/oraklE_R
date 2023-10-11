@@ -15,6 +15,6 @@ Title
 \examples{
 working_directory <- getwd()
 setwd(tempdir())
-midterm_model_data_example <- orakle.mid_term_lm(midterm_all_data_example$midterm)
+midterm_model_data_example <- mid_term_lm(midterm_all_data_example$midterm)
 setwd(working_directory)
 }
