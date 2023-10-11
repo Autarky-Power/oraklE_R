@@ -7,7 +7,8 @@
 combine_models(
   longterm_all_data_predicted,
   midterm_all_data_predicted,
-  short_term_data_predicted
+  short_term_data_predicted,
+  longterm_model_number = 1
 )
 }
 \arguments{

@@ -11,7 +11,7 @@
 #' setwd(tempdir())
 #' midterm_model_data_example <- orakle.mid_term_lm(midterm_all_data_example$midterm)
 #' setwd(working_directory)
-mid_term_lm <- function(midterm_all_data, training_set_ratio=0.2){
+mid_term_lm <- function(midterm_all_data,Tref=18, training_set_ratio=0.2){
   month_list=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec")
 
   for (i in 1:length(month_list)){
@@ -31,9 +31,9 @@ mid_term_lm <- function(midterm_all_data, training_set_ratio=0.2){
   midterm_all_data$CD <-0
 
   for (i in 1:nrow(midterm_all_data)){
-    if (midterm_all_data$weighted_temperature[i] < 18){
-      midterm_all_data$HD[i]<- 18-midterm_all_data$weighted_temperature[i]
-    }else{  midterm_all_data$CD[i]<- midterm_all_data$weighted_temperature[i] -18
+    if (midterm_all_data$weighted_temperature[i] < Tref){
+      midterm_all_data$HD[i]<- Tref-midterm_all_data$weighted_temperature[i]
+    }else{  midterm_all_data$CD[i]<- midterm_all_data$weighted_temperature[i] -Tref
     }
   }
 

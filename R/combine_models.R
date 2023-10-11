@@ -10,18 +10,25 @@
 #' @examples
 #' combined_model_results_example <- combine_models(longterm_model_data_example,midterm_model_data_example,shortterm_model_data_example)
 
-combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicted,short_term_data_predicted){
+combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicted,short_term_data_predicted, longterm_model_number=1){
 
   library(ggplot2)
   library(patchwork)
   combined_model_results <- short_term_data_predicted[,1:8]
   country = unique(longterm_all_data_predicted$country)
   combined_model_results$long_term_model <- 0
+
+  if (longterm_model_number==1){
   for (year in unique(combined_model_results$year)){
     combined_model_results$long_term_model[combined_model_results$year==year]  <-
-      longterm_all_data_predicted$longterm_model_predictions[longterm_all_data_predicted$year==year]
-  }
-
+      longterm_all_data_predicted$longterm_model_predictions1[longterm_all_data_predicted$year==year]
+  }} else if (longterm_model_number==2){
+    combined_model_results$long_term_model[combined_model_results$year==year]  <-
+      longterm_all_data_predicted$longterm_model_predictions2[longterm_all_data_predicted$year==year]
+  }else{
+    combined_model_results$long_term_model[combined_model_results$year==year]  <-
+      longterm_all_data_predicted$longterm_model_predictions3[longterm_all_data_predicted$year==year]
+      }
 
   combined_model_results$mid_term_model <- 0
 
