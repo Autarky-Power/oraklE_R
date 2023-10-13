@@ -1,8 +1,10 @@
-#' Title
+#' Retrieve a list of macroeconomic data from WDI
+#' 
+#' This function downloads a set of macroeconomic variables via API from the World Development Indicators (WDI).  
 #'
-#' @param longterm
+#' @param longterm Data frame containing information on country (longterm$country) and years (e.g., longterm$years).
 #'
-#' @return
+#' @return Data frame with 10 macroeconomic indicators.
 #' @export
 #'
 #' @examples

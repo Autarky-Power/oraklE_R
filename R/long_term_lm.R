@@ -1,10 +1,12 @@
-#' Title
+#' Long-term forecast
+#' 
+#' This function predicts the long-term load data. For provided time series data and a set of macroeconomic variables. The load data is regressed on the macroeconomic indicators. For all possible model combinations, the best model is chosen based on AIC (?) and k-fold cross-validation. 
 #'
 #' @param longterm_all_data
 #' @param training_set_ratio
 #' @param testquant
 #'
-#' @return
+#' @return The forecast of the best model fit is stored and the results are displayed in a plot. 
 #' @export
 #'
 #' @examples
