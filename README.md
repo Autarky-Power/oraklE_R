@@ -1,4 +1,4 @@
-# orakle Documentation
+# oraklE_R
 
 R package for Long-term Electricity Demand Forecasting
 
