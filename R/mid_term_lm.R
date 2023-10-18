@@ -1,7 +1,7 @@
 #' Title
 #'
 #' @param midterm_all_data
-#' @param training_set_ratio
+#' @param test_set_steps
 #'
 #' @return
 #' @export
@@ -11,7 +11,7 @@
 #' setwd(tempdir())
 #' midterm_model_data_example <- mid_term_lm(midterm_all_data_example$midterm)
 #' setwd(working_directory)
-mid_term_lm <- function(midterm_all_data,Tref=18, training_set_ratio=0.2){
+mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730){
   month_list=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec")
 
   for (i in 1:length(month_list)){
@@ -62,7 +62,7 @@ mid_term_lm <- function(midterm_all_data,Tref=18, training_set_ratio=0.2){
   midterm_all_data$end_of_year <- 0
   midterm_all_data$end_of_year[midterm_all_data$month==12 & midterm_all_data$day>22] <-1
 
-  training_set=nrow(midterm_all_data)- round(nrow(midterm_all_data)*training_set_ratio)
+  training_set=nrow(midterm_all_data)- test_set_steps
   training_data=midterm_all_data[1:training_set,]
   test_data=midterm_all_data[(training_set+1):nrow(midterm_all_data),]
 
@@ -113,7 +113,7 @@ mid_term_lm <- function(midterm_all_data,Tref=18, training_set_ratio=0.2){
       midterm_all_data$midterm_model_fit <- predict(globalmodel, newdata = midterm_all_data)
       save(globalmodel,file=paste0("./",country,"/models/midterm/best_model.Rdata"))
     })
-
+  midterm_all_data$test_set_steps <- test_set_steps
   years <- unique(midterm_all_data$year)
   index <- 1:length(years)
   for (i in 1:length(years)){

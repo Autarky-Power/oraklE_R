@@ -1,7 +1,7 @@
 #' Title
 #'
 #' @param longterm_all_data
-#' @param training_set_ratio
+#' @param test_set_steps
 #' @param testquant
 #'
 #' @return
@@ -10,10 +10,10 @@
 #' @examples
 #' working_directory <- getwd()
 #' setwd(tempdir())
-#' #longterm_model_data_example <- long_term_lm(longterm_all_data_example)
+#' #longterm_model_data_example <- long_term_lm(longterm_all_data_example,test_set_steps=2,testquant = 500)
 #' setwd(working_directory)
 
-long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500){
+long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
 
   if(! "avg_hourly_demand" %in% colnames(longterm_all_data)){
     stop("No column named \"avg_hourly_demand\"")
@@ -24,7 +24,7 @@ long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500
 
   longterm_all_data <- longterm_all_data[mean(longterm_all_data$avg_hourly_demand)/longterm_all_data$avg_hourly_demand <150,]
 
-  training_set=nrow(longterm_all_data)- round(nrow(longterm_all_data)*training_set_ratio)
+  training_set=nrow(longterm_all_data)- test_set_steps
   training_data=longterm_all_data[1:training_set,]
   test_data=longterm_all_data[(training_set+1):nrow(longterm_all_data),]
   variables <- colnames(longterm_all_data)[4:(ncol(longterm_all_data))]
@@ -255,7 +255,7 @@ long_term_lm<- function(longterm_all_data,training_set_ratio=0.1,testquant = 500
 
   i=i+1
   }
-  longterm_all_data$training_set_end = max(training_data$year,na.rm = T)
+  longterm_all_data$test_set_steps = test_set_steps
   write.csv(longterm_all_data,paste0("./",country,"/data/long_term_all_data.csv"),row.names = F)
 
 

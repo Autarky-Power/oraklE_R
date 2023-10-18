@@ -4,7 +4,7 @@
 \alias{long_term_lm}
 \title{Title}
 \usage{
-long_term_lm(longterm_all_data, training_set_ratio = 0.1, testquant = 500)
+long_term_lm(longterm_all_data, test_set_steps = 2, testquant = 500)
 }
 \arguments{
 \item{testquant}{}
@@ -15,6 +15,6 @@ Title
 \examples{
 working_directory <- getwd()
 setwd(tempdir())
-#longterm_model_data_example <- long_term_lm(longterm_all_data_example)
+#longterm_model_data_example <- long_term_lm(longterm_all_data_example,test_set_steps=2,testquant = 500)
 setwd(working_directory)
 }

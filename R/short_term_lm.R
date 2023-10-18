@@ -1,7 +1,7 @@
 #' Title
 #'
 #' @param short_term_data
-#' @param training_set_ratio
+#' @param test_set_steps
 #'
 #' @return
 #' @export
@@ -11,9 +11,8 @@
 #' setwd(tempdir())
 #' shortterm_model_data_example <- short_term_lm(shortterm_holidays_example)
 #' setwd(working_directory)
-short_term_lm <- function(short_term_data, training_set_ratio=0.2){
-  library(ggplot2)
-  library(patchwork)
+short_term_lm <- function(short_term_data, test_set_steps=17520){
+
 
   columns_original_df <- ncol(short_term_data)
   short_term_data[,c((columns_original_df+1):(columns_original_df+24))] <- 0
@@ -44,7 +43,7 @@ short_term_lm <- function(short_term_data, training_set_ratio=0.2){
   model.st[,3] <- 1:24
 
   # define training and test set
-  training_set=nrow(short_term_data)- round(nrow(short_term_data)*training_set_ratio)
+  training_set=nrow(short_term_data)- test_set_steps
   training_data=short_term_data[1:training_set,]
   test_data=short_term_data[(training_set+1):nrow(short_term_data),]
 
@@ -96,7 +95,7 @@ short_term_lm <- function(short_term_data, training_set_ratio=0.2){
           model.st[which(model.st$month == i & model.st$wday == wday[j]),4]
       }
     })
-
+  short_term_data$test_set_steps <- test_set_steps
   if (! file.exists(paste0("./",country,"./data/"))){
     dir.create(paste0("./",country,"./data/"))}
   write.csv(short_term_data,paste0("./",country,"./data/short_term_data.csv"),row.names = F)

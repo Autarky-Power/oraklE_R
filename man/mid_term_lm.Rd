@@ -4,10 +4,10 @@
 \alias{mid_term_lm}
 \title{Title}
 \usage{
-mid_term_lm(midterm_all_data, Tref = 18, training_set_ratio = 0.2)
+mid_term_lm(midterm_all_data, Tref = 18, test_set_steps = 730)
 }
 \arguments{
-\item{training_set_ratio}{}
+\item{test_set_steps}{}
 }
 \description{
 Title

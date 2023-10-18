@@ -4,10 +4,10 @@
 \alias{short_term_lm}
 \title{Title}
 \usage{
-short_term_lm(short_term_data, training_set_ratio = 0.2)
+short_term_lm(short_term_data, test_set_steps = 17520)
 }
 \arguments{
-\item{training_set_ratio}{}
+\item{test_set_steps}{}
 }
 \description{
 Title
