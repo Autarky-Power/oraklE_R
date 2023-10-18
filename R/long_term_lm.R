@@ -8,6 +8,8 @@
 #'
 #' @return The forecast of the best model fit is stored and the results are displayed in a plot. 
 #' @export
+#' 
+#' @seealso See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download. 
 #'
 #' @examples
 #' working_directory <- getwd()
