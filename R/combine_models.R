@@ -12,8 +12,6 @@
 
 combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicted,short_term_data_predicted, longterm_model_number=1){
 
-  library(ggplot2)
-  library(patchwork)
   combined_model_results <- short_term_data_predicted[,1:8]
   country = unique(longterm_all_data_predicted$country)
   combined_model_results$long_term_model <- 0
@@ -44,8 +42,8 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
     combined_model_results$mid_term_model + combined_model_results$short_term_model
 
 
-  training_set_ratio <- unique(longterm_all_data_predicted$training_set_ratio)
-  year_training_set=nrow(longterm_all_data_predicted)- round(nrow(longterm_all_data_predicted)*training_set_ratio)
+  test_set_steps <- unique(longterm_all_data_predicted$test_set_steps)
+  year_training_set=nrow(longterm_all_data_predicted)- test_set_steps
   end_of_training_set=max(which(combined_model_results$year== longterm_all_data_predicted$year[year_training_set]))
 
 
@@ -226,7 +224,7 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
 
   ggsave(file=paste0("./",country,"/plots/complete_model_sample_weeks.png"), plot=full_plot_sample_week2, width=12, height=8)
 
-  stacked_plots <- full_plot/full_plot_sample_week
+  stacked_plots <- patchwork::wrap_plots(full_plot, full_plot_sample_week, ncol = 1)
   print(stacked_plots)
   print(full_plot_sample_week)
   print(full_plot)
