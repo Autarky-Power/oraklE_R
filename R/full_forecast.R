@@ -20,7 +20,7 @@ longterm_all_data_predicted <- oRaklE::long_term_lm(longterm_all_data, , test_se
 
 midterm <- oRaklE::add_holidays_mid_term(decomposed_data$midterm)
 midterm_all <- oRaklE::get_weather_data(midterm)
-midterm_all_data_predicted <- oRaklE::mid_term_lm(midterm_all$midterm,  test_set_steps= test_set_steps=test_set_steps*365)
+midterm_all_data_predicted <- oRaklE::mid_term_lm(midterm_all$midterm,  test_set_steps=test_set_steps*365)
 
 shortterm <- oRaklE::add_holidays_short_term(decomposed_data$shortterm)
 short_term_data_predicted <- oRaklE::short_term_lm(shortterm, test_set_steps=test_set_steps*8760)
