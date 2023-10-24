@@ -1,8 +1,8 @@
 #' Get weather data for the mid-term model
-#' 
+#'
 #' This function loads weather data which is used to forecast the mid-term data. The weather data is downloaded from https://wft-geo-db.p.rapidapi.com for a provided country and time period.
 #'
-#' @param midterm The mid-term data series resulting from the function \code{\link{decompose_load_data}.  
+#' @param midterm The mid-term data series resulting from the function \code{\link{decompose_load_data}.
 #'
 #' @return A list containing the mid-term data and temperature data.
 #' @export
@@ -22,9 +22,12 @@ get_weather_data <- function(midterm){
 
   rAPI_keys <-  c('78373349ffmsh25400c35b068c97p141de2jsnc9c3cb289eeb',
                   "1a5b8f0e09mshf53aea987d0438ap15877ajsnb38876b3416f",
-                  '7bcc8e6611msh036ad704bd92ab7p1c117bjsn85b388ab36c2')
+                  '7bcc8e6611msh036ad704bd92ab7p1c117bjsn85b388ab36c2',
+                  'ff83e65c19mshe1a5a3cade9b307p12c6abjsnc5ca238dd93f',
+                  'a1ca87a51fmsh084a0420e192fb3p1e80dejsn751dfe70bbd9',
+                  '3a789ffa80msha4a27ded5ad6bf6p17156ajsn65dde6edcd82')
 
-  key_integer <- sample(1:3, 1 )
+  key_integer <- sample(1:6, 1 )
   rAPI_key <- rAPI_keys[key_integer]
 
   cities1<- httr::GET(paste0("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=",country,"&sort=-population&offset=0&limit=10&types=CITY"),
