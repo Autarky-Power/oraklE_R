@@ -1,9 +1,11 @@
-#' Title
+#' Mid-term forecast
+#' 
+#' The mid-term load series is forecasted based on the provided weather data
 #'
 #' @param midterm_all_data
 #' @param test_set_steps
 #'
-#' @return
+#' @return The forecast of the best model fit is stored and the results are displayed in a plot. 
 #' @export
 #'
 #' @examples

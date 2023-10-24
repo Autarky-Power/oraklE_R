@@ -1,4 +1,6 @@
-#' Title
+#' Short-term forecast
+#' 
+#' The short-term load series is forecasted based on the data.
 #'
 #' @param short_term_data
 #' @param test_set_steps

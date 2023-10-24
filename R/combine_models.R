@@ -1,10 +1,12 @@
-#' Title
+#' Combine forecast models
+#' 
+#' This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first. 
 #'
-#' @param longterm_all_data_predicted
-#' @param midterm_all_data_predicted
-#' @param short_term_data_predicted
+#' @param longterm_all_data_predicted The object resulting from function long_term_lm().
+#' @param midterm_all_data_predicted The object resulting from function mid_term_lm().
+#' @param short_term_data_predictedThe object resulting from function short_term_lm().
 #'
-#' @return
+#' @return The combined model results.
 #' @export
 #'
 #' @examples

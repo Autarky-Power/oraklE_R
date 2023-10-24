@@ -1,4 +1,4 @@
-#' Trend and seasonality decomposition
+#' Decomposition into long-, mid- and short-term component
 #'
 #' This function decomposes the load data into three components: a yearly long-term trend, a daily mid-term seasonality, and an hourly short-term seasonality. If the data is available only at a daily resolution, the calculation of hourly seasonality is skipped. The results of the decomposition are returned as a list of dataframes.
 #'

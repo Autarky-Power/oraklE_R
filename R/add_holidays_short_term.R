@@ -1,8 +1,10 @@
-#' Title
+#' Add holidays to the short-term series
+#' 
+#' This function adds a dummy variable for holidays to the short-term data series. Information on the holidays is retrieved from "https://date.nager.at/api/v3/publicholidays/".
 #'
-#' @param shortterm
+#' @param shortterm The short-term data series resulting from the function decompose_load_data() 
 #'
-#' @return
+#' @return The short-term series with an additional column of holiday dummies.
 #' @export
 #'
 #' @examples

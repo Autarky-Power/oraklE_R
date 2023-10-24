@@ -1,9 +1,13 @@
-#' Title
+#' Retrieve a list of macroeconomic data from WDI
+#' 
+#' This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI). The variables are suspected to have a predictive capacity for the load data.   
 #'
-#' @param longterm
+#' @param longterm Data frame containing information on country (longterm$country) and years (e.g., longterm$year).
 #'
-#' @return
+#' @return Data frame with the original time series and 10 macroeconomic indicators.
 #' @export
+#' 
+#' @seealso See also function \code{\link{long_term_lm}} for the selection of covariates. 
 #'
 #' @examples
 #' longterm_all_data_example <- get_macro_economic_data(longterm_example)
