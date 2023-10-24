@@ -2,19 +2,25 @@
 % Please edit documentation in R/long_term_lm.R
 \name{long_term_lm}
 \alias{long_term_lm}
-\title{Title}
+\title{Long-term forecast}
 \usage{
 long_term_lm(longterm_all_data, test_set_steps = 2, testquant = 500)
 }
 \arguments{
 \item{testquant}{}
 }
+\value{
+The forecast of the best model fit is stored and the results are displayed in a plot.
+}
 \description{
-Title
+This function predicts the long-term load data. For provided time series data and a set of macroeconomic variables. The load data is regressed on the macroeconomic indicators. For all possible model combinations, the best model is chosen based on AIC (?) and k-fold cross-validation.
 }
 \examples{
 working_directory <- getwd()
 setwd(tempdir())
 #longterm_model_data_example <- long_term_lm(longterm_all_data_example,test_set_steps=2,testquant = 500)
 setwd(working_directory)
+}
+\seealso{
+See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download.
 }

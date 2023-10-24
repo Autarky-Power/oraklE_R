@@ -2,17 +2,20 @@
 % Please edit documentation in R/add_holidays_mid_term.R
 \name{add_holidays_mid_term}
 \alias{add_holidays_mid_term}
-\title{Title}
+\title{Add holidays to the mid-term series}
 \usage{
 add_holidays_mid_term(midterm)
 }
-\arguments{
-\item{midterm}{}
+\value{
+The mid-term series with an additional column of holiday dummies.
 }
 \description{
-Title
+This function adds a dummy variable for holidays to the mid-term data series. Information on the holidays is retrieved from "https://date.nager.at/api/v3/publicholidays/".
 }
 \examples{
 midterm_holidays_example <- add_holidays_mid_term(decomposed_load_example$midterm)
 midterm_holidays_example
+}
+\seealso{
+See also \code{\link{mid_term_lm}} for the prediction model.
 }

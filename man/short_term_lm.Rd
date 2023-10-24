@@ -2,7 +2,7 @@
 % Please edit documentation in R/short_term_lm.R
 \name{short_term_lm}
 \alias{short_term_lm}
-\title{Title}
+\title{Short-term forecast}
 \usage{
 short_term_lm(short_term_data, test_set_steps = 17520)
 }
@@ -10,7 +10,7 @@ short_term_lm(short_term_data, test_set_steps = 17520)
 \item{test_set_steps}{}
 }
 \description{
-Title
+The short-term load series is forecasted based on the data.
 }
 \examples{
 working_directory <- getwd()

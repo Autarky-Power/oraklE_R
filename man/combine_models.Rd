@@ -2,7 +2,7 @@
 % Please edit documentation in R/combine_models.R
 \name{combine_models}
 \alias{combine_models}
-\title{Title}
+\title{Combine forecast models}
 \usage{
 combine_models(
   longterm_all_data_predicted,
@@ -12,8 +12,15 @@ combine_models(
 )
 }
 \arguments{
-\item{short_term_data_predicted}{}
+\item{longterm_all_data_predicted}{The object resulting from function long_term_lm().}
+
+\item{midterm_all_data_predicted}{The object resulting from function mid_term_lm().}
+
+\item{short_term_data_predictedThe}{object resulting from function short_term_lm().}
+}
+\value{
+The combined model results.
 }
 \description{
-Title
+This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.
 }

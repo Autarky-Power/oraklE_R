@@ -2,15 +2,18 @@
 % Please edit documentation in R/add_holidays_short_term.R
 \name{add_holidays_short_term}
 \alias{add_holidays_short_term}
-\title{Title}
+\title{Add holidays to the short-term series}
 \usage{
 add_holidays_short_term(shortterm)
 }
 \arguments{
-\item{shortterm}{}
+\item{shortterm}{The short-term data series resulting from the function decompose_load_data()}
+}
+\value{
+The short-term series with an additional column of holiday dummies.
 }
 \description{
-Title
+This function adds a dummy variable for holidays to the short-term data series. Information on the holidays is retrieved from "https://date.nager.at/api/v3/publicholidays/".
 }
 \examples{
 shortterm_holidays_example <- add_holidays_short_term(decomposed_load_example$shortterm)

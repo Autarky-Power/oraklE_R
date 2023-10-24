@@ -4,7 +4,7 @@
 \alias{full_forecast}
 \title{Title}
 \usage{
-full_forecast(start_year, end_year, country)
+full_forecast(start_year, end_year, country, test_set_steps = 2)
 }
 \arguments{
 \item{country}{}

@@ -2,15 +2,18 @@
 % Please edit documentation in R/mid_term_lm.R
 \name{mid_term_lm}
 \alias{mid_term_lm}
-\title{Title}
+\title{Mid-term forecast}
 \usage{
 mid_term_lm(midterm_all_data, Tref = 18, test_set_steps = 730)
 }
 \arguments{
 \item{test_set_steps}{}
 }
+\value{
+The forecast of the best model fit is stored and the results are displayed in a plot.
+}
 \description{
-Title
+The mid-term load series is forecasted based on the provided weather data
 }
 \examples{
 working_directory <- getwd()

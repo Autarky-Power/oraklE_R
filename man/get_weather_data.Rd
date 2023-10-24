@@ -2,15 +2,15 @@
 % Please edit documentation in R/get_weather_data.R
 \name{get_weather_data}
 \alias{get_weather_data}
-\title{Title}
+\title{Get weather data for the mid-term model}
 \usage{
 get_weather_data(midterm)
 }
-\arguments{
-\item{midterm}{}
+\value{
+A list containing the mid-term data and temperature data.
 }
 \description{
-Title
+This function loads weather data which is used to forecast the mid-term data. The weather data is downloaded from https://wft-geo-db.p.rapidapi.com for a provided country and time period.
 }
 \examples{
 working_directory <- getwd()

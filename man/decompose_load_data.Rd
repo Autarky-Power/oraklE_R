@@ -2,7 +2,7 @@
 % Please edit documentation in R/decompose_load_data.R
 \name{decompose_load_data}
 \alias{decompose_load_data}
-\title{Trend and seasonality decomposition}
+\title{Decomposition into long-, mid- and short-term component}
 \usage{
 decompose_load_data(load_data)
 }

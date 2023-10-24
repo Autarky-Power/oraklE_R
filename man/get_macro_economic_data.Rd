@@ -2,17 +2,23 @@
 % Please edit documentation in R/get_macro_economic_data.R
 \name{get_macro_economic_data}
 \alias{get_macro_economic_data}
-\title{Title}
+\title{Retrieve a list of macroeconomic data from WDI}
 \usage{
 get_macro_economic_data(longterm)
 }
 \arguments{
-\item{longterm}{}
+\item{longterm}{Data frame containing information on country (longterm$country) and years (e.g., longterm$year).}
+}
+\value{
+Data frame with the original time series and 10 macroeconomic indicators.
 }
 \description{
-Title
+This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI). The variables are suspected to have a predictive capacity for the load data.
 }
 \examples{
 longterm_all_data_example <- get_macro_economic_data(longterm_example)
 longterm_all_data_example
+}
+\seealso{
+See also function \code{\link{long_term_lm}} for the selection of covariates.
 }
