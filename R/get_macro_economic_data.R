@@ -1,13 +1,13 @@
 #' Retrieve a list of macroeconomic data from WDI
-#' 
-#' This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI). The variables are suspected to have a predictive capacity for the load data.   
+#'
+#' This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI). The variables are suspected to have a predictive capacity for the load data.
 #'
 #' @param longterm Data frame containing information on country (longterm$country) and years (e.g., longterm$year).
 #'
 #' @return Data frame with the original time series and 10 macroeconomic indicators.
 #' @export
-#' 
-#' @seealso See also function \code{\link{long_term_lm}} for the selection of covariates. 
+#'
+#' @seealso See also function \code{\link{long_term_lm}} for the selection of covariates.
 #'
 #' @examples
 #' longterm_all_data_example <- get_macro_economic_data(longterm_example)
@@ -98,6 +98,23 @@ get_macro_economic_data <- function(longterm){
   df_rural<- df_rural[order(df_rural$date),]
 
   longterm$rural_population <- df_rural$value
+
+  consumer_price_inflation_pct= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/FP.CPI.TOTL.ZG?date=",start_year,":",end_year,"&format=json"))
+
+  data_cpi=jsonlite::fromJSON(rawToChar(consumer_price_inflation_pct$content))
+  df_cpi<- as.data.frame(data_cpi[2])
+  df_cpi<- df_cpi[order(df_cpi$date),]
+
+  longterm$consumer_price_inflation_pct <- df_cpi$value
+
+  consumer_price_inflation= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/FP.CPI.TOTL?date=",start_year,":",end_year,"&format=json"))
+
+  data_cpi2=jsonlite::fromJSON(rawToChar(consumer_price_inflation$content))
+  df_cpi2<- as.data.frame(data_cpi2[2])
+  df_cpi2<- df_cpi2[order(df_cpi2$date),]
+
+  longterm$consumer_price_inflation_index <- df_cpi2$value
+
 
   return(longterm)
 }

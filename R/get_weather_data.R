@@ -25,9 +25,14 @@ get_weather_data <- function(midterm){
                   '7bcc8e6611msh036ad704bd92ab7p1c117bjsn85b388ab36c2',
                   'ff83e65c19mshe1a5a3cade9b307p12c6abjsnc5ca238dd93f',
                   'a1ca87a51fmsh084a0420e192fb3p1e80dejsn751dfe70bbd9',
-                  '3a789ffa80msha4a27ded5ad6bf6p17156ajsn65dde6edcd82')
+                  '3a789ffa80msha4a27ded5ad6bf6p17156ajsn65dde6edcd82',
+                  '3f1e8156e8msh77ecdc22a46a6dcp16f7afjsn0f8652f0a598',
+                  'a2fa81f7c0msh99fc6bfcd50c2c1p11f186jsn6acb9eb0881b',
+                  '9e5732f249mshf4d3ca6064fd56ep1c0303jsnad9722dc52f8',
+                  '994e4b90abmshafbba71e8e92722p14f3d1jsn06ff01f2b6ca',
+                  '200439098fmsh508a44ddd5102eap196ed0jsn92487da6e4d6')
 
-  key_integer <- sample(1:6, 1 )
+  key_integer <- sample(1:11, 1 )
   rAPI_key <- rAPI_keys[key_integer]
 
   cities1<- httr::GET(paste0("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=",country,"&sort=-population&offset=0&limit=10&types=CITY"),
