@@ -75,7 +75,7 @@ long_term_future <- function(longterm_predictions,end_year){
     longterm_predictions[new_row_start:nrow(longterm_predictions),prediction_column] <- predict(best_lm_model,newdata = longterm_predictions)[new_row_start:nrow(longterm_predictions)]
   }
 
-  write.csv(longterm_predictions,"./data/longterm_future_predictions.csv",row.names = F)
+  write.csv(longterm_predictions,paste0("./",unique(longterm_predictions$country),"/data/longterm_future_predictions.csv"),row.names = F)
 
   intercept <- longterm_predictions$year[(new_row_start-1)]-unique(longterm_predictions$test_set_steps)
   lt_plot <- ggplot(longterm_predictions)+geom_line(aes(year,avg_hourly_demand,color="actual"),lwd=1)+
