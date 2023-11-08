@@ -107,13 +107,7 @@ get_macro_economic_data <- function(longterm){
 
   longterm$consumer_price_inflation_pct <- df_cpi$value
 
-  consumer_price_inflation= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/FP.CPI.TOTL?date=",start_year,":",end_year,"&format=json"))
 
-  data_cpi2=jsonlite::fromJSON(rawToChar(consumer_price_inflation$content))
-  df_cpi2<- as.data.frame(data_cpi2[2])
-  df_cpi2<- df_cpi2[order(df_cpi2$date),]
-
-  longterm$consumer_price_inflation_index <- df_cpi2$value
 
 
   return(longterm)
