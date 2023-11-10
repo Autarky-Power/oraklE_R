@@ -99,13 +99,13 @@ get_macro_economic_data <- function(longterm){
 
   longterm$rural_population <- df_rural$value
 
-  consumer_price_inflation_pct= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/FP.CPI.TOTL.ZG?date=",start_year,":",end_year,"&format=json"))
-
-  data_cpi=jsonlite::fromJSON(rawToChar(consumer_price_inflation_pct$content))
-  df_cpi<- as.data.frame(data_cpi[2])
-  df_cpi<- df_cpi[order(df_cpi$date),]
-
-  longterm$consumer_price_inflation_pct <- df_cpi$value
+  # consumer_price_inflation_pct= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/FP.CPI.TOTL.ZG?date=",start_year,":",end_year,"&format=json"))
+  #
+  # data_cpi=jsonlite::fromJSON(rawToChar(consumer_price_inflation_pct$content))
+  # df_cpi<- as.data.frame(data_cpi[2])
+  # df_cpi<- df_cpi[order(df_cpi$date),]
+  #
+  # longterm$consumer_price_inflation_pct <- df_cpi$value
 
 
 

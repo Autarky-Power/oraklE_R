@@ -33,8 +33,8 @@ long_term_future <- function(longterm_predictions,end_year){
   ngdp_r <- as.numeric(country_subset[1,col_year_first:col_year_end])
   ngdp_d <- as.numeric(country_subset[2,col_year_first:col_year_end])
   pl     <- as.numeric(country_subset[3,col_year_first:col_year_end])
-  pcpipch <- as.numeric(country_subset[4,col_year_first:col_year_end])
-  longterm_predictions$consumer_price_pct_change_weo <-pcpipch
+  #pcpipch <- as.numeric(country_subset[4,col_year_first:col_year_end])
+  #longterm_predictions$consumer_price_pct_change_weo <-pcpipch
 
 
   for (i in 2:nrow(longterm_predictions)){
@@ -47,7 +47,7 @@ long_term_future <- function(longterm_predictions,end_year){
   longterm_predictions$year[new_row_start:nrow(longterm_predictions)] <- (max(longterm_predictions$year,na.rm = T)+1):end_year
   longterm_predictions$country <- unique(longterm_predictions$country)[1]
   longterm_predictions$test_set_steps <- unique(longterm_predictions$test_set_steps)[1]
-  longterm_predictions$consumer_price_inflation_pct[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$consumer_price_pct_change_weo[new_row_start:nrow(longterm_predictions)]
+  #longterm_predictions$consumer_price_inflation_pct[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$consumer_price_pct_change_weo[new_row_start:nrow(longterm_predictions)]
 
   longterm_predictions$GDP_deflator[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$GDP_deflator_weo[new_row_start:nrow(longterm_predictions)]
   longterm_predictions$GDP_growth[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$GDP_growth_weo[new_row_start:nrow(longterm_predictions)]
