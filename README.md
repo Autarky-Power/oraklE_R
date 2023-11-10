@@ -9,10 +9,12 @@ Installing the development version:
 ```install_github("Autarky-Power/oraklE_R")```
 
 Install requirements:
-```packages <- c("caret","countrycode","doParallel","dplyr","ggplot2","ggthemes","glmnet","httr",
-```             "jsonlite","lubridate","MLmetrics","MuMIn","parallel","patchwork","purrr","R.utils",
-```              "readxl", "xml2")
-```install.packages(setdiff(packages, rownames(installed.packages())))```
+```
+packages <- c("caret","countrycode","doParallel","dplyr","ggplot2","ggthemes","glmnet","httr",
+             "jsonlite","lubridate","MLmetrics","MuMIn","parallel","patchwork","purrr","R.utils",
+              "readxl", "xml2")
+install.packages(setdiff(packages, rownames(installed.packages())))
+```
 
 
 [![Github All Releases](https://img.shields.io/github/downloads/Autarky-Power/orakle/total.svg)]()
