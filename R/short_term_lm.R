@@ -1,5 +1,5 @@
 #' Short-term forecast
-#' 
+#'
 #' The short-term load series is forecasted based on the data.
 #'
 #' @param short_term_data
@@ -66,7 +66,7 @@ short_term_lm <- function(short_term_data, test_set_steps=17520){
       x <- training_data[which(training_data$month == i & training_data$wday == wday[j]),]
       xreg <- as.matrix(x[,c((columns_original_df):(columns_original_df+24))])
 
-      fit1 <- lm(hourly_demand_trend_and_season_corrected ~ xreg[,1:25], data=x)
+      fit1 <- stats:: lm(hourly_demand_trend_and_season_corrected ~ xreg[,1:25], data=x)
 
       name=paste0("month",i,wday[j])
       modelname=paste0("./",country,"/models/shortterm_lm/",name,".Rdata")
@@ -100,7 +100,7 @@ short_term_lm <- function(short_term_data, test_set_steps=17520){
   short_term_data$test_set_steps <- test_set_steps
   if (! file.exists(paste0("./",country,"./data/"))){
     dir.create(paste0("./",country,"./data/"))}
-  write.csv(short_term_data,paste0("./",country,"./data/short_term_data.csv"),row.names = F)
+  utils::write.csv(short_term_data,paste0("./",country,"./data/short_term_data.csv"),row.names = F)
 
   colnames(short_term_data) <- make.unique(names(short_term_data))
 

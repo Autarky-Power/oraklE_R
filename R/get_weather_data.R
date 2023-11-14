@@ -74,11 +74,11 @@ get_weather_data <- function(midterm){
   for (i in 1:nrow(big_cities)){
     tryCatch({
       station_id <- big_cities$weather_station[i]
-      download.file(paste0("https://bulk.meteostat.net/v2/daily/",station_id,".csv.gz"),
+      utils::download.file(paste0("https://bulk.meteostat.net/v2/daily/",station_id,".csv.gz"),
                     destfile = "temp.csv.gz")
 
       R.utils::gunzip("temp.csv.gz")
-      temp_data <- read.csv("temp.csv")
+      temp_data <- utils::read.csv("temp.csv")
       colnames(temp_data)[c(1,2)] <- c("date","daily_avg_temp")
       temp_data$date <- as.Date(temp_data$date, format="%Y-%m-%d")
       temp_data <- temp_data[(lubridate::year(temp_data$date)>=start_year)&
@@ -104,8 +104,8 @@ get_weather_data <- function(midterm){
     dir.create(country)}
   if (! file.exists(paste0("./",country,"/data"))){
     dir.create(paste0("./",country,"/data"))}
-  write.csv(temp_df,paste0("./",country,"/data/temperatures.csv"),row.names = F)
-  write.csv(midterm,paste0("./",country,"/data/midterm_data.csv"),row.names = F)
+  utils::write.csv(temp_df,paste0("./",country,"/data/temperatures.csv"),row.names = F)
+  utils::write.csv(midterm,paste0("./",country,"/data/midterm_data.csv"),row.names = F)
 
   return(list("midterm"=midterm, "temperature_data"=temp_df))
 

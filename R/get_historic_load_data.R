@@ -26,7 +26,7 @@ get_historic_load_data <- function(longterm){
   country=unique(longterm$country)
   if (country=="UK"){country="GB"}
 
-  entsodata <-historic_entsodata1
+  entsodata <- oRaklE::historic_entsodata1
 
   colnames(entsodata)[1:5]<- c("country","year","month","day","coverage_ratio")
 
@@ -65,7 +65,7 @@ get_historic_load_data <- function(longterm){
   }
   year_list <- unique(data1$year)
 
-  entsodata2 <- historic_entsodata2
+  entsodata2 <- oRaklE::historic_entsodata2
 
   data2 <- entsodata2[entsodata2$CountryCode== country,]
   data2$year <- lubridate::year(data2$DateUTC)

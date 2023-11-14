@@ -1,11 +1,11 @@
 #' Mid-term forecast
-#' 
+#'
 #' The mid-term load series is forecasted based on the provided weather data
 #'
 #' @param midterm_all_data
 #' @param test_set_steps
 #'
-#' @return The forecast of the best model fit is stored and the results are displayed in a plot. 
+#' @return The forecast of the best model fit is stored and the results are displayed in a plot.
 #' @export
 #'
 #' @examples
@@ -72,10 +72,10 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730){
   variables <- colnames(midterm_all_data)[c(9:(ncol(midterm_all_data)))]
 
 
-  f <- as.formula(  paste("seasonal_avg_hourly_demand",paste(variables, collapse = " + "),
+  f <- stats:: as.formula(  paste("seasonal_avg_hourly_demand",paste(variables, collapse = " + "),
                           sep = " ~ "))
 
-  globalmodel <- lm(f , data=training_data, na.action = "na.omit")
+  globalmodel <-stats:: lm(f , data=training_data, na.action = "na.omit")
 
 
   y <- training_data$seasonal_avg_hourly_demand
@@ -92,9 +92,9 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730){
 
 
 
-  testlasso<-predict(best_model, s = best_lambda, newx = x_test)
+  testlasso<-stats::predict(best_model, s = best_lambda, newx = x_test)
   suppressWarnings(
-    testlm<-predict(globalmodel, newdata=test_data)
+    testlm<-stats::predict(globalmodel, newdata=test_data)
   )
   country = unique(midterm_all_data$country)
   if (! file.exists(country)){
@@ -109,10 +109,10 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730){
     dir.create(paste0("./",country,"/models/midterm"))}
   suppressWarnings(
     if(MLmetrics::RMSE(testlasso,y_test) < MLmetrics::RMSE(testlm,y_test)){
-      midterm_all_data$midterm_model_fit <- predict(best_model, s = best_lambda, newx = x_all)
+      midterm_all_data$midterm_model_fit <- stats:: predict(best_model, s = best_lambda, newx = x_all)
       save(best_model,file=paste0("./",country,"/models/midterm/best_model.Rdata"))
     }else{
-      midterm_all_data$midterm_model_fit <- predict(globalmodel, newdata = midterm_all_data)
+      midterm_all_data$midterm_model_fit <- stats:: predict(globalmodel, newdata = midterm_all_data)
       save(globalmodel,file=paste0("./",country,"/models/midterm/best_model.Rdata"))
     })
   midterm_all_data$test_set_steps <- test_set_steps

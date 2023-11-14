@@ -65,17 +65,17 @@ long_term_future <- function(longterm_predictions,end_year){
     longterm_predictions$GNI[i] <-  mean(longterm_predictions$GNI[(i-3):(i-1)]/longterm_predictions$GDP[(i-3):(i-1)]) * longterm_predictions$GDP[i]
   }
 
-  rural_model <- lm(rural_population~ year, data = longterm_predictions[1:(new_row_start-1),])
-  longterm_predictions$rural_population[new_row_start:nrow(longterm_predictions)]<-predict(rural_model,newdata = longterm_predictions[new_row_start:nrow(longterm_predictions),] )
+  rural_model <- stats::lm(rural_population~ year, data = longterm_predictions[1:(new_row_start-1),])
+  longterm_predictions$rural_population[new_row_start:nrow(longterm_predictions)]<-stats::predict(rural_model,newdata = longterm_predictions[new_row_start:nrow(longterm_predictions),] )
 
   for (i in 1:3){
     model_path= paste0("./", unique(longterm_predictions$country),"/models/longterm/best_lm_model",i,".Rdata")
     load(model_path)
     prediction_column <- which(colnames(longterm_predictions)==paste0("longterm_model_predictions",i))
-    longterm_predictions[new_row_start:nrow(longterm_predictions),prediction_column] <- predict(best_lm_model,newdata = longterm_predictions)[new_row_start:nrow(longterm_predictions)]
+    longterm_predictions[new_row_start:nrow(longterm_predictions),prediction_column] <- stats::predict(best_lm_model,newdata = longterm_predictions)[new_row_start:nrow(longterm_predictions)]
   }
 
-  write.csv(longterm_predictions,paste0("./",unique(longterm_predictions$country),"/data/longterm_future_predictions.csv"),row.names = F)
+  utils::write.csv(longterm_predictions,paste0("./",unique(longterm_predictions$country),"/data/longterm_future_predictions.csv"),row.names = F)
 
   intercept <- longterm_predictions$year[(new_row_start-1)]-unique(longterm_predictions$test_set_steps)
   lt_plot <- ggplot(longterm_predictions)+geom_line(aes(year,avg_hourly_demand,color="actual"),lwd=1)+

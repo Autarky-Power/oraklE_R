@@ -16,7 +16,7 @@ demand_data_filled <- oRaklE::fill_missing_data(demand_data)
 decomposed_data <- oRaklE::decompose_load_data(demand_data_filled)
 longterm <- oRaklE::get_historic_load_data(decomposed_data$longterm)
 longterm_all_data <- oRaklE::get_macro_economic_data(longterm)
-longterm_all_data_predicted <- oRaklE::long_term_lm(longterm_all_data, , test_set_steps=test_set_steps)
+longterm_all_data_predicted <- oRaklE::long_term_lm(longterm_all_data,  test_set_steps=test_set_steps)
 
 midterm <- oRaklE::add_holidays_mid_term(decomposed_data$midterm)
 midterm_all <- oRaklE::get_weather_data(midterm)
