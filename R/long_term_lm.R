@@ -131,7 +131,7 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
 
       model <- stats::lm(f, data = training_data)
 
-      LT <- predict(model,longterm_all_data)
+      LT <- stats:: predict(model,longterm_all_data)
 
       dist[i,1]<- sum(abs(test_data$avg_hourly_demand- LT[(training_set+1):nrow(longterm_all_data)]))
       dist[i,2]<- ind
