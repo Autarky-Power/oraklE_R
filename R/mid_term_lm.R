@@ -13,7 +13,7 @@
 #' setwd(tempdir())
 #' midterm_model_data_example <- mid_term_lm(midterm_all_data_example$midterm)
 #' setwd(working_directory)
-mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730){
+mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="dummy"){
   month_list=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec")
 
   for (i in 1:length(month_list)){
@@ -29,6 +29,8 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730){
     midterm_all_data[midterm_all_data$wday==weekday_list[i],weekday_list[i]]<- 1
   }
 
+  if(method=="dummy"){
+  
   midterm_all_data$HD <-0
   midterm_all_data$CD <-0
 
@@ -124,7 +126,94 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730){
 
   lowest_real_values <- min(midterm_all_data$seasonal_avg_hourly_demand)
   midterm_all_data$midterm_model_fit[midterm_all_data$midterm_model_fit<lowest_real_values] <- lowest_real_values
+  
+  
+  }else if(method=="spline"){
+    
+    library(splines)
+    
+    midterm_all_data$weighted_temperaturelag1 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 1)
+    midterm_all_data$weighted_temperaturelag1[1]<- midterm_all_data$weighted_temperature[1]
+    midterm_all_data$weighted_temperaturelag2 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 2)
+    midterm_all_data$weighted_temperaturelag2[1:2]<- midterm_all_data$weighted_temperaturelag1[1:2]
+    
+    midterm_all_data$end_of_year <- 0
+    midterm_all_data$end_of_year[midterm_all_data$month==12 & midterm_all_data$day>22] <-1
+    
+    training_set=nrow(midterm_all_data)- test_set_steps
+    training_data=midterm_all_data[1:training_set,]
+    test_data=midterm_all_data[(training_set+1):nrow(midterm_all_data),]
+    
+    variables <- colnames(midterm_all_data)[c(9:(ncol(midterm_all_data)))]
+    
+    spline_vars <- c( "weighted_temperature", "weighted_temperaturelag1", "weighted_temperaturelag2")
+    
+    formula_str <- paste("seasonal_avg_hourly_demand ~", 
+                         paste(lapply(variables, function(v) {
+                           if (v %in% spline_vars) {
+                             return(paste("s(", v, ", bs='cs')", sep = ""))
+                           } else {
+                             return(v)
+                           }
+                         }), collapse = " + "))
+    
 
+    f <- as.formula(formula_str)
+    
+    
+    globalmodel <- gam(f , data=training_data, method="REML")
+    
+    
+    y <- training_data$seasonal_avg_hourly_demand
+    y_all <- midterm_all_data$seasonal_avg_hourly_demand
+    y_test <- test_data$seasonal_avg_hourly_demand
+    x <- data.matrix(training_data[, 9:ncol(midterm_all_data)])
+    x_all <- data.matrix(midterm_all_data[, 9:ncol(midterm_all_data)])
+    x_test<- data.matrix(test_data[, 9:ncol(training_data)])
+    
+    cv_model <- glmnet::cv.glmnet(x, y, alpha = 1)
+    
+    best_lambda <- cv_model$lambda.min
+    best_model <- glmnet::glmnet(x, y, alpha = 1, lambda = best_lambda)
+    
+    
+    
+    testlasso<-predict(best_model, s = best_lambda, newx = x_test)
+    suppressWarnings(
+      testlm<-predict(globalmodel, newdata=test_data)
+    )
+    country = unique(midterm_all_data$country)
+    if (! file.exists(country)){
+      dir.create(country)}
+    if (! file.exists(paste0("./",country,"/models"))){
+      dir.create(paste0("./",country,"/models"))}
+    if (! file.exists(paste0("./",country,"/data"))){
+      dir.create(paste0("./",country,"/data"))}
+    if (! file.exists(paste0("./",country,"/plots"))){
+      dir.create(paste0("./",country,"/plots"))}
+    if (! file.exists(paste0("./",country,"/models/midterm"))){
+      dir.create(paste0("./",country,"/models/midterm"))}
+    suppressWarnings(
+      if(MLmetrics::RMSE(testlasso,y_test) < MLmetrics::RMSE(testlm,y_test)){
+        midterm_all_data$midterm_model_fit <- predict(best_model, s = best_lambda, newx = x_all)
+        save(best_model,file=paste0("./",country,"/models/midterm/best_model.Rdata"))
+      }else{
+        midterm_all_data$midterm_model_fit <- predict(globalmodel, newdata = midterm_all_data)
+        save(globalmodel,file=paste0("./",country,"/models/midterm/best_model.Rdata"))
+      })
+    midterm_all_data$test_set_steps <- test_set_steps
+    years <- unique(midterm_all_data$year)
+    index <- 1:length(years)
+    for (i in 1:length(years)){
+      index[i] <- min(as.numeric(rownames(midterm_all_data[midterm_all_data$year==years[i],])))
+    }
+    
+    lowest_real_values <- min(midterm_all_data$seasonal_avg_hourly_demand)
+    midterm_all_data$midterm_model_fit[midterm_all_data$midterm_model_fit<lowest_real_values] <- lowest_real_values
+
+  }
+  
+  
   mt_plot <- ggplot(midterm_all_data)+geom_line(aes(1:nrow(midterm_all_data),seasonal_avg_hourly_demand,color="actual"))+
     geom_line(aes(1:nrow(midterm_all_data),midterm_model_fit,color="fitted"))+
     geom_vline(xintercept=training_set,linetype=2)+
