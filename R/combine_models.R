@@ -1,6 +1,6 @@
 #' Combine forecast models
-#' 
-#' This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first. 
+#'
+#' This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.
 #'
 #' @param longterm_all_data_predicted The object resulting from function long_term_lm().
 #' @param midterm_all_data_predicted The object resulting from function mid_term_lm().
@@ -53,8 +53,8 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
   training_mape=MLmetrics::MAPE(combined_model_results$complete_model[1:end_of_training_set],combined_model_results$hourly_demand[1:end_of_training_set])
   test_mape=MLmetrics::MAPE(combined_model_results$complete_model[(end_of_training_set+1):nrow(combined_model_results)],combined_model_results$hourly_demand[(end_of_training_set+1):nrow(combined_model_results)])
 
-  RSQUARE_training = cor(combined_model_results$hourly_demand[1:end_of_training_set],combined_model_results$complete_model[1:end_of_training_set])^2
-  RSQUARE_test = cor(combined_model_results$hourly_demand[(end_of_training_set+1):nrow(combined_model_results)],combined_model_results$complete_model[(end_of_training_set+1):nrow(combined_model_results)])^2
+  RSQUARE_training = stats::cor(combined_model_results$hourly_demand[1:end_of_training_set],combined_model_results$complete_model[1:end_of_training_set])^2
+  RSQUARE_test = stats::cor(combined_model_results$hourly_demand[(end_of_training_set+1):nrow(combined_model_results)],combined_model_results$complete_model[(end_of_training_set+1):nrow(combined_model_results)])^2
 
   training_rmse=MLmetrics::RMSE(combined_model_results$complete_model[1:end_of_training_set],combined_model_results$hourly_demand[1:end_of_training_set])
   test_rmse=MLmetrics::RMSE(combined_model_results$complete_model[(end_of_training_set+1):nrow(combined_model_results)],combined_model_results$hourly_demand[(end_of_training_set+1):nrow(combined_model_results)])
@@ -143,7 +143,7 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
     dir.create(country)}
   if (! file.exists(paste0("./",country,"/data"))){
     dir.create(paste0("./",country,"/data"))}
-  write.csv(results,paste0("./",country,"/data/final_model_metrics.csv"))
+  utils::write.csv(results,paste0("./",country,"/data/final_model_metrics.csv"))
 
   if (! file.exists(paste0("./",country,"/plots"))){
     dir.create(paste0("./",country,"/plots"))}

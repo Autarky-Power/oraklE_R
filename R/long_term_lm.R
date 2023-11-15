@@ -1,15 +1,15 @@
 #' Long-term forecast
-#' 
-#' This function predicts the long-term load data. For provided time series data and a set of macroeconomic variables. The load data is regressed on the macroeconomic indicators. For all possible model combinations, the best model is chosen based on AIC (?) and k-fold cross-validation. 
+#'
+#' This function predicts the long-term load data. For provided time series data and a set of macroeconomic variables. The load data is regressed on the macroeconomic indicators. For all possible model combinations, the best model is chosen based on AIC (?) and k-fold cross-validation.
 #'
 #' @param longterm_all_data
 #' @param test_set_steps
 #' @param testquant
 #'
-#' @return The forecast of the best model fit is stored and the results are displayed in a plot. 
+#' @return The forecast of the best model fit is stored and the results are displayed in a plot.
 #' @export
-#' 
-#' @seealso See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download. 
+#'
+#' @seealso See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download.
 #'
 #' @examples
 #' working_directory <- getwd()
@@ -33,13 +33,13 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
   test_data=longterm_all_data[(training_set+1):nrow(longterm_all_data),]
   variables <- colnames(longterm_all_data)[4:(ncol(longterm_all_data))]
 
-  f <- as.formula(
+  f <- stats:: as.formula(
     paste("avg_hourly_demand",
           paste(variables, collapse = " + "),
           sep = " ~ "))
 
 
-  globalmodel <- lm(f , data=training_data, na.action = "na.fail")
+  globalmodel <- stats::lm(f , data=training_data, na.action = "na.fail")
 
   message("Getting all possible combinations, this might take a while.")
 
@@ -63,8 +63,8 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
   cross_val <- function(i){
     tryCatch({
       predictor_names=combinations[i,2:(ncol(combinations)-5)]
-      model_variables=colnames(predictor_names)[complete.cases(t(predictor_names))]
-      lm_formula <- as.formula(paste("avg_hourly_demand", paste(model_variables, collapse = " + "),
+      model_variables=colnames(predictor_names)[stats::complete.cases(t(predictor_names))]
+      lm_formula <- stats::as.formula(paste("avg_hourly_demand", paste(model_variables, collapse = " + "),
                                      sep = " ~ "))
 
       set.seed(rdm)
@@ -123,15 +123,15 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
     tryCatch({
       ind=candidates$index[i]
       x=combinations[ind,2:(ncol(combinations)-5)]
-      variables=colnames(x)[complete.cases(t(x))]
+      variables=colnames(x)[stats::complete.cases(t(x))]
 
 
-      f <- as.formula(paste("avg_hourly_demand",paste(variables, collapse = " + "),
+      f <- stats::as.formula(paste("avg_hourly_demand",paste(variables, collapse = " + "),
                             sep = " ~ "))
 
-      model <- lm(f, data = training_data)
+      model <- stats::lm(f, data = training_data)
 
-      LT <- predict(model,longterm_all_data)
+      LT <- stats:: predict(model,longterm_all_data)
 
       dist[i,1]<- sum(abs(test_data$avg_hourly_demand- LT[(training_set+1):nrow(longterm_all_data)]))
       dist[i,2]<- ind
@@ -162,15 +162,15 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
   for (model in best_models){
     x=combinations[model,]
     x=x[,2:(ncol(combinations)-5)]
-    variables=colnames(x)[complete.cases(t(x))]
-    f <- as.formula(paste("avg_hourly_demand", paste(variables, collapse = " + "),
+    variables=colnames(x)[stats::complete.cases(t(x))]
+    f <- stats:: as.formula(paste("avg_hourly_demand", paste(variables, collapse = " + "),
                           sep = " ~ "))
     print_vars <- paste(variables,collapse = ", ")
     print(paste("Best model",i,"depends on:",print_vars))
 
 
-  best_lm_model<- lm(f,data=training_data)
-  results<- predict(best_lm_model,longterm_all_data)
+  best_lm_model<- stats::lm(f,data=training_data)
+  results<- stats::predict(best_lm_model,longterm_all_data)
   longterm_all_data[,(ncol(longterm_all_data)-3+i)] <- results
   country<- unique(longterm_all_data$country)
 
@@ -260,7 +260,7 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
   i=i+1
   }
   longterm_all_data$test_set_steps = test_set_steps
-  write.csv(longterm_all_data,paste0("./",country,"/data/long_term_all_data.csv"),row.names = F)
+  utils::write.csv(longterm_all_data,paste0("./",country,"/data/long_term_all_data.csv"),row.names = F)
 
 
   return(longterm_all_data)

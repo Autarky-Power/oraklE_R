@@ -57,7 +57,7 @@ fill_missing_data <- function(load_data){
   if (! file.exists(paste0("./",country,"/data"))){
     dir.create(paste0("./",country,"/data"))}
 
-  write.csv(complete_data,paste0("./",country,"/data/filled_load_data.csv"),row.names = F)
+  utils::write.csv(complete_data,paste0("./",country,"/data/filled_load_data.csv"),row.names = F)
 
 
   return (complete_data)
