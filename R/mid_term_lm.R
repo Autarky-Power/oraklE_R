@@ -30,7 +30,7 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
   }
 
   if(method=="dummy"){
-  
+
   midterm_all_data$HD <-0
   midterm_all_data$CD <-0
 
@@ -126,29 +126,29 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
 
   lowest_real_values <- min(midterm_all_data$seasonal_avg_hourly_demand)
   midterm_all_data$midterm_model_fit[midterm_all_data$midterm_model_fit<lowest_real_values] <- lowest_real_values
-  
-  
+
+
   }else if(method=="spline"){
-    
+
     library(splines)
-    
+
     midterm_all_data$weighted_temperaturelag1 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 1)
     midterm_all_data$weighted_temperaturelag1[1]<- midterm_all_data$weighted_temperature[1]
     midterm_all_data$weighted_temperaturelag2 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 2)
     midterm_all_data$weighted_temperaturelag2[1:2]<- midterm_all_data$weighted_temperaturelag1[1:2]
-    
+
     midterm_all_data$end_of_year <- 0
     midterm_all_data$end_of_year[midterm_all_data$month==12 & midterm_all_data$day>22] <-1
-    
+
     training_set=nrow(midterm_all_data)- test_set_steps
     training_data=midterm_all_data[1:training_set,]
     test_data=midterm_all_data[(training_set+1):nrow(midterm_all_data),]
-    
+
     variables <- colnames(midterm_all_data)[c(9:(ncol(midterm_all_data)))]
-    
+
     spline_vars <- c( "weighted_temperature", "weighted_temperaturelag1", "weighted_temperaturelag2")
-    
-    formula_str <- paste("seasonal_avg_hourly_demand ~", 
+
+    formula_str <- paste("seasonal_avg_hourly_demand ~",
                          paste(lapply(variables, function(v) {
                            if (v %in% spline_vars) {
                              return(paste("s(", v, ", bs='cs')", sep = ""))
@@ -156,28 +156,28 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
                              return(v)
                            }
                          }), collapse = " + "))
-    
+
 
     f <- as.formula(formula_str)
-    
-    
-    globalmodel <- gam(f , data=training_data, method="REML")
-    
-    
+
+
+    globalmodel <- mgcv::gam(f , data=training_data, method="REML")
+
+
     y <- training_data$seasonal_avg_hourly_demand
     y_all <- midterm_all_data$seasonal_avg_hourly_demand
     y_test <- test_data$seasonal_avg_hourly_demand
     x <- data.matrix(training_data[, 9:ncol(midterm_all_data)])
     x_all <- data.matrix(midterm_all_data[, 9:ncol(midterm_all_data)])
     x_test<- data.matrix(test_data[, 9:ncol(training_data)])
-    
+
     cv_model <- glmnet::cv.glmnet(x, y, alpha = 1)
-    
+
     best_lambda <- cv_model$lambda.min
     best_model <- glmnet::glmnet(x, y, alpha = 1, lambda = best_lambda)
-    
-    
-    
+
+
+
     testlasso<-predict(best_model, s = best_lambda, newx = x_test)
     suppressWarnings(
       testlm<-predict(globalmodel, newdata=test_data)
@@ -207,13 +207,13 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
     for (i in 1:length(years)){
       index[i] <- min(as.numeric(rownames(midterm_all_data[midterm_all_data$year==years[i],])))
     }
-    
+
     lowest_real_values <- min(midterm_all_data$seasonal_avg_hourly_demand)
     midterm_all_data$midterm_model_fit[midterm_all_data$midterm_model_fit<lowest_real_values] <- lowest_real_values
 
   }
-  
-  
+
+
   mt_plot <- ggplot(midterm_all_data)+geom_line(aes(1:nrow(midterm_all_data),seasonal_avg_hourly_demand,color="actual"))+
     geom_line(aes(1:nrow(midterm_all_data),midterm_model_fit,color="fitted"))+
     geom_vline(xintercept=training_set,linetype=2)+
