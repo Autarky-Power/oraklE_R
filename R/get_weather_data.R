@@ -1,11 +1,14 @@
-#' Get weather data for the mid-term model
+#' Load weather data via API
 #'
-#' This function loads weather data which is used to forecast the mid-term data. The weather data is downloaded from https://wft-geo-db.p.rapidapi.com for a provided country and time period.
+#' This function loads weather data which is used to forecast the mid-term data. 
+#' The weather data is downloaded from https://wft-geo-db.p.rapidapi.com for a provided country and time period.
 #'
 #' @param midterm The mid-term data series resulting from the function \code{\link{decompose_load_data}.
 #'
 #' @return A list containing the mid-term data and temperature data.
 #' @export
+#' 
+#' @seealso See function \code{\link{decompose_load_data}} for the generation of the mid-term series.
 #'
 #' @examples
 #' working_directory <- getwd()
