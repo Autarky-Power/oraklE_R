@@ -50,7 +50,7 @@ short_term_lm <- function(short_term_data, test_set_steps=17520){
   training_data$short_term_lm_model_predictions <-0
   test_data$short_term_lm_model_predictions <-0
 
-
+suppressWarnings(
   for (i in 1:12){
     for (j in 1:7){
       cat(paste("Processing model:",7*(i-1)+j,"of",12*7))
@@ -73,9 +73,7 @@ short_term_lm <- function(short_term_data, test_set_steps=17520){
       if (7*(i-1)+j == 12*7) cat('\n Done')
       else cat('\014')
     }
-
-
-  }
+  })
 
 
   ## combine the results
