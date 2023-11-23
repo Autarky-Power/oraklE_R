@@ -14,13 +14,14 @@ decompose_load_data <- function(load_data){
 
 
   resolution <- as.numeric(difftime(load_data$date[2], load_data$date[1],units="hours"))
-
+  resolution2 <- as.numeric(difftime(as.POSIXct(load_data$date[-1]), as.POSIXct(load_data$date[-length(load_data$date)]), units="hours"))
+  unique(resolution2)
   if (resolution <= 1){
-    timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))),'-01-01 00:00')),
-                     as.POSIXct(paste0(as.character(max(unique(load_data$year))),'-12-31 23:00')),by="hour")
+    timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))),'-01-01 00:00'),tz="UTC"),
+                     as.POSIXct(paste0(as.character(max(unique(load_data$year))),'-12-31 23:00'),tz="UTC"),by="hour")
   } else{
-    timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))),'-01-01')),
-                     as.POSIXct(paste0(as.character(max(unique(load_data$year))),'-12-31')),by="day")
+    timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))),'-01-01'),tz="UTC"),
+                     as.POSIXct(paste0(as.character(max(unique(load_data$year))),'-12-31'),tz="UTC"),by="day")
   }
 
   ordered_data <- as.data.frame(timepoint)

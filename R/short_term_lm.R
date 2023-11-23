@@ -25,28 +25,11 @@ short_term_lm <- function(short_term_data, test_set_steps=17520){
 
   country=unique(short_term_data$country)
   wday <- as.character(unique(short_term_data$wday))
-  # preparation of matrix, where model is stored
-  model_st <- data.frame(matrix(ncol = 14, nrow = 168))
-  colnames(model_st) <- c("wday","hour","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-  model_st[,1] <- c(rep(wday[1],24),rep(wday[2],24),rep(wday[3],24),rep(wday[4],24),rep(wday[5],24),rep(wday[6],24),rep(wday[7],24))
-  model_st[,2] <- 1:24
-
-
-  # data frame for adding all model fits together:
-  model.st <- data.frame(matrix(ncol = 4, nrow = 2016)) # 2016 = 24 hours*7 days*12 month
-  colnames(model.st) <- c("month","wday","hour","modelfit")
-  model.st[,1] <- c(rep(1,168), rep(2,168),rep(3,168),rep(4,168),rep(5,168),rep(6,168),
-                    rep(7,168),rep(8,168),rep(9,168),rep(10,168),rep(11,168),rep(12,168))
-
-  model.st[,2] <- c(rep(wday[1],24),rep(wday[2],24),
-                    rep(wday[3],24),rep(wday[4],24),
-                    rep(wday[5],24),rep(wday[6],24),
-                    rep(wday[7],24))
-  model.st[,3] <- 1:24
 
   # define training and test set
   training_set=nrow(short_term_data)- test_set_steps
   training_data=short_term_data[1:training_set,]
+
   test_data=short_term_data[(training_set+1):nrow(short_term_data),]
 
   # compute models and store results
@@ -57,46 +40,48 @@ short_term_lm <- function(short_term_data, test_set_steps=17520){
   if (! file.exists(paste0("./",country,"./models/shortterm_lm"))){
     dir.create(paste0("./",country,"./models/shortterm_lm"))}
 
-  k = 1
-  l = 1
+  variables <- colnames(training_data)[(columns_original_df):(columns_original_df+24)]
+
+  f <- stats:: as.formula(
+    paste("hourly_demand_trend_and_season_corrected",
+          paste(variables, collapse = " + "),
+          sep = " ~ "))
+
+  training_data$short_term_lm_model_predictions <-0
+  test_data$short_term_lm_model_predictions <-0
+
+
   for (i in 1:12){
     for (j in 1:7){
       cat(paste("Processing model:",7*(i-1)+j,"of",12*7))
 
       x <- training_data[which(training_data$month == i & training_data$wday == wday[j]),]
-      xreg <- as.matrix(x[,c((columns_original_df):(columns_original_df+24))])
+      x_test <- test_data[which(test_data$month == i & test_data$wday == wday[j]),]
 
-      fit1 <- stats:: lm(hourly_demand_trend_and_season_corrected ~ xreg[,1:25], data=x)
+
+      fit1 <- stats:: lm(f, data=x)
 
       name=paste0("month",i,wday[j])
       modelname=paste0("./",country,"/models/shortterm_lm/",name,".Rdata")
       save(fit1,file=modelname)
-      fv <- data.frame(fit1$fitted.values)
-      model_st[k:(k+23),(i+2)] <- fv[1:24,]
-      model.st[l:(l+23),4] <- fv[1:24,]
-      k = k+24
-      l = l+24
+      training_data$short_term_lm_model_predictions[which(training_data$month == i & training_data$wday == wday[j])] <-
+                                                    fit1$fitted.values
+      test_data$short_term_lm_model_predictions[which(test_data$month == i & test_data$wday == wday[j])] <-
+                                           predict(fit1,newdata = x_test)
+
+
       if (7*(i-1)+j == 12*7) cat('\n Done')
       else cat('\014')
     }
 
-    k = 1
+
   }
 
 
-
-
-
   ## combine the results
-  short_term_data$short_term_lm_model_predictions <- vector(length=nrow(short_term_data))
 
-  suppressWarnings(
-    for (i in 1:12){
-      for(j in 1:7){
-        short_term_data$short_term_lm_model_predictions[which(short_term_data$month == i & short_term_data$wday == wday[j])] <-
-          model.st[which(model.st$month == i & model.st$wday == wday[j]),4]
-      }
-    })
+  short_term_data <- rbind(training_data,test_data)
+
   short_term_data$test_set_steps <- test_set_steps
   if (! file.exists(paste0("./",country,"./data/"))){
     dir.create(paste0("./",country,"./data/"))}

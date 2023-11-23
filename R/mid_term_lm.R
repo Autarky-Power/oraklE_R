@@ -98,6 +98,7 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
   suppressWarnings(
     testlm<-stats::predict(globalmodel, newdata=test_data)
   )
+
   country = unique(midterm_all_data$country)
   if (! file.exists(country)){
     dir.create(country)}
@@ -130,12 +131,12 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
 
   }else if(method=="spline"){
 
-    library(splines)
 
     midterm_all_data$weighted_temperaturelag1 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 1)
     midterm_all_data$weighted_temperaturelag1[1]<- midterm_all_data$weighted_temperature[1]
     midterm_all_data$weighted_temperaturelag2 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 2)
     midterm_all_data$weighted_temperaturelag2[1:2]<- midterm_all_data$weighted_temperaturelag1[1:2]
+
 
     midterm_all_data$end_of_year <- 0
     midterm_all_data$end_of_year[midterm_all_data$month==12 & midterm_all_data$day>22] <-1
@@ -158,7 +159,7 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
                          }), collapse = " + "))
 
 
-    f <- as.formula(formula_str)
+    f <- stats:: as.formula(formula_str)
 
 
     globalmodel <- mgcv::gam(f , data=training_data, method="REML")
@@ -178,9 +179,9 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
 
 
 
-    testlasso<-predict(best_model, s = best_lambda, newx = x_test)
+    testlasso<-stats::predict(best_model, s = best_lambda, newx = x_test)
     suppressWarnings(
-      testlm<-predict(globalmodel, newdata=test_data)
+      testlm<-stats::predict(globalmodel, newdata=test_data)
     )
     country = unique(midterm_all_data$country)
     if (! file.exists(country)){
@@ -195,10 +196,10 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
       dir.create(paste0("./",country,"/models/midterm"))}
     suppressWarnings(
       if(MLmetrics::RMSE(testlasso,y_test) < MLmetrics::RMSE(testlm,y_test)){
-        midterm_all_data$midterm_model_fit <- predict(best_model, s = best_lambda, newx = x_all)
+        midterm_all_data$midterm_model_fit <- stats::predict(best_model, s = best_lambda, newx = x_all)
         save(best_model,file=paste0("./",country,"/models/midterm/best_model.Rdata"))
       }else{
-        midterm_all_data$midterm_model_fit <- predict(globalmodel, newdata = midterm_all_data)
+        midterm_all_data$midterm_model_fit <- stats::predict(globalmodel, newdata = midterm_all_data)
         save(globalmodel,file=paste0("./",country,"/models/midterm/best_model.Rdata"))
       })
     midterm_all_data$test_set_steps <- test_set_steps
