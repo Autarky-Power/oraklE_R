@@ -23,10 +23,10 @@ decompose_load_data <- function(load_data){
                      as.POSIXct(paste0(as.character(max(unique(load_data$year))),'-12-31'),tz="UTC"),by="day")
   }
 
+
   if (is.character(load_data$time_interval)){
-    for (i in 1:nrow(load_data)){
-      load_data$time_interval[i] <- difftime(load_data$date[(i+1)],load_data$date[i],units = "mins")
-    }
+    intervals <- as.numeric(sub(" mins", "", load_data$time_interval))
+    load_data$time_interval <- as.difftime(intervals, units = "mins")
   }
 
 
