@@ -18,18 +18,19 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
   country = unique(longterm_all_data_predicted$country)
   combined_model_results$long_term_model <- 0
 
-  if (longterm_model_number==1){
   for (year in unique(combined_model_results$year)){
+  if (longterm_model_number==1){
     combined_model_results$long_term_model[combined_model_results$year==year]  <-
       longterm_all_data_predicted$longterm_model_predictions1[longterm_all_data_predicted$year==year]
-  }} else if (longterm_model_number==2){
+  } else if (longterm_model_number==2){
+
     combined_model_results$long_term_model[combined_model_results$year==year]  <-
       longterm_all_data_predicted$longterm_model_predictions2[longterm_all_data_predicted$year==year]
   }else{
     combined_model_results$long_term_model[combined_model_results$year==year]  <-
       longterm_all_data_predicted$longterm_model_predictions3[longterm_all_data_predicted$year==year]
       }
-
+  }
   combined_model_results$mid_term_model <- 0
 
 
