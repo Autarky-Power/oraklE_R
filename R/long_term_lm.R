@@ -48,7 +48,7 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
   message("Getting all possible combinations, this might take a while.")
 
   suppressMessages(combinations <- MuMIn::dredge(globalmodel))
-
+  combinations <- combinations[combinations$population >= 0 | is.na(combinations$population), ]
   for (i in 1:nrow(combinations)){
     if (all(is.na(combinations[i,2:(ncol(combinations)-5)]))){
       combinations<-combinations[-i,]
