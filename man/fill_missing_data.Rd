@@ -8,16 +8,16 @@ fill_missing_data(load_data)
 }
 \arguments{
 \item{load_data}{Data Frame with load data. Data Frame must contain the following columns:
-"date" consisting of the datetime values,
-"load" consisting of the load values,
-"unit" indicating the measured unit (e.g. MW),
-"country" indicating the country's ISO2C code}
+\item{date} consisting of the datetime values,
+\item{load} consisting of the load values,
+\item{unit} indicating the measured unit (e.g. MW),
+\item{country} indicating the country's ISO2C code}
 }
 \value{
-Data Frame with filled up load values, date, unit, year, time resolution, ISO2C Country Code
+Data Frame with completed load values, date, unit, year, time resolution, ISO2C Country Code
 }
 \description{
-The purpose of this function is to substitute missing values with the corresponding values from the dataset, exactly one week prior at the same time point. For example, if there is no load value available for May 12th at 20:00, the value recorded on May 7th at 20:00 will be used as a replacement.
+This function substitutes missing values with the corresponding values at the same hour exactly one week prior. For example, if there is no load value available for May 12th at 20:00, the value recorded on May 7th at 20:00 will be used as a replacement.
 This function is primarily designed to handle minor gaps in the dataset acquired using the "get_entsoE_data()" function. To use this function with other datasets, it is important that the input data frame adheres to the required column naming conventions.
 }
 \examples{

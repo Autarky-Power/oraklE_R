@@ -4,16 +4,25 @@
 \alias{mid_term_lm}
 \title{Mid-term forecast}
 \usage{
-mid_term_lm(midterm_all_data, Tref = 18, test_set_steps = 730)
+mid_term_lm(
+  midterm_all_data,
+  Tref = 18,
+  test_set_steps = 730,
+  method = "dummy"
+)
 }
 \arguments{
-\item{test_set_steps}{}
+\item{midterm_all_data}{Dataframe. Containing the mid-term load data, the holidays and weather data obtained from \code{\link{get_weather_data}}.}
+
+\item{Tref}{Numeric. Reference temperature as basis for the calculation of cooling and heating days.}
+
+\item{test_set_steps}{Integer. Number of time periods in the test set.}
 }
 \value{
 The forecast of the best model fit is stored and the results are displayed in a plot.
 }
 \description{
-The mid-term load series is forecasted based on the provided weather data
+The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with dummy variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.
 }
 \examples{
 working_directory <- getwd()

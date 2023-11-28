@@ -2,15 +2,15 @@
 % Please edit documentation in R/get_historic_load_data.R
 \name{get_historic_load_data}
 \alias{get_historic_load_data}
-\title{Adding historic yearly load average data}
+\title{Load historic yearly average load data}
 \usage{
 get_historic_load_data(longterm)
 }
 \arguments{
-\item{longterm}{A dataframe object with "country", "year", and "avg_hourly_demand" columns}
+\item{longterm}{A data frame object with "country", "year", and "avg_hourly_demand" columns resulting from the function \code{\link{decompose_load_data}}.}
 }
 \value{
-Data Frame with "country", "year", and "avg_hourly_demand"
+Data frame with "country", "year", and "avg_hourly_demand" (yearly average of hourly demand).
 }
 \description{
 This function utilizes two historical load datasets obtained from the archive of https://www.entsoe.eu/data/power-stats/.

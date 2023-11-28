@@ -7,13 +7,22 @@
 long_term_lm(longterm_all_data, test_set_steps = 2, testquant = 500)
 }
 \arguments{
+\item{longterm_all_data}{Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data()}}.}
+
+\item{test_set_steps}{Integer. Number of time periods in the test set.}
+
 \item{testquant}{}
 }
 \value{
-The forecast of the best model fit is stored and the results are displayed in a plot.
+A dataframe with the input data and additional columns for test_set_steps and the best three models longterm_model_predictions1, longterm_model_predictions2 and longterm_model_predictions3.
 }
 \description{
-This function predicts the long-term load data. For provided time series data and a set of macroeconomic variables. The load data is regressed on the macroeconomic indicators. For all possible model combinations, the best model is chosen based on AIC (?) and k-fold cross-validation.
+This function predicts the long-term load data based on the provided time series and a set of macroeconomic variables. The model corresponds to
+}
+\details{
+\deqn{\bar{D}_L(t_L)=\beta_{L,1}+\beta_{L,2}x_1(t_L)+...+ \beta_{L,10}x_{10}(t_L) \epsilon_L(t_L).}
+
+where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data()}}. For all possible covariate combinations, the three best models are chosen and stored. The included regressors are stored and the predicted and actual time series plotted.
 }
 \examples{
 working_directory <- getwd()

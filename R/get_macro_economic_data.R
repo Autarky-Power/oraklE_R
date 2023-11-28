@@ -3,7 +3,7 @@
 #' This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI). 
 #' The variables are suspected to have a predictive capacity for the load data. 
 #'
-#' @param longterm The long-term data series resulting from the function \code{\link{decompose_load_data}. Contains information on country (longterm$country) and years (longterm$year).
+#' @param longterm The long-term data series resulting from the function \code{\link{decompose_load_data}}. Contains information on country (longterm$country) and years (longterm$year).
 #'
 #' @return Data frame with the original time series and 10 additional columns with macroeconomic indicators.
 #' @export

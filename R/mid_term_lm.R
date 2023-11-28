@@ -1,9 +1,10 @@
 #' Mid-term forecast
 #'
-#' The mid-term load series is forecasted based on the provided weather data
+#' The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with dummy variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.  
 #'
-#' @param midterm_all_data
-#' @param test_set_steps
+#' @param midterm_all_data Dataframe. Containing the mid-term load data, the holidays and weather data obtained from \code{\link{get_weather_data}}.
+#' @param test_set_steps Integer. Number of time periods in the test set.
+#' @param Tref Numeric. Reference temperature as basis for the calculation of cooling and heating days.
 #'
 #' @return The forecast of the best model fit is stored and the results are displayed in a plot.
 #' @export
@@ -129,8 +130,6 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
 
 
   }else if(method=="spline"){
-
-    library(splines)
 
     midterm_all_data$weighted_temperaturelag1 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 1)
     midterm_all_data$weighted_temperaturelag1[1]<- midterm_all_data$weighted_temperature[1]
