@@ -140,26 +140,34 @@ decompose_load_data <- function(load_data){
     }
     shortterm_seasonality_plot <-  ggplot(shortterm)+geom_line(aes(1:nrow(shortterm),hourly_demand_trend_and_season_corrected, color="Average hourly demand"),linewidth=1.1)+
       theme(legend.title = element_blank()) +ggtitle('Short-term seasonality \n')+
-      theme(plot.title = element_text(hjust = 0.5))+ylab("MW")+xlab("Hour")
+      theme(plot.title = element_text(hjust = 0.5),legend.position = "bottom")+ylab("MW")+xlab("Hour\n")
   }
 
   trend_plot<- ggplot(longterm)+geom_line(aes(year,avg_hourly_demand, color="Average hourly demand"),linewidth=1.1)+
-    theme(legend.title = element_blank()) +ggtitle('Long term trend \n')+
-    theme(plot.title = element_text(hjust = 0.5))+ylab("MW")
+    theme(legend.title = element_blank()) +ggtitle('Long-term trend \n')+xlab("Year\n")+
+    theme(plot.title = element_text(hjust = 0.5))+ylab("MW")+ theme(legend.position = "none")
 
   midterm_seasonality_plot <-  ggplot(midterm)+geom_line(aes(1:nrow(midterm),seasonal_avg_hourly_demand, color="Average hourly demand"),linewidth=1.1)+
     theme(legend.title = element_blank()) +ggtitle('Mid-term seasonality \n')+
-    theme(plot.title = element_text(hjust = 0.5))+ylab("MW")+xlab("Day")
-
+    theme(plot.title = element_text(hjust = 0.5))+ylab("MW")+xlab("Day\n")+ theme(legend.position = "none")
+  if (! file.exists(country)){
+    dir.create(country)}
+  if (! file.exists(paste0("./",country,"/models"))){
+    dir.create(paste0("./",country,"/models"))}
+  if (! file.exists(paste0("./",country,"/data"))){
+    dir.create(paste0("./",country,"/data"))}
+  if (! file.exists(paste0("./",country,"/plots"))){
+    dir.create(paste0("./",country,"/plots"))}
 
   if (resolution <= 1){
     all_plots <- patchwork::wrap_plots(trend_plot,midterm_seasonality_plot,shortterm_seasonality_plot,ncol=1)
     print(all_plots)
-
+    ggsave(file=paste0("./",country,"/plots/Decomposed_load.png"), plot=all_plots, width=12, height=8)
     return(list("longterm"=longterm, "midterm"=midterm, "shortterm"=shortterm))
   } else{
     all_plots <- patchwork::wrap_plots(trend_plot , midterm_seasonality_plot, ncol=1)
     print(all_plots)
+    ggsave(file=paste0("./",country,"/plots/Decomposed_load.png"), plot=all_plots, width=12, height=8)
 
     return(list("longterm"=longterm, "midterm"=midterm))
   }

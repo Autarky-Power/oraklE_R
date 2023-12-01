@@ -115,7 +115,7 @@ suppressWarnings(
           plot.margin=unit(c(10,5,5,5),"mm"),
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
-    theme(legend.title = element_blank())
+    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
   print(st_plot)
 
@@ -151,7 +151,7 @@ suppressWarnings(
           plot.margin=unit(c(10,5,5,5),"mm"),
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
-    theme(legend.title = element_blank())
+    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
   print(st_plot_sample_week)
 
@@ -190,7 +190,7 @@ suppressWarnings(
     theme(axis.title=element_text(size=23))+
     theme(legend.text=element_text(size=23))+
     theme(axis.text=element_text(size=20))+
-    theme(plot.title = element_text(size=26))
+    theme(plot.title = element_text(size=26))+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
   ggsave(file=paste0("./",country,"/plots/short_term_results.png"), plot=st_plot2, width=12, height=8)
 
@@ -226,7 +226,7 @@ suppressWarnings(
     theme(legend.text=element_text(size=23))+
     theme(axis.text=element_text(size=20))+
     theme(plot.title = element_text(size=26))+
-    theme(plot.subtitle = element_text(size=20,hjust = 0.5))
+    theme(plot.subtitle = element_text(size=20,hjust = 0.5))+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
 
 

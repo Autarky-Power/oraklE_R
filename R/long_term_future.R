@@ -82,10 +82,9 @@ long_term_future <- function(longterm_predictions,end_year){
     geom_line(aes(year,longterm_model_predictions1,color="Model1"))+
     geom_line(aes(year,longterm_model_predictions2,color="Model2"))+
     geom_line(aes(year,longterm_model_predictions3,color="Model3"))+
-    xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
     geom_vline(xintercept=intercept,linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
+    xlab("\nYear")+ylab("Avg Hourly Demand p. Year\n [MW]\n")+
     ggtitle(paste("Long Term Model Results -",unique(longterm_predictions$country)))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -110,7 +109,7 @@ long_term_future <- function(longterm_predictions,end_year){
           plot.margin=unit(c(10,5,5,5),"mm"),
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
-    theme(legend.title = element_blank())
+    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
   suppressWarnings(print(lt_plot))
 
@@ -120,10 +119,9 @@ long_term_future <- function(longterm_predictions,end_year){
     geom_line(aes(year,longterm_model_predictions1,color="Model1"))+
     geom_line(aes(year,longterm_model_predictions2,color="Model2"))+
     geom_line(aes(year,longterm_model_predictions3,color="Model3"))+
-    xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
+    xlab("\nYear")+ylab("Avg Hourly Demand p. Year\n [MW]\n")+
     geom_vline(xintercept=intercept,linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
     ggtitle(paste("Long Term Model Results -",unique(longterm_predictions$country)))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -152,7 +150,7 @@ long_term_future <- function(longterm_predictions,end_year){
     theme(axis.title=element_text(size=23))+
     theme(legend.text=element_text(size=23))+
     theme(axis.text=element_text(size=20))+
-    theme(plot.title = element_text(size=26))
+    theme(plot.title = element_text(size=26))+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
   suppressWarnings(
     ggsave(file=paste0("./",unique(longterm_predictions$country),"/plots/Long_term_results_future.png"), plot=lt_plot2, width=12, height=8)

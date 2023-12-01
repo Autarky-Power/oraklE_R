@@ -1,14 +1,14 @@
 #' Long-term forecast
 #'
 #' This function predicts the long-term load data based on the provided time series and a set of macroeconomic variables. The model corresponds to
-#' 
+#'
 #' \deqn{\bar{D}_L(t_L)=\beta_{L,1}+\beta_{L,2}x_1(t_L)+...+ \beta_{L,10}x_{10}(t_L) \epsilon_L(t_L).}
-#' 
+#'
 #' where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data()}}. For all possible covariate combinations, the three best models are chosen and stored. The included regressors are stored and the predicted and actual time series plotted.
 #'
 #' @param longterm_all_data Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data()}}.
 #' @param test_set_steps Integer. Number of time periods in the test set.
-#' @param testquant 
+#' @param testquant
 #'
 #' @return A dataframe with the input data and additional columns for test_set_steps and the best three models longterm_model_predictions1, longterm_model_predictions2 and longterm_model_predictions3.
 #' @export
@@ -182,7 +182,7 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
     geom_line(aes(year,results,color="fitted"))+xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
     geom_vline(xintercept=longterm_all_data$year[training_set],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
+    xlab("\nYear")+ylab("Avg Hourly Demand p. Year\n [MW]\n")+
     ggtitle(paste("Long Term Model Results -",country),subtitle = paste("Model",i,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -207,13 +207,13 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
           plot.margin=unit(c(10,5,5,5),"mm"),
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
-    theme(legend.title = element_blank())
+    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
   lt_plot2 <- ggplot(longterm_all_data)+geom_line(aes(year,avg_hourly_demand,color="actual"))+
     geom_line(aes(year,results,color="fitted"))+xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
     geom_vline(xintercept=longterm_all_data$year[training_set],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
+    xlab("\nYear")+ylab("Avg Hourly Demand p. Year\n [MW]\n")+
     ggtitle(paste("Long Term Model Results -",country),subtitle = paste("Model",i,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -242,7 +242,7 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
     theme(axis.title=element_text(size=23))+
     theme(legend.text=element_text(size=23))+
     theme(axis.text=element_text(size=20))+
-    theme(plot.title = element_text(size=26))
+    theme(plot.title = element_text(size=26))+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
   print(lt_plot)
 

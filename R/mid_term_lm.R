@@ -1,6 +1,6 @@
 #' Mid-term forecast
 #'
-#' The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with dummy variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.  
+#' The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with dummy variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.
 #'
 #' @param midterm_all_data Dataframe. Containing the mid-term load data, the holidays and weather data obtained from \code{\link{get_weather_data}}.
 #' @param test_set_steps Integer. Number of time periods in the test set.
@@ -132,8 +132,7 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
 
   }else if(method=="spline"){
 
-library(splines)
-    
+
     midterm_all_data$weighted_temperaturelag1 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 1)
     midterm_all_data$weighted_temperaturelag1[1]<- midterm_all_data$weighted_temperature[1]
     midterm_all_data$weighted_temperaturelag2 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 2)
@@ -221,7 +220,7 @@ library(splines)
     geom_line(aes(1:nrow(midterm_all_data),midterm_model_fit,color="fitted"))+
     geom_vline(xintercept=training_set,linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nDay")+ylab("Avg Hourly Demand\n [MW]\n")+
+    xlab("\nDay")+ylab("Avg Hourly Demand p. Day\n [MW]\n")+
     ggtitle(paste("Mid Term Model Results -",country,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -246,7 +245,7 @@ library(splines)
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
     theme(legend.title = element_blank())+
-    scale_x_continuous(breaks = index,labels = years)
+    scale_x_continuous(breaks = index,labels = years)+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
 
   mt_plot2 <- ggplot(midterm_all_data)+geom_line(aes(1:nrow(midterm_all_data),seasonal_avg_hourly_demand,color="actual"))+
@@ -282,7 +281,7 @@ library(splines)
     theme(legend.text=element_text(size=23))+
     theme(axis.text=element_text(size=20))+
     theme(plot.title = element_text(size=26))+
-    scale_x_continuous(breaks = index,labels = years)
+    scale_x_continuous(breaks = index,labels = years)+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
 
 
