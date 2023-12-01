@@ -12,11 +12,11 @@ combine_models(
 )
 }
 \arguments{
-\item{longterm_all_data_predicted}{The object resulting from function long_term_lm().}
+\item{longterm_all_data_predicted}{Dataframe. The object resulting from function \code{\link{long_term_lm}}.}
 
-\item{midterm_all_data_predicted}{The object resulting from function mid_term_lm().}
+\item{midterm_all_data_predicted}{Dataframe. The object resulting from function \code{\link{mid_term_lm}}.}
 
-\item{short_term_data_predictedThe}{object resulting from function short_term_lm().}
+\item{short_term_data_predictedThe}{Dataframe. The object resulting from function \code{\link{short_term_lm}}.}
 }
 \value{
 The combined model results.

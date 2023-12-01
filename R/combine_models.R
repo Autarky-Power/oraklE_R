@@ -2,9 +2,9 @@
 #'
 #' This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.
 #'
-#' @param longterm_all_data_predicted The object resulting from function long_term_lm().
-#' @param midterm_all_data_predicted The object resulting from function mid_term_lm().
-#' @param short_term_data_predictedThe object resulting from function short_term_lm().
+#' @param longterm_all_data_predicted Dataframe. The object resulting from function \code{\link{long_term_lm}}.
+#' @param midterm_all_data_predicted Dataframe. The object resulting from function \code{\link{mid_term_lm}}.
+#' @param short_term_data_predictedThe Dataframe. The object resulting from function \code{\link{short_term_lm}}.
 #'
 #' @return The combined model results.
 #' @export

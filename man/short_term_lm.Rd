@@ -7,10 +7,15 @@
 short_term_lm(short_term_data, test_set_steps = 17520)
 }
 \arguments{
-\item{test_set_steps}{}
+\item{short_term_data}{Dataframe. Containing the short-term load data and the added holiday dummy resulting from \code{\link{add_holidays_short_term}}.}
+
+\item{test_set_steps}{Integer. Number of time periods in the test set.}
+}
+\value{
+A dataframe containing the original data series and the predicted data series.
 }
 \description{
-The short-term load series is forecasted based on the data.
+The short-term load series is forecasted based on the provided hourly load data.
 }
 \examples{
 working_directory <- getwd()

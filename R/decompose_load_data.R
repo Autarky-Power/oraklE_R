@@ -1,10 +1,17 @@
-#' Decomposition into long-, mid- and short-term component
+#' Decomposing the load data into long-, mid- and short-term component
 #'
-#' This function decomposes the load data into three components: a yearly long-term trend, a daily mid-term seasonality, and an hourly short-term seasonality. If the data is available only at a daily resolution, the calculation of hourly seasonality is skipped. The results of the decomposition are returned as a list of dataframes.
+#' This function decomposes the load data into three components: a yearly long-term trend, a daily mid-term seasonality, and an hourly short-term seasonality. If the data is available only at a daily resolution, the calculation of hourly seasonality is skipped. The results of the decomposition are returned as a list of dataframes. The series are plotted additionally.
 #'
 #' @param load_data A dataframe object with "load", "date", "unit", and "country" columns
+#' \item{load} consisting of the load values,
+#' \item{date} consisting of the datetime values,
+#' \item{unit} indicating the measured unit (e.g. MW),
+#' \item{country} indicating the country's ISO2C code
 #'
-#' @return A list of three dataframes with long-term trend, mid-term seasonality, short-term seasonality
+#' @return A list of three dataframes with
+#' \item{longterm} dataframe of long-term trend with country, year and yearly average hourly demand.
+#' \item{midterm} datafram of mid-term component with country, date, year, month, day, week day, average hourly demand and seasonal average hourly demand.
+#' \item{shortterm} dataframe of short-term component with country, date, year, month, day, week day, hour, hourly demand and hourly demand trend and trend and season corrected.
 #' @export
 #' @import ggplot2
 #'

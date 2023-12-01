@@ -2,15 +2,19 @@
 % Please edit documentation in R/get_weather_data.R
 \name{get_weather_data}
 \alias{get_weather_data}
-\title{Get weather data for the mid-term model}
+\title{Load weather data via API}
 \usage{
 get_weather_data(midterm)
+}
+\arguments{
+\item{midterm}{The mid-term data series resulting from the function \code{\link{decompose_load_data}}.}
 }
 \value{
 A list containing the mid-term data and temperature data.
 }
 \description{
-This function loads weather data which is used to forecast the mid-term data. The weather data is downloaded from https://wft-geo-db.p.rapidapi.com for a provided country and time period.
+This function loads weather data which is used to forecast the mid-term data.
+The weather data is downloaded from https://wft-geo-db.p.rapidapi.com for a provided country and time period.
 }
 \examples{
 working_directory <- getwd()
@@ -19,4 +23,7 @@ midterm_all_example <- get_weather_data(midterm_holidays_example)
 midterm_all_example$midterm
 midterm_all_example$temperature_data
 setwd(working_directory)
+}
+\seealso{
+See function \code{\link{decompose_load_data}} for the generation of the mid-term series.
 }
