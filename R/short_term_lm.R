@@ -162,7 +162,7 @@ suppressWarnings(
     geom_line(aes(date,short_term_lm_model_predictions,color="fitted"))+
     geom_vline(xintercept=test_data$date[1],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nHour")+ylab("[MW]\n")+
+    xlab("\nHour")+ylab("Avg Hourly Demand\n[MW]\n")+
     ggtitle(paste("Short Term Model Results -",country,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -197,7 +197,7 @@ suppressWarnings(
   st_plot_sample_week2 <- ggplot(short_term_data[week_start:(week_start+335),])+geom_line(aes(date,hourly_demand_trend_and_season_corrected,color="actual"))+
     geom_line(aes(date,short_term_lm_model_predictions,color="fitted"))+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nHour")+ylab("[MW]\n")+
+    xlab("\nHour")+ylab("Avg Hourly Demand\n[MW]\n")+
     ggtitle(paste("Short Term Model Results -",country),subtitle = paste("2 sample weeks in",sample_year,"\n") )+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
