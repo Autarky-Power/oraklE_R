@@ -114,7 +114,11 @@ decompose_load_data <- function(load_data){
     shortterm$hourly_demand <- all_data$load
     shortterm$hourly_demand_trend_corrected <- 0
 
+    #
+    shortterm$yearly <- 0
+    shortterm$daily <- 0
     for (i in min(all_data$year):max(all_data$year)){
+      shortterm$yearly[shortterm$year==i] <- longterm$avg_hourly_demand[longterm$year==i]
       shortterm$hourly_demand_trend_corrected[shortterm$year==i] <- shortterm$hourly_demand[shortterm$year==i]-
         longterm$avg_hourly_demand[longterm$year==i]
     }
@@ -122,7 +126,8 @@ decompose_load_data <- function(load_data){
     shortterm$hourly_demand_trend_and_season_corrected <- 0
 
 
-    for (i in 1:(nrow(midterm)-1)){
+    for (i in 1:(nrow(midterm))){
+      shortterm$daily[((i-1)*24+1):(i*24)]<- midterm$seasonal_avg_hourly_demand[i]
       shortterm$hourly_demand_trend_and_season_corrected[((i-1)*24+1):(i*24)] <-
         shortterm$hourly_demand_trend_corrected[((i-1)*24+1):(i*24)]- midterm$seasonal_avg_hourly_demand[i]
     }
