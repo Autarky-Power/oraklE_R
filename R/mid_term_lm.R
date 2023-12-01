@@ -252,7 +252,7 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
     geom_line(aes(1:nrow(midterm_all_data),midterm_model_fit,color="fitted"))+
     geom_vline(xintercept=training_set,linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nDay")+ylab("Avg Hourly Demand\n [MW]\n")+
+    xlab("\nDay")+ylab("Avg Hourly Demand p. Day\n [MW]\n")+
     ggtitle(paste("Mid Term Model Results -",country,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
