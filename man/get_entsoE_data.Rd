@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_entsoE_data.R
 \name{get_entsoE_data}
 \alias{get_entsoE_data}
-\title{Load Data Acquisition from the ENTSO-E Transparency Platform}
+\title{Load data from the ENTSO-E Transparency Platform}
 \usage{
 get_entsoE_data(
   start_year,
@@ -12,20 +12,27 @@ get_entsoE_data(
 )
 }
 \arguments{
-\item{start_year}{The starting year for which load data will be requested.}
+\item{start_year}{Numeric. The starting year for which load data will be requested.}
 
-\item{end_year}{The final year for which load data will be requested.}
+\item{end_year}{Numeric. The final year for which load data will be requested.}
 
-\item{country}{The country name for which load data will be requested.}
+\item{country}{Character. The country name for which load data will be requested provided as the English name of the country.}
 
-\item{api_key}{A valid API key for the ENTSO-E Transparency Platform. If none is provided one of the deposited keys will be used.}
+\item{api_key}{Character. A valid API key for the ENTSO-E Transparency Platform. If none is provided, one of the deposited keys will be used.}
 }
 \value{
-Data Frame with the Date, Load, Unit, Year, Time Resolution, ISO2C Country Code
+A Data Frame with the
+\item{date} The series of dates in POSIXct format.
+\item{load} The series of load data.
+\item{unit} The series of units in which the load data is provided, character.
+\item{year} The year of each load data point.
+\item{time_interval} The time resolution of reach load data point.
+\item{country} The ISO2C Country Code.
 }
 \description{
-Makes various API Requests to the Transparency Platform of the European Network of
-Transmission System Operators for Electricity (ENTSO-E) and stores the results in a data frame. https://transparency.entsoe.eu/
+This function makes various API requests to the Transparency Platform of the European Network of
+Transmission System Operators for Electricity (ENTSO-E, https://transparency.entsoe.eu/) and
+stores the downloaded load data in a data frame. The earliest year for the requested load time series is 2017.
 }
 \examples{
 example_load_data <- get_entsoE_data(2017,2021,"France")

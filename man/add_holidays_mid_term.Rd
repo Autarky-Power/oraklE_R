@@ -6,6 +6,9 @@
 \usage{
 add_holidays_mid_term(midterm)
 }
+\arguments{
+\item{midterm}{The mid-term data series resulting from the function \code{\link{decompose_load_data}}.}
+}
 \value{
 The mid-term series with an additional column of holiday dummies.
 }

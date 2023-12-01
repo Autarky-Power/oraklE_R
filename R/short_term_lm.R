@@ -1,11 +1,11 @@
 #' Short-term forecast
 #'
-#' The short-term load series is forecasted based on the data.
+#' The short-term load series is forecasted based on the provided hourly load data.
 #'
-#' @param short_term_data
-#' @param test_set_steps
+#' @param short_term_data Dataframe. Containing the short-term load data and the added holiday dummy resulting from \code{\link{add_holidays_short_term}}.
+#' @param test_set_steps Integer. Number of time periods in the test set.
 #'
-#' @return
+#' @return A dataframe containing the original data series and the predicted data series.
 #' @export
 #'
 #' @examples
