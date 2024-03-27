@@ -54,11 +54,12 @@ fill_missing_data <- function(load_data){
   complete_data$time_interval <- difftime(complete_data$date[2],complete_data$date[1],units = "mins")
   complete_data$country <- unique(load_data$country)
   country <- unique(load_data$country)
+  complete_data <- zoo::na.trim(complete_data)
   if (! file.exists(country)){
     dir.create(country)}
   if (! file.exists(paste0("./",country,"/data"))){
     dir.create(paste0("./",country,"/data"))}
-
+  complete_data
   utils::write.csv(complete_data,paste0("./",country,"/data/filled_load_data.csv"),row.names = F)
 
 
