@@ -32,7 +32,7 @@ get_macro_economic_data <- function(longterm){
   data_gdp=jsonlite::fromJSON(rawToChar(res_gdp$content))
   df_gdp<- as.data.frame(data_gdp[2])
   df_gdp<- df_gdp[order(df_gdp$date),]
-  longterm$GDP <- rep(NA, nrow(longterm)
+  longterm$GDP <- rep(NA, nrow(longterm))
   for (i in 1:nrow(df_gdp)){
     longterm$GDP[i]<-df_gdp$value[i]
   }
