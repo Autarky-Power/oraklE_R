@@ -23,7 +23,7 @@ get_macro_economic_data <- function(longterm){
   data_pop=jsonlite::fromJSON(rawToChar(res_pop$content))
   df_pop<- as.data.frame(data_pop[2])
   df_pop<- df_pop[order(df_pop$date),]
-  longterm$population <- 'NA'
+  longterm$population <- rep(NA, nrow(longterm)
   for (i in 1:nrow(df_pop)){
   longterm$population[i]<-df_pop$value[i]
   }
@@ -32,7 +32,7 @@ get_macro_economic_data <- function(longterm){
   data_gdp=jsonlite::fromJSON(rawToChar(res_gdp$content))
   df_gdp<- as.data.frame(data_gdp[2])
   df_gdp<- df_gdp[order(df_gdp$date),]
-  longterm$GDP <- 'NA'
+  longterm$GDP <- rep(NA, nrow(longterm)
   for (i in 1:nrow(df_gdp)){
     longterm$GDP[i]<-df_gdp$value[i]
   }
@@ -44,7 +44,7 @@ get_macro_economic_data <- function(longterm){
   df_ind<- as.data.frame(data_ind[2])
   df_ind<- df_ind[order(df_ind$date),]
 
-  longterm$industrial_value_added <- 'NA'
+  longterm$industrial_value_added <- rep(NA, nrow(longterm)
   for (i in 1:nrow(df_ind)){
     longterm$industrial_value_added[i]<-df_ind$value[i]
   }
@@ -55,7 +55,7 @@ get_macro_economic_data <- function(longterm){
   df_man<- as.data.frame(data_man[2])
   df_man<- df_man[order(df_man$date),]
 
-  longterm$manufacturing_value_added <- 'NA'
+  longterm$manufacturing_value_added <- rep(NA, nrow(longterm)
   for (i in 1:nrow(df_man)){
     longterm$manufacturing_value_added[i]<-df_man$value[i]
   }
@@ -67,7 +67,7 @@ get_macro_economic_data <- function(longterm){
   df_gro<- as.data.frame(data_gro[2])
   df_gro<- df_gro[order(df_gro$date),]
 
-  longterm$GDP_growth <- 'NA'
+  longterm$GDP_growth <- rep(NA, nrow(longterm)
   for (i in 1:nrow(df_gro)){
     longterm$GDP_growth[i]<-df_gro$value[i]
   }
@@ -80,7 +80,7 @@ get_macro_economic_data <- function(longterm){
   df_gdp_defl<- as.data.frame(data_gdp_defl[2])
   df_gdp_defl<- df_gdp_defl[order(df_gdp_defl$date),]
 
-  longterm$GDP_deflator <- 'NA'
+  longterm$GDP_deflator <- rep(NA, nrow(longterm)
   for (i in 1:nrow(df_gdp_defl)){
     longterm$GDP_deflator[i]<- df_gdp_defl$value[i]
   }
@@ -94,7 +94,7 @@ get_macro_economic_data <- function(longterm){
   df_serv<- df_serv[order(df_serv$date),]
 
 
-  longterm$service_value_added <- 'NA'
+  longterm$service_value_added <-rep(NA, nrow(longterm)
   for (i in 1:nrow(df_serv)){
     longterm$service_value_added[i]<-df_serv$value[i]
   }
@@ -107,7 +107,7 @@ get_macro_economic_data <- function(longterm){
   df_gni<- as.data.frame(data_gni[2])
   df_gni<- df_gni[order(df_gni$date),]
 
-  longterm$GNI <- 'NA'
+  longterm$GNI <- rep(NA, nrow(longterm)
   for (i in 1:nrow(df_gni)){
     longterm$GNI[i]<-df_gni$value[i]
   }
@@ -121,7 +121,7 @@ get_macro_economic_data <- function(longterm){
   df_hou<- df_hou[order(df_hou$date),]
 
 
-  longterm$household_consumption_expenditure <- 'NA'
+  longterm$household_consumption_expenditure <- rep(NA, nrow(longterm)
   for (i in 1:nrow(df_hou)){
     longterm$household_consumption_expenditure[i]<-df_hou$value[i]
   }
@@ -133,7 +133,7 @@ get_macro_economic_data <- function(longterm){
   df_rural<- as.data.frame(data_rural[2])
   df_rural<- df_rural[order(df_rural$date),]
 
-  longterm$rural_population <- 'NA'
+  longterm$rural_population <- rep(NA, nrow(longterm))
   for (i in 1:nrow(df_serv)){
     longterm$rural_population[i]<-df_rural$value[i]
   }
