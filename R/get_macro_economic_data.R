@@ -46,7 +46,7 @@ get_macro_economic_data <- function(longterm){
 
   longterm$industrial_value_added <- 'NA'
   for (i in 1:nrow(df_ind)){
-    longterm$industrial_value_added[i]<-longterm$GDP[i]*df_ind$value[i]/100
+    longterm$industrial_value_added[i]<-df_ind$value[i]
   }
 
   res_man= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NV.IND.MANF.ZS?date=",start_year,":",end_year,"&format=json"))
@@ -57,7 +57,7 @@ get_macro_economic_data <- function(longterm){
 
   longterm$manufacturing_value_added <- 'NA'
   for (i in 1:nrow(df_man)){
-    longterm$manufacturing_value_added[i]<-longterm$GDP[i]*df_man$value[i]/100
+    longterm$manufacturing_value_added[i]<-df_man$value[i]
   }
 
 
@@ -82,7 +82,7 @@ get_macro_economic_data <- function(longterm){
 
   longterm$GDP_deflator <- 'NA'
   for (i in 1:nrow(df_gdp_defl)){
-    longterm$GDP_deflator[i]<-longterm$GDP[i]*df_gdp_defl$value[i]/100
+    longterm$GDP_deflator[i]<- df_gdp_defl$value[i]
   }
 
 
@@ -96,7 +96,7 @@ get_macro_economic_data <- function(longterm){
 
   longterm$service_value_added <- 'NA'
   for (i in 1:nrow(df_serv)){
-    longterm$service_value_added[i]<-longterm$GDP[i]*df_serv$value[i]/100
+    longterm$service_value_added[i]<-df_serv$value[i]
   }
 
 
@@ -118,12 +118,12 @@ get_macro_economic_data <- function(longterm){
 
   data_hou=jsonlite::fromJSON(rawToChar(res_hou$content))
   df_hou<- as.data.frame(data_hou[2])
-  df_hou<- df_hou[order(df_gro$date),]
+  df_hou<- df_hou[order(df_hou$date),]
 
 
   longterm$household_consumption_expenditure <- 'NA'
   for (i in 1:nrow(df_hou)){
-    longterm$household_consumption_expenditure[i]<-longterm$GDP[i]*df_hou$value[i]/100
+    longterm$household_consumption_expenditure[i]<-df_hou$value[i]
   }
 
 
