@@ -7,17 +7,21 @@
 decompose_load_data(load_data)
 }
 \arguments{
-\item{load_data}{A dataframe object with "load", "date", "unit", and "country" columns
-\item{load} consisting of the load values,
-\item{date} consisting of the datetime values,
-\item{unit} indicating the measured unit (e.g. MW),
-\item{country} indicating the country's ISO2C code}
+\item{load_data}{A data frame object with "load", "date", "unit", and "country" columns
+\describe{
+\item{load}{Consisting of the load values, numeric.}
+\item{date}{Consisting of the datetime values, datetime (e.g. POSIXct).}
+\item{unit}{Indicating the unit, e.g. MW, character.}
+\item{country}{Indicating the country's ISO2C code, character.}
+}}
 }
 \value{
-A list of three dataframes with
-\item{longterm} dataframe of long-term trend with country, year and yearly average hourly demand.
-\item{midterm} datafram of mid-term component with country, date, year, month, day, week day, average hourly demand and seasonal average hourly demand.
-\item{shortterm} dataframe of short-term component with country, date, year, month, day, week day, hour, hourly demand and hourly demand trend and trend and season corrected.
+A list of three data frames with
+\describe{
+\item{longterm}{A data frame of the long-term trend, including columns for country, year, and yearly average hourly demand.}
+\item{midterm}{A data frame of the mid-term component, including country, date, year, month, day, weekday, average hourly demand, and seasonal average hourly demand. Where seasonal average hourly demand corresponds to the difference between the yearly average demand per hour and the daily average demand per hour of the respective day.}
+\item{shortterm}{A data frame of the short-term component, including country, date, year, month, day, weekday, hour, hourly demand, and hourly demand trend and trend and season corrected. Where hourly demand trend and season corrected corresponds to the difference between the daily average demand per hour and the actual demand in the respective hour, effectively showing the intra-day pattern.}
+}
 }
 \description{
 This function decomposes the load data into three components: a yearly long-term trend, a daily mid-term seasonality, and an hourly short-term seasonality. If the data is available only at a daily resolution, the calculation of hourly seasonality is skipped. The results of the decomposition are returned as a list of dataframes. The series are plotted additionally.

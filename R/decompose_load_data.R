@@ -2,17 +2,21 @@
 #'
 #' This function decomposes the load data into three components: a yearly long-term trend, a daily mid-term seasonality, and an hourly short-term seasonality. If the data is available only at a daily resolution, the calculation of hourly seasonality is skipped. The results of the decomposition are returned as a list of dataframes. The series are plotted additionally.
 #'
-#' @param load_data A dataframe object with "load", "date", "unit", and "country" columns
-#' \item{load} consisting of the load values,
-#' \item{date} consisting of the datetime values,
-#' \item{unit} indicating the measured unit (e.g. MW),
-#' \item{country} indicating the country's ISO2C code
+#' @param load_data A data frame object with "load", "date", "unit", and "country" columns
+#' \describe{
+#'   \item{load}{Consisting of the load values, numeric.}
+#'   \item{date}{Consisting of the datetime values, datetime (e.g. POSIXct).}
+#'   \item{unit}{Indicating the unit, e.g. MW, character.}
+#'   \item{country}{Indicating the country's ISO2C code, character.}
+#' }
 #'
-#' @return A list of three dataframes with
-#' \item{longterm} dataframe of long-term trend with country, year and yearly average hourly demand.
-#' \item{midterm} datafram of mid-term component with country, date, year, month, day, week day, average hourly demand and seasonal average hourly demand.
-#' \item{shortterm} dataframe of short-term component with country, date, year, month, day, week day, hour, hourly demand and hourly demand trend and trend and season corrected.
-#' @export
+#' @return A list of three data frames with
+#' \describe{
+#'   \item{longterm}{A data frame of the long-term trend, including columns for country, year, and yearly average hourly demand.}
+#'   \item{midterm}{A data frame of the mid-term component, including country, date, year, month, day, weekday, average hourly demand, and seasonal average hourly demand. Where seasonal average hourly demand corresponds to the difference between the yearly average demand per hour and the daily average demand per hour of the respective day.}
+#'   \item{shortterm}{A data frame of the short-term component, including country, date, year, month, day, weekday, hour, hourly demand, and hourly demand trend and trend and season corrected. Where hourly demand trend and season corrected corresponds to the difference between the daily average demand per hour and the actual demand in the respective hour, effectively showing the intra-day pattern.}
+#' }
+#'@export
 #' @import ggplot2
 #'
 #' @examples decomposed_load_example <- decompose_load_data(no_missing_data_example)
@@ -49,16 +53,21 @@ decompose_load_data <- function(load_data){
     if (resolution <=1){
       ordered_data$hour <- lubridate::hour(ordered_data$date)
       for (year in years){
-
-      if(load_data$time_interval[load_data$year==year][1] == 15){
-        ordered_data$load[ordered_data$year==year] <- colMeans(matrix(load_data$load[load_data$year==year], nrow=4))
+      intervals <- unique(load_data$time_interval[load_data$year == year])
+      if (length(intervals)>1){
+        data <- load_data[load_data$year==year,]
+        year_load <- c()
+        for (i in intervals){
+          end_index <- max(which(data$time_interval == i))
+          start_index <- min(which(data$time_interval == i))
+          load_mean <- colMeans(matrix(data$load[start_index:end_index], nrow=60/i))
+          year_load <- c(year_load,load_mean)
+        }
+      }else{
+        year_load <- colMeans(matrix(load_data$load[load_data$year==year], nrow=60/intervals[1]))
       }
-      if(load_data$time_interval[load_data$year==year][1] == 30){
-        ordered_data$load[ordered_data$year==year] <- colMeans(matrix(load_data$load[load_data$year==year], nrow=2))
-      }
-      if(load_data$time_interval[load_data$year==year][1] == 60){
-        ordered_data$load[ordered_data$year==year] <- load_data$load[load_data$year==year]
-      } }
+      ordered_data$load[ordered_data$year==year] <- year_load
+       }
       }else{ordered_data$load <- load_data$load}
   )
   if ("unit" %in% colnames(load_data)){
@@ -138,18 +147,21 @@ decompose_load_data <- function(load_data){
       shortterm$hourly_demand_trend_and_season_corrected[((i-1)*24+1):(i*24)] <-
         shortterm$hourly_demand_trend_corrected[((i-1)*24+1):(i*24)]- midterm$seasonal_avg_hourly_demand[i]
     }
-    shortterm_seasonality_plot <-  ggplot(shortterm)+geom_line(aes(1:nrow(shortterm),hourly_demand_trend_and_season_corrected, color="Average hourly demand"),linewidth=1.1)+
+    suppressWarnings(
+    shortterm_seasonality_plot <-  ggplot(shortterm)+geom_line(aes(1:nrow(shortterm),shortterm$hourly_demand_trend_and_season_corrected, color="Average hourly demand"),linewidth=1.1)+
       theme(legend.title = element_blank()) +ggtitle('Short-term seasonality \n')+
       theme(plot.title = element_text(hjust = 0.5),legend.position = "bottom")+ylab("MW")+xlab("Hour\n")
-  }
-
-  trend_plot<- ggplot(longterm)+geom_line(aes(year,avg_hourly_demand, color="Average hourly demand"),linewidth=1.1)+
+  )}
+  suppressWarnings(
+  trend_plot<- ggplot(longterm)+geom_line(aes(year,longterm$avg_hourly_demand, color="Average hourly demand"),linewidth=1.1)+
     theme(legend.title = element_blank()) +ggtitle('Long-term trend \n')+xlab("Year\n")+
     theme(plot.title = element_text(hjust = 0.5))+ylab("MW")+ theme(legend.position = "none")
-
-  midterm_seasonality_plot <-  ggplot(midterm)+geom_line(aes(1:nrow(midterm),seasonal_avg_hourly_demand, color="Average hourly demand"),linewidth=1.1)+
+  )
+  suppressWarnings(
+  midterm_seasonality_plot <-  ggplot(midterm)+geom_line(aes(1:nrow(midterm),midterm$seasonal_avg_hourly_demand, color="Average hourly demand"),linewidth=1.1)+
     theme(legend.title = element_blank()) +ggtitle('Mid-term seasonality \n')+
     theme(plot.title = element_text(hjust = 0.5))+ylab("MW")+xlab("Day\n")+ theme(legend.position = "none")
+  )
   if (! file.exists(country)){
     dir.create(country)}
   if (! file.exists(paste0("./",country,"/models"))){
@@ -160,14 +172,20 @@ decompose_load_data <- function(load_data){
     dir.create(paste0("./",country,"/plots"))}
 
   if (resolution <= 1){
+    suppressWarnings(
     all_plots <- patchwork::wrap_plots(trend_plot,midterm_seasonality_plot,shortterm_seasonality_plot,ncol=1)
+    )
+    suppressWarnings(
     print(all_plots)
-    ggsave(file=paste0("./",country,"/plots/Decomposed_load.png"), plot=all_plots, width=12, height=8)
+    )
+    suppressWarnings(
+    ggsave(filename=paste0("./",country,"/plots/Decomposed_load.png"), plot=all_plots, width=12, height=8)
+    )
     return(list("longterm"=longterm, "midterm"=midterm, "shortterm"=shortterm))
   } else{
     all_plots <- patchwork::wrap_plots(trend_plot , midterm_seasonality_plot, ncol=1)
     print(all_plots)
-    ggsave(file=paste0("./",country,"/plots/Decomposed_load.png"), plot=all_plots, width=12, height=8)
+    ggsave(filename=paste0("./",country,"/plots/Decomposed_load.png"), plot=all_plots, width=12, height=8)
 
     return(list("longterm"=longterm, "midterm"=midterm))
   }

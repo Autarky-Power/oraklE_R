@@ -21,13 +21,15 @@ get_entsoE_data(
 \item{api_key}{Character. A valid API key for the ENTSO-E Transparency Platform. If none is provided, one of the deposited keys will be used.}
 }
 \value{
-A Data Frame with the
-\item{date} The series of dates in POSIXct format.
-\item{load} The series of load data.
-\item{unit} The series of units in which the load data is provided, character.
-\item{year} The year of each load data point.
-\item{time_interval} The time resolution of reach load data point.
-\item{country} The ISO2C Country Code.
+A Data Frame with the following columns
+\describe{
+\item{date}{The series of dates, POSIXct format.}
+\item{load}{The series of load data, numeric}
+\item{unit}{The series of units in which the load data is provided, character.}
+\item{year}{The year of each load data point, numeric}
+\item{time_interval}{The time resolution of each load data point, character}
+\item{country}{The ISO2C Country Code, character}
+}
 }
 \description{
 This function makes various API requests to the Transparency Platform of the European Network of

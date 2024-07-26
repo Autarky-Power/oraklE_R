@@ -7,8 +7,6 @@
 long_term_future_data(longterm_predictions, end_year)
 }
 \arguments{
-\item{longterm_predictions}{}
-
 \item{end_year}{}
 }
 \description{
