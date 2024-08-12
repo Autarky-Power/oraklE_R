@@ -7,11 +7,11 @@
 long_term_lm(longterm_all_data, test_set_steps = 2, testquant = 500)
 }
 \arguments{
-\item{longterm_all_data}{Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data()}}.}
+\item{longterm_all_data}{Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data}}.}
 
 \item{test_set_steps}{Integer. Number of time periods in the test set.}
 
-\item{testquant}{}
+\item{testquant}{Integer. Determines how many of the best ranked models are evaluated with cross validation.}
 }
 \value{
 A dataframe with the input data and additional columns for test_set_steps and the best three models longterm_model_predictions1, longterm_model_predictions2 and longterm_model_predictions3.
@@ -22,13 +22,13 @@ This function predicts the long-term load data based on the provided time series
 \details{
 \deqn{\bar{D}_L(t_L)=\beta_{L,1}+\beta_{L,2}x_1(t_L)+...+ \beta_{L,10}x_{10}(t_L) \epsilon_L(t_L).}
 
-where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data()}}. For all possible covariate combinations, the three best models are chosen and stored. The included regressors are stored and the predicted and actual time series plotted.
+where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data}}. For all possible covariate combinations, the three best models are chosen and stored. The included regressors are stored and the predicted and actual time series plotted.
 }
 \examples{
-working_directory <- getwd()
-setwd(tempdir())
-#longterm_model_data_example <- long_term_lm(longterm_all_data_example,test_set_steps=2,testquant = 500)
-setwd(working_directory)
+\dontrun{
+longterm_model_data_example <- long_term_lm(longterm_all_data_example,
+test_set_steps=2,testquant = 500)
+}
 }
 \seealso{
 See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download.

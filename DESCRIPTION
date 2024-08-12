@@ -10,7 +10,25 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 LazyData: true
+LazyDataCompression: xz
 Imports:
-  ggplot2
+    ggplot2,
+    MLmetrics,
+    MuMIn,
+    R.utils,
+    caret,
+    countrycode,
+    doParallel,
+    dplyr,
+    ggthemes,
+    glmnet,
+    httr,
+    jsonlite,
+    lubridate,
+    mgcv,
+    patchwork,
+    purrr,
+    xml2,
+    zoo
 Depends: 
     R (>= 2.10)

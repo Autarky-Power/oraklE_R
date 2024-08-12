@@ -1,14 +1,23 @@
 
 #' Title
 #'
-#' @param start_year
-#' @param end_year
-#' @param country
+#' @param start_year Specifies the starting year for which predictions and models will be generated
+#' @param end_year Specifies the final year for which future predictions and models will be generated
+#' @param country String. Specifies the country.
+#' @param test_set_steps Integer. Specifies how many years are used for generating the test/validation set for the model selection.
 #'
-#' @return
+#' @return Returns a dataframe with the full prediction results. All models, plots and data is saved to a folder with the corresponding
+#' iso2c country code.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#'   start_year <- 2017
+#'   end_year <- 2023
+#'   country <- "France"
+#'   test_set_steps <- 2
+#'   forecast_data <- full_forecast(start_year, end_year, country, test_set_steps)
+#' }
 full_forecast <- function(start_year, end_year, country, test_set_steps=2){
 
 demand_data <- oRaklE::get_entsoE_data(start_year,end_year,country)

@@ -7,7 +7,7 @@
 short_term_future(shortterm_predictions, end_year)
 }
 \arguments{
-\item{end_year}{}
+\item{end_year}{Integer. Specifies the final year for which future predictions will be generated}
 }
 \description{
 Title

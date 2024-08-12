@@ -3,7 +3,7 @@
 #' Title
 #'
 #' @param shortterm_predictions
-#' @param end_year
+#' @param end_year Integer. Specifies the final year for which future predictions will be generated
 #'
 #' @return
 #' @export
@@ -85,12 +85,18 @@ short_term_future <- function(shortterm_predictions,end_year){
   new_rows$test_set_steps = unique(short_df$test_set_steps)
   future_short_term = rbind(short_df, new_rows)
 
+  training_set_end <- nrow(short_df)-unique(short_df$test_set_steps)
+  test_set_end <- training_set_end + unique(short_df$test_set_steps)
+  future_set <- nrow(future_short_term)-test_set_end
+  max_value <- max(c(max(future_short_term$short_term_lm_model_predictions),max(future_short_term$hourly_demand_trend_and_season_corrected,na.rm = T)))
 
+  suppressWarnings(
   st_plot <- ggplot(future_short_term)+geom_line(aes(date,hourly_demand_trend_and_season_corrected,color="actual"))+
     geom_line(aes(date,short_term_lm_model_predictions,color="fitted"))+
     geom_vline(xintercept=short_df$date[(nrow(short_df)-unique(short_df$test_set_steps))],linetype=2)+
+    geom_vline(xintercept=short_df$date[test_set_end],linetype=3)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nHour")+ylab("[MW]\n")+
+    xlab("\nHour")+ylab("Change in avg. Hourly Demand\n[MW]\n")+
     ggtitle(paste("Short Term Model Results -",country,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -114,12 +120,17 @@ short_term_future <- function(shortterm_predictions,end_year){
           plot.margin=unit(c(10,5,5,5),"mm"),
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
-    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))
+    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))+
+    annotate("text", x = future_short_term$date[(training_set_end/2)], y =   (max_value+max_value*0.1), label = "Training", size = 4, hjust = 0.5, vjust = 0)+
+   annotate("text", x = future_short_term$date[(training_set_end+unique(short_df$test_set_steps)/2)], y =    (max_value+max_value*0.1), label = "Test", size = 4, hjust = 0.5, vjust = 0)+
+    annotate("text", x = future_short_term$date[(nrow(short_df)+future_set/2)], y =      (max_value+max_value*0.1), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
+  )
   suppressWarnings(
     print(st_plot)
   )
+  suppressWarnings(
   ggsave(file=paste0("./",country,"/plots/short_term_results_future.png"), plot=st_plot, width=12, height=8)
-
+)
   return(future_short_term)
 
 }

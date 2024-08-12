@@ -5,7 +5,9 @@
 #' @param midterm_all_data Dataframe. Containing the mid-term load data, the holidays and weather data obtained from \code{\link{get_weather_data}}.
 #' @param test_set_steps Integer. Number of time periods in the test set.
 #' @param Tref Numeric. Reference temperature as basis for the calculation of cooling and heating days.
-#'
+#' @param method String. Indicates which model selection process is used. If method="linear", the temperature values are transformed to heating and cooling
+#' degree days to capture the non-linear relationship of temperature and electricity demand. If the method is set to "spline" a spline regression is instead used without
+#' the transformation of the temperature data.
 #' @return The forecast of the best model fit is stored and the results are displayed in a plot.
 #' @export
 #'
@@ -14,7 +16,7 @@
 #' setwd(tempdir())
 #' midterm_model_data_example <- mid_term_lm(midterm_all_data_example$midterm)
 #' setwd(working_directory)
-mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="dummy"){
+mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="temperature transformation"){
   month_list=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec")
 
   for (i in 1:length(month_list)){
@@ -30,7 +32,7 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
     midterm_all_data[midterm_all_data$wday==weekday_list[i],weekday_list[i]]<- 1
   }
 
-  if(method=="dummy"){
+  if(method=="temperature transformation"){
 
   midterm_all_data$HD <-0
   midterm_all_data$CD <-0
@@ -216,11 +218,11 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
   }
 
 
-  mt_plot <- ggplot(midterm_all_data)+geom_line(aes(1:nrow(midterm_all_data),seasonal_avg_hourly_demand,color="actual"))+
-    geom_line(aes(1:nrow(midterm_all_data),midterm_model_fit,color="fitted"))+
+  mt_plot <- ggplot(midterm_all_data)+geom_line(aes(1:nrow(midterm_all_data),midterm_all_data$seasonal_avg_hourly_demand,color="actual"))+
+    geom_line(aes(1:nrow(midterm_all_data),midterm_all_data$midterm_model_fit,color="fitted"))+
     geom_vline(xintercept=training_set,linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nDay")+ylab("Avg Hourly Demand p. Day\n [MW]\n")+
+    xlab("\nDay")+ylab("Change in avg. Hourly Demand\n p. Day [MW]\n")+
     ggtitle(paste("Mid Term Model Results -",country,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -248,11 +250,11 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
     scale_x_continuous(breaks = index,labels = years)+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
 
-  mt_plot2 <- ggplot(midterm_all_data)+geom_line(aes(1:nrow(midterm_all_data),seasonal_avg_hourly_demand,color="actual"))+
-    geom_line(aes(1:nrow(midterm_all_data),midterm_model_fit,color="fitted"))+
+  mt_plot2 <- ggplot(midterm_all_data)+geom_line(aes(1:nrow(midterm_all_data),midterm_all_data$seasonal_avg_hourly_demand,color="actual"))+
+    geom_line(aes(1:nrow(midterm_all_data),midterm_all_data$midterm_model_fit,color="fitted"))+
     geom_vline(xintercept=training_set,linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nDay")+ylab("Avg Hourly Demand p. Day\n [MW]\n")+
+    xlab("\nDay")+ylab("Change in avg. Hourly Demand\n p. Day [MW]\n")+
     ggtitle(paste("Mid Term Model Results -",country,"\n"))+
     theme(plot.title = element_text(face = "bold",
                                     size = rel(1.2), hjust = 0.5),
@@ -285,9 +287,11 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="du
 
 
 
-  ggsave(file=paste0("./",country,"/plots/Mid_term_results.png"), plot=mt_plot2, width=12, height=8)
-
+  ggsave(filename=paste0("./",country,"/plots/Mid_term_results.png"), plot=mt_plot2, width=12, height=8)
+suppressWarnings(
   print(mt_plot)
+)
 
   return(midterm_all_data)
 }
+

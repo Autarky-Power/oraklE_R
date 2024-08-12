@@ -4,11 +4,11 @@
 #'
 #' \deqn{\bar{D}_L(t_L)=\beta_{L,1}+\beta_{L,2}x_1(t_L)+...+ \beta_{L,10}x_{10}(t_L) \epsilon_L(t_L).}
 #'
-#' where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data()}}. For all possible covariate combinations, the three best models are chosen and stored. The included regressors are stored and the predicted and actual time series plotted.
+#' where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data}}. For all possible covariate combinations, the three best models are chosen and stored. The included regressors are stored and the predicted and actual time series plotted.
 #'
-#' @param longterm_all_data Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data()}}.
+#' @param longterm_all_data Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data}}.
 #' @param test_set_steps Integer. Number of time periods in the test set.
-#' @param testquant
+#' @param testquant Integer. Determines how many of the best ranked models are evaluated with cross validation.
 #'
 #' @return A dataframe with the input data and additional columns for test_set_steps and the best three models longterm_model_predictions1, longterm_model_predictions2 and longterm_model_predictions3.
 #' @export
@@ -16,10 +16,10 @@
 #' @seealso See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download.
 #'
 #' @examples
-#' working_directory <- getwd()
-#' setwd(tempdir())
-#' #longterm_model_data_example <- long_term_lm(longterm_all_data_example,test_set_steps=2,testquant = 500)
-#' setwd(working_directory)
+#' \dontrun{
+#' longterm_model_data_example <- long_term_lm(longterm_all_data_example,
+#' test_set_steps=2,testquant = 500)
+#' }
 
 long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
 
@@ -143,7 +143,10 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
     },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
   }
 
-  ordered_dist <- dist[order(dist$distance),]
+  dist_clean <- stats::na.omit(dist)
+
+  ordered_dist <- dist_clean[order(dist_clean$distance),]
+
 
   if (testquant>500){
     best_model_num <- ordered_dist$model_no[which.min(ordered_dist$max_single_distance[1:50])]
@@ -178,8 +181,8 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
   longterm_all_data[,(ncol(longterm_all_data)-3+i)] <- results
   country<- unique(longterm_all_data$country)
 
-  lt_plot <- ggplot(longterm_all_data)+geom_line(aes(year,avg_hourly_demand,color="actual"))+
-    geom_line(aes(year,results,color="fitted"))+xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
+  lt_plot <- ggplot(longterm_all_data)+geom_line(aes(longterm_all_data$year,longterm_all_data$avg_hourly_demand,color="actual"))+
+    geom_line(aes(longterm_all_data$year,results,color="fitted"))+xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
     geom_vline(xintercept=longterm_all_data$year[training_set],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nYear")+ylab("Avg Hourly Demand p. Year\n [MW]\n")+
@@ -209,8 +212,8 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
           strip.text = element_text(face="bold"))+
     theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
-  lt_plot2 <- ggplot(longterm_all_data)+geom_line(aes(year,avg_hourly_demand,color="actual"))+
-    geom_line(aes(year,results,color="fitted"))+xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
+  lt_plot2 <- ggplot(longterm_all_data)+geom_line(aes(longterm_all_data$year,longterm_all_data$avg_hourly_demand,color="actual"))+
+    geom_line(aes(longterm_all_data$year,results,color="fitted"))+xlab("\nYear")+ylab("Avg Hourly Demand\n [MW]\n")+
     geom_vline(xintercept=longterm_all_data$year[training_set],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nYear")+ylab("Avg Hourly Demand p. Year\n [MW]\n")+
@@ -243,9 +246,9 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
     theme(legend.text=element_text(size=23))+
     theme(axis.text=element_text(size=20))+
     theme(plot.title = element_text(size=26))+guides(color = guide_legend(override.aes = list(linewidth = 2)))
-
+suppressWarnings(
   print(lt_plot)
-
+)
 
   if (! file.exists(country)){
     dir.create(country)}
@@ -258,14 +261,13 @@ long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
   if (! file.exists(paste0("./",country,"/models/longterm"))){
     dir.create(paste0("./",country,"/models/longterm"))}
   save(best_lm_model,file=paste0("./",country,"/models/longterm/best_lm_model",i,".Rdata"))
-
-  ggsave(file=paste0("./",country,"/plots/Long_term_results",i,".png"), plot=lt_plot2, width=12, height=8)
-
+suppressWarnings(
+  ggsave(filename=paste0("./",country,"/plots/Long_term_results",i,".png"), plot=lt_plot2, width=12, height=8)
+)
   i=i+1
   }
   longterm_all_data$test_set_steps = test_set_steps
   utils::write.csv(longterm_all_data,paste0("./",country,"/data/long_term_all_data.csv"),row.names = F)
-
 
   return(longterm_all_data)
 }

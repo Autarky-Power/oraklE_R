@@ -1,8 +1,8 @@
 #' Add holidays to the short-term series
-#' 
+#'
 #' This function adds a dummy variable for holidays to the short-term data series. Information on the holidays is retrieved from "https://date.nager.at/api/v3/publicholidays/".
 #'
-#' @param shortterm The short-term data series resulting from the function decompose_load_data() 
+#' @param shortterm The short-term data series resulting from the function decompose_load_data()
 #'
 #' @return The short-term series with an additional column of holiday dummies.
 #' @export
@@ -26,10 +26,7 @@ add_holidays_short_term<- function(shortterm){
   holidays = unlist(holiday_list)
   holidays = as.Date(holidays)
 
-  shortterm$place_holder <- as.Date(shortterm$date,tz="CET")
-  shortterm$holiday <- 0
-  shortterm$holiday[shortterm$place_holder %in% holidays] <- 1
-  shortterm <- subset(shortterm, select = -c(place_holder))
+  shortterm$holiday <- ifelse(as.Date(shortterm$date, tz = "CET") %in% holidays, 1, 0)
 
   return(shortterm)
 }

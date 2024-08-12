@@ -16,11 +16,20 @@ combine_models(
 
 \item{midterm_all_data_predicted}{Dataframe. The object resulting from function \code{\link{mid_term_lm}}.}
 
-\item{short_term_data_predictedThe}{Dataframe. The object resulting from function \code{\link{short_term_lm}}.}
+\item{short_term_data_predicted}{Dataframe. The object resulting from function \code{\link{short_term_lm}}.}
+
+\item{longterm_model_number}{Integer. Specifies which of the 3 best long-term models should be used.}
 }
 \value{
 The combined model results.
 }
 \description{
 This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.
+}
+\examples{
+\dontrun{
+combined_model_results <- long_term_lm(longterm_all_data_example,
+test_set_steps=2,testquant = 500)
+}
+
 }

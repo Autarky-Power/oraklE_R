@@ -7,8 +7,27 @@
 full_forecast(start_year, end_year, country, test_set_steps = 2)
 }
 \arguments{
-\item{country}{}
+\item{start_year}{Specifies the starting year for which predictions and models will be generated}
+
+\item{end_year}{Specifies the final year for which future predictions and models will be generated}
+
+\item{country}{String. Specifies the country.}
+
+\item{test_set_steps}{Integer. Specifies how many years are used for generating the test/validation set for the model selection.}
+}
+\value{
+Returns a dataframe with the full prediction results. All models, plots and data is saved to a folder with the corresponding
+iso2c country code.
 }
 \description{
 Title
+}
+\examples{
+\dontrun{
+  start_year <- 2017
+  end_year <- 2023
+  country <- "France"
+  test_set_steps <- 2
+  forecast_data <- full_forecast(start_year, end_year, country, test_set_steps)
+}
 }

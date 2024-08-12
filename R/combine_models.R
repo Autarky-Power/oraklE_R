@@ -4,12 +4,16 @@
 #'
 #' @param longterm_all_data_predicted Dataframe. The object resulting from function \code{\link{long_term_lm}}.
 #' @param midterm_all_data_predicted Dataframe. The object resulting from function \code{\link{mid_term_lm}}.
-#' @param short_term_data_predictedThe Dataframe. The object resulting from function \code{\link{short_term_lm}}.
-#'
+#' @param short_term_data_predicted Dataframe. The object resulting from function \code{\link{short_term_lm}}.
+#' @param longterm_model_number Integer. Specifies which of the 3 best long-term models should be used.
 #' @return The combined model results.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' combined_model_results <- long_term_lm(longterm_all_data_example,
+#' test_set_steps=2,testquant = 500)
+#' }
 #'
 
 combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicted,short_term_data_predicted, longterm_model_number=1){
@@ -73,8 +77,8 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
   results[2,] <- c(round(test_mape,4),round(RSQUARE_test,4),round((1-test_mape)*100,2),round(test_rmse,1))
 
 
-  full_plot <- ggplot(combined_model_results)+geom_line(aes(date,hourly_demand,color="actual"))+
-    geom_line(aes(date,complete_model,color="fitted"))+xlab("\nYear")+ylab("Hourly Demand\n [MW]\n")+
+  full_plot <- ggplot(combined_model_results)+geom_line(aes(date,combined_model_results$hourly_demand,color="actual"))+
+    geom_line(aes(date,combined_model_results$complete_model,color="fitted"))+xlab("\nYear")+ylab("Hourly Demand\n [MW]\n")+
     geom_vline(xintercept=combined_model_results$date[end_of_training_set],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nHour")+ylab("Hourly Demand\n [MW]\n")+
@@ -105,8 +109,8 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
 
 
 
-  full_plot2 <- ggplot(combined_model_results)+geom_line(aes(date,hourly_demand,color="actual"))+
-    geom_line(aes(date,complete_model,color="fitted"))+xlab("\nYear")+ylab("Hourly Demand\n [MW]\n")+
+  full_plot2 <- ggplot(combined_model_results)+geom_line(aes(date,combined_model_results$hourly_demand,color="actual"))+
+    geom_line(aes(date,combined_model_results$complete_model,color="fitted"))+xlab("\nYear")+ylab("Hourly Demand\n [MW]\n")+
     geom_vline(xintercept=combined_model_results$date[end_of_training_set],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nHour")+ylab("Hourly Demand\n [MW]\n")+
@@ -148,9 +152,9 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
 
   if (! file.exists(paste0("./",country,"/plots"))){
     dir.create(paste0("./",country,"/plots"))}
-
-  ggsave(file=paste0("./",country,"/plots/complete_model_results.png"), plot=full_plot2, width=12, height=8)
-
+suppressWarnings(
+  ggsave(filename=paste0("./",country,"/plots/complete_model_results.png"), plot=full_plot2, width=12, height=8)
+)
   ###
   sample_week_index <-nrow(combined_model_results)-(nrow(combined_model_results)-end_of_training_set)*0.45
 
@@ -158,8 +162,8 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
                         "Mon")[1]+sample_week_index
   sample_year <- combined_model_results$year[week_start]
 
-  full_plot_sample_week <- ggplot(combined_model_results[week_start:(week_start+335),])+geom_line(aes(date,hourly_demand,color="actual"))+
-    geom_line(aes(date,complete_model,color="fitted"))+
+  full_plot_sample_week <- ggplot(combined_model_results[week_start:(week_start+335),])+geom_line(aes(date,combined_model_results$hourly_demand[week_start:(week_start+335)],color="actual"))+
+    geom_line(aes(date,combined_model_results$complete_model[week_start:(week_start+335)],color="fitted"))+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nHour")+ylab("[MW]\n")+
     ggtitle(paste("Complete Model Results -",country),subtitle = paste("2 sample weeks in",sample_year,"\n") )+
@@ -191,8 +195,8 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
 
 
 
-  full_plot_sample_week2 <- ggplot(combined_model_results[week_start:(week_start+335),])+geom_line(aes(date,hourly_demand,color="actual"))+
-    geom_line(aes(date,complete_model,color="fitted"))+
+  full_plot_sample_week2 <- ggplot(combined_model_results[week_start:(week_start+335),])+geom_line(aes(date,combined_model_results$hourly_demand[week_start:(week_start+335)],color="actual"))+
+    geom_line(aes(date,combined_model_results$complete_model[week_start:(week_start+335)],color="fitted"))+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nHour")+ylab("[MW]\n")+
     ggtitle(paste("Complete Model Results -",country),subtitle = paste("2 sample weeks in",sample_year,"\n") )+
@@ -224,12 +228,20 @@ combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicte
     theme(axis.text=element_text(size=20))+
     theme(plot.title = element_text(size=26))+
     theme(plot.subtitle = element_text(size=20,hjust = 0.5))
-
-  ggsave(file=paste0("./",country,"/plots/complete_model_sample_weeks.png"), plot=full_plot_sample_week2, width=12, height=8)
-
+suppressWarnings(
+  ggsave(filename=paste0("./",country,"/plots/complete_model_sample_weeks.png"), plot=full_plot_sample_week2, width=12, height=8)
+)
+suppressWarnings(
   stacked_plots <- patchwork::wrap_plots(full_plot, full_plot_sample_week, ncol = 1)
-  print(stacked_plots)
+)
+  suppressWarnings(
+    print(stacked_plots)
+  )
+  suppressWarnings(
   print(full_plot_sample_week)
+  )
+  suppressWarnings(
   print(full_plot)
+)
   return(combined_model_results)
 }

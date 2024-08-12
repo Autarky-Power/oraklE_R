@@ -11,8 +11,10 @@
 #' @seealso See function \code{\link{decompose_load_data}} for the generation of the long-term series and \code{\link{long_term_lm}} for the selection of covariates.
 #'
 #' @examples
+#' \dontrun{
 #' longterm_all_data_example <- get_macro_economic_data(longterm_example)
 #' longterm_all_data_example
+#' }
 get_macro_economic_data <- function(longterm){
 
   country=unique(longterm$country)

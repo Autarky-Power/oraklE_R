@@ -17,6 +17,10 @@ mid_term_lm(
 \item{Tref}{Numeric. Reference temperature as basis for the calculation of cooling and heating days.}
 
 \item{test_set_steps}{Integer. Number of time periods in the test set.}
+
+\item{method}{String. Indicates which model selection process is used. If method="linear", the temperature values are transformed to heating and cooling
+degree days to capture the non-linear relationship of temperature and electricity demand. If the method is set to "spline" a spline regression is instead used without
+the transformation of the temperature data.}
 }
 \value{
 The forecast of the best model fit is stored and the results are displayed in a plot.
