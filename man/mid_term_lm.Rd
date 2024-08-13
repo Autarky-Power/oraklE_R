@@ -8,7 +8,7 @@ mid_term_lm(
   midterm_all_data,
   Tref = 18,
   test_set_steps = 730,
-  method = "dummy"
+  method = "temperature transformation"
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ mid_term_lm(
 
 \item{test_set_steps}{Integer. Number of time periods in the test set.}
 
-\item{method}{String. Indicates which model selection process is used. If method="linear", the temperature values are transformed to heating and cooling
+\item{method}{String. Indicates which model selection process is used. If method="temperature transformation", the temperature values are transformed to heating and cooling
 degree days to capture the non-linear relationship of temperature and electricity demand. If the method is set to "spline" a spline regression is instead used without
 the transformation of the temperature data.}
 }
@@ -26,11 +26,13 @@ the transformation of the temperature data.}
 The forecast of the best model fit is stored and the results are displayed in a plot.
 }
 \description{
-The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with dummy variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.
+The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with transformed variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.
 }
 \examples{
+\dontrun{
 working_directory <- getwd()
 setwd(tempdir())
 midterm_model_data_example <- mid_term_lm(midterm_all_data_example$midterm)
 setwd(working_directory)
+}
 }

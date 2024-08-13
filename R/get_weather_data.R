@@ -1,22 +1,25 @@
 #' Load weather data via API
 #'
-#' This function loads weather data which is used to forecast the mid-term data. 
-#' The weather data is downloaded from https://wft-geo-db.p.rapidapi.com for a provided country and time period.
+#' This function loads weather data which is used to forecast the mid-term load seasonalities.
+#' First the 20 most populated areas in the country are obtained from https://wft-geo-db.p.rapidapi.com . Then the closest weather stations of each area are identified and average daily temperature values are downloaded from https://meteostat.p.rapidapi.com  for the provided time period.
+#' From this data a weighted daily average temperature based on population is calculated for the provided country.
 #'
 #' @param midterm The mid-term data series resulting from the function \code{\link{decompose_load_data}}.
 #'
 #' @return A list containing the mid-term data and temperature data.
 #' @export
-#' 
+#'
 #' @seealso See function \code{\link{decompose_load_data}} for the generation of the mid-term series.
 #'
 #' @examples
+#' \dontrun{
 #' working_directory <- getwd()
 #' setwd(tempdir())
 #' midterm_all_example <- get_weather_data(midterm_holidays_example)
 #' midterm_all_example$midterm
 #' midterm_all_example$temperature_data
 #' setwd(working_directory)
+#' }
 get_weather_data <- function(midterm){
 
   country=unique(midterm$country)
@@ -33,9 +36,13 @@ get_weather_data <- function(midterm){
                   'a2fa81f7c0msh99fc6bfcd50c2c1p11f186jsn6acb9eb0881b',
                   '9e5732f249mshf4d3ca6064fd56ep1c0303jsnad9722dc52f8',
                   '994e4b90abmshafbba71e8e92722p14f3d1jsn06ff01f2b6ca',
-                  '200439098fmsh508a44ddd5102eap196ed0jsn92487da6e4d6')
+                  '200439098fmsh508a44ddd5102eap196ed0jsn92487da6e4d6',
+                  "85bc618d2cmsh2df7162687e459cp11af9cjsncd9308af6007",
+                  "78a5abe631msh672c79b2280107ep1060d7jsn7dd1dda63e55",
+                  "73835b8d7emsha0dd3db1fbc8c45p1435e7jsn402be5ac38f9"
+                  )
 
-  key_integer <- sample(1:11, 1 )
+  key_integer <- sample(1:14, 1 )
   rAPI_key <- rAPI_keys[key_integer]
 
   cities1<- httr::GET(paste0("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=",country,"&sort=-population&offset=0&limit=10&types=CITY"),

@@ -3,6 +3,7 @@
 export(add_holidays_mid_term)
 export(add_holidays_short_term)
 export(combine_models)
+export(combine_models_future)
 export(decompose_load_data)
 export(fill_missing_data)
 export(full_forecast)

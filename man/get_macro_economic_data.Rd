@@ -18,8 +18,7 @@ The variables are suspected to have a predictive capacity for the load data.
 }
 \examples{
 \dontrun{
-longterm_all_data_example <- get_macro_economic_data(longterm_example)
-longterm_all_data_example
+longterm_all_data_example <- get_macro_economic_data(decomposed_load_example$longterm)
 }
 }
 \seealso{

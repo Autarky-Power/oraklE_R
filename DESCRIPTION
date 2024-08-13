@@ -2,8 +2,8 @@ Package: oRaklE
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person("Johannes", "Schwenzer", , "schwenzer@europa-uni.de", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0006-9618-8889"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -13,6 +13,7 @@ LazyData: true
 LazyDataCompression: xz
 Imports:
     ggplot2,
+    scales,
     MLmetrics,
     MuMIn,
     R.utils,

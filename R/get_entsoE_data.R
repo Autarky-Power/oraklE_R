@@ -7,7 +7,7 @@
 #' @param start_year  Numeric. The starting year for which load data will be requested.
 #' @param end_year  Numeric. The final year for which load data will be requested.
 #' @param country  Character. The country name for which load data will be requested provided as the English name of the country.
-#' @param api_key  Character. A valid API key for the ENTSO-E Transparency Platform. If none is provided, one of the deposited keys will be used.
+#' @param api_key  Character. A valid API key for the ENTSO-E Transparency Platform. If set to "default", one of the deposited keys will be used.
 #'
 #' @return A Data Frame with the following columns
 #' \describe{
@@ -21,10 +21,12 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' example_load_data <- get_entsoE_data(2017,2021,"France")
+#' }
 
 
-get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4302-b444-5042ab55d8ef"){
+get_entsoE_data <- function(start_year,end_year,country,api_key="default"){
 
   Sys.setlocale("LC_TIME", "English")
   # Convert country names to iso2c code ----
@@ -87,6 +89,15 @@ get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4
 
 
   # API call ----
+  if (api_key=="default"){
+  keys <-  c("38c78048-f4ae-4ec9-8ea6-983049e5db5d",
+             "5ca5937c-7eae-4302-b444-5042ab55d8ef",
+             "02f98e29-fe49-4343-87b6-42f2947d9004"
+                )
+
+  key_integer <- sample(1:3, 1 )
+  api_key <- keys[key_integer]
+  }
   # Loop over every year
 
   data_list <- list()
@@ -94,6 +105,11 @@ get_entsoE_data <- function(start_year,end_year,country,api_key="5ca5937c-7eae-4
     starting_year=i
     print(paste("Getting data for",i))
     entso_response = httr::GET(paste0("https://web-api.tp.entsoe.eu/api?securityToken=",api_key,"&documentType=A65&processType=A16&outBiddingZone_Domain=",domain,"&periodStart=",starting_year,"01010000&periodEnd=",(starting_year+1),"01010000"))
+    if (entso_response$status_code == 503){
+      message("The ENTSO_E Transparency platform seems to be unavailable.\n
+              Please check https://transparency.entsoe.eu/ and try again later.")
+      return()
+    }
     entso_content <- httr::content(entso_response, encoding = "UTF-8")
     entso_content_list <- xml2::as_list(entso_content)
 

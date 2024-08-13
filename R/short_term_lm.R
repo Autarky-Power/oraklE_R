@@ -9,10 +9,12 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' working_directory <- getwd()
 #' setwd(tempdir())
 #' shortterm_model_data_example <- short_term_lm(shortterm_holidays_example)
 #' setwd(working_directory)
+#' }
 short_term_lm <- function(short_term_data, test_set_steps=17520){
 
 
@@ -67,7 +69,7 @@ suppressWarnings(
       training_data$short_term_lm_model_predictions[which(training_data$month == i & training_data$wday == wday[j])] <-
                                                     fit1$fitted.values
       test_data$short_term_lm_model_predictions[which(test_data$month == i & test_data$wday == wday[j])] <-
-                                           predict(fit1,newdata = x_test)
+                                           stats::predict(fit1,newdata = x_test)
 
 
       if (7*(i-1)+j == 12*7) cat('\n Done')
@@ -87,8 +89,8 @@ suppressWarnings(
 
   colnames(short_term_data) <- make.unique(names(short_term_data))
 
-  st_plot <- ggplot(short_term_data)+geom_line(aes(date,hourly_demand_trend_and_season_corrected,color="actual"))+
-    geom_line(aes(date,short_term_lm_model_predictions,color="fitted"))+
+  st_plot <- ggplot(short_term_data)+geom_line(aes(date,short_term_data$hourly_demand_trend_and_season_corrected,color="actual"))+
+    geom_line(aes(date,short_term_data$short_term_lm_model_predictions,color="fitted"))+
     geom_vline(xintercept=test_data$date[1],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nHour")+ylab("Avg Hourly Demand\n[MW]\n")+
@@ -123,8 +125,8 @@ suppressWarnings(
                         "Mon")[1]+(nrow(short_term_data)/2)
   sample_year <- short_term_data$year[week_start]
 
-  st_plot_sample_week <- ggplot(short_term_data[week_start:(week_start+335),])+geom_line(aes(date,hourly_demand_trend_and_season_corrected,color="actual"))+
-    geom_line(aes(date,short_term_lm_model_predictions,color="fitted"))+
+  st_plot_sample_week <- ggplot(short_term_data[week_start:(week_start+335),])+geom_line(aes(date,short_term_data$hourly_demand_trend_and_season_corrected[week_start:(week_start+335)],color="actual"))+
+    geom_line(aes(date,short_term_data$short_term_lm_model_predictions[week_start:(week_start+335)],color="fitted"))+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nHour")+ylab("Avg Hourly Demand\n[MW]\n")+
     ggtitle(paste("Short Term Model Results -",country),subtitle = paste("2 sample weeks in",sample_year,"\n") )+
@@ -158,8 +160,8 @@ suppressWarnings(
   if (! file.exists(paste0("./",country,"/plots"))){
     dir.create(paste0("./",country,"/plots"))}
 
-  st_plot2 <-ggplot(short_term_data)+geom_line(aes(date,hourly_demand_trend_and_season_corrected,color="actual"))+
-    geom_line(aes(date,short_term_lm_model_predictions,color="fitted"))+
+  st_plot2 <-ggplot(short_term_data)+geom_line(aes(date,short_term_data$hourly_demand_trend_and_season_corrected,color="actual"))+
+    geom_line(aes(date,short_term_data$short_term_lm_model_predictions,color="fitted"))+
     geom_vline(xintercept=test_data$date[1],linetype=2)+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nHour")+ylab("Avg Hourly Demand\n[MW]\n")+
@@ -192,10 +194,10 @@ suppressWarnings(
     theme(axis.text=element_text(size=20))+
     theme(plot.title = element_text(size=26))+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
-  ggsave(file=paste0("./",country,"/plots/short_term_results.png"), plot=st_plot2, width=12, height=8)
+  ggsave(filename =paste0("./",country,"/plots/short_term_results.png"), plot=st_plot2, width=12, height=8)
 
-  st_plot_sample_week2 <- ggplot(short_term_data[week_start:(week_start+335),])+geom_line(aes(date,hourly_demand_trend_and_season_corrected,color="actual"))+
-    geom_line(aes(date,short_term_lm_model_predictions,color="fitted"))+
+  st_plot_sample_week2 <- ggplot(short_term_data[week_start:(week_start+335),])+geom_line(aes(date,short_term_data$hourly_demand_trend_and_season_corrected[week_start:(week_start+335)],color="actual"))+
+    geom_line(aes(date,short_term_data$short_term_lm_model_predictions[week_start:(week_start+335)],color="fitted"))+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
     xlab("\nHour")+ylab("Avg Hourly Demand\n[MW]\n")+
     ggtitle(paste("Short Term Model Results -",country),subtitle = paste("2 sample weeks in",sample_year,"\n") )+
@@ -230,7 +232,7 @@ suppressWarnings(
 
 
 
-  ggsave(file=paste0("./",country,"/plots/short_term_results_sample_weeks.png"), plot=st_plot_sample_week2, width=12, height=8)
+  ggsave(filename=paste0("./",country,"/plots/short_term_results_sample_weeks.png"), plot=st_plot_sample_week2, width=12, height=8)
 
 
   return (short_term_data)

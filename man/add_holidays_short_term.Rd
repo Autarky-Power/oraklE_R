@@ -7,7 +7,7 @@
 add_holidays_short_term(shortterm)
 }
 \arguments{
-\item{shortterm}{The short-term data series resulting from the function decompose_load_data()}
+\item{shortterm}{The short-term data series resulting from \code{\link{decompose_load_data}}}
 }
 \value{
 The short-term series with an additional column of holiday dummies.
@@ -16,6 +16,8 @@ The short-term series with an additional column of holiday dummies.
 This function adds a dummy variable for holidays to the short-term data series. Information on the holidays is retrieved from "https://date.nager.at/api/v3/publicholidays/".
 }
 \examples{
+\dontrun{
 shortterm_holidays_example <- add_holidays_short_term(decomposed_load_example$shortterm)
 shortterm_holidays_example[,c(1,2,11)]
+}
 }

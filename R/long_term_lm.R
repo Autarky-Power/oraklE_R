@@ -10,7 +10,8 @@
 #' @param test_set_steps Integer. Number of time periods in the test set.
 #' @param testquant Integer. Determines how many of the best ranked models are evaluated with cross validation.
 #'
-#' @return A dataframe with the input data and additional columns for test_set_steps and the best three models longterm_model_predictions1, longterm_model_predictions2 and longterm_model_predictions3.
+#' @return A dataframe with the input data and additional columns for test_set_steps and the for best three models longterm_model_predictions1, longterm_model_predictions2 and longterm_model_predictions3.
+#' The dataset and the models are saved in the respective folder for the country.
 #' @export
 #'
 #' @seealso See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download.

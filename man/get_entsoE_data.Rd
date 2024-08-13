@@ -4,12 +4,7 @@
 \alias{get_entsoE_data}
 \title{Load data from the ENTSO-E Transparency Platform}
 \usage{
-get_entsoE_data(
-  start_year,
-  end_year,
-  country,
-  api_key = "5ca5937c-7eae-4302-b444-5042ab55d8ef"
-)
+get_entsoE_data(start_year, end_year, country, api_key = "default")
 }
 \arguments{
 \item{start_year}{Numeric. The starting year for which load data will be requested.}
@@ -18,7 +13,7 @@ get_entsoE_data(
 
 \item{country}{Character. The country name for which load data will be requested provided as the English name of the country.}
 
-\item{api_key}{Character. A valid API key for the ENTSO-E Transparency Platform. If none is provided, one of the deposited keys will be used.}
+\item{api_key}{Character. A valid API key for the ENTSO-E Transparency Platform. If set to "default", one of the deposited keys will be used.}
 }
 \value{
 A Data Frame with the following columns
@@ -37,5 +32,7 @@ Transmission System Operators for Electricity (ENTSO-E, https://transparency.ent
 stores the downloaded load data in a data frame. The earliest year for the requested load time series is 2017.
 }
 \examples{
+\dontrun{
 example_load_data <- get_entsoE_data(2017,2021,"France")
+}
 }

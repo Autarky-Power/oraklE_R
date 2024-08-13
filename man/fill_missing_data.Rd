@@ -20,7 +20,7 @@ Data Frame with completed load values, date, unit, year, time resolution, ISO2C 
 }
 \description{
 This function substitutes missing values with the corresponding values at the same hour exactly one week prior. For example, if there is no load value available for May 12th at 20:00, the value recorded on May 7th at 20:00 will be used as a replacement.
-This function is primarily designed to handle minor gaps in the dataset acquired using the "get_entsoE_data()" function. To use this function with other datasets, it is important that the input data frame adheres to the required column naming conventions.
+This function is primarily designed to handle minor gaps in the dataset acquired using \code{\link{get_entsoE_data}}. To use this function with other datasets, it is important that the input data frame adheres to the required column naming conventions.
 }
 \examples{
 library(ggplot2)

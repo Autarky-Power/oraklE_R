@@ -18,8 +18,10 @@ A dataframe containing the original data series and the predicted data series.
 The short-term load series is forecasted based on the provided hourly load data.
 }
 \examples{
+\dontrun{
 working_directory <- getwd()
 setwd(tempdir())
 shortterm_model_data_example <- short_term_lm(shortterm_holidays_example)
 setwd(working_directory)
+}
 }

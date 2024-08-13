@@ -13,16 +13,19 @@ get_weather_data(midterm)
 A list containing the mid-term data and temperature data.
 }
 \description{
-This function loads weather data which is used to forecast the mid-term data.
-The weather data is downloaded from https://wft-geo-db.p.rapidapi.com for a provided country and time period.
+This function loads weather data which is used to forecast the mid-term load seasonalities.
+First the 20 most populated areas in the country are obtained from https://wft-geo-db.p.rapidapi.com . Then the closest weather stations of each area are identified and average daily temperature values are downloaded from https://meteostat.p.rapidapi.com  for the provided time period.
+From this data a weighted daily average temperature based on population is calculated for the provided country.
 }
 \examples{
+\dontrun{
 working_directory <- getwd()
 setwd(tempdir())
 midterm_all_example <- get_weather_data(midterm_holidays_example)
 midterm_all_example$midterm
 midterm_all_example$temperature_data
 setwd(working_directory)
+}
 }
 \seealso{
 See function \code{\link{decompose_load_data}} for the generation of the mid-term series.
