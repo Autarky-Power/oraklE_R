@@ -23,17 +23,20 @@ This function substitutes missing values with the corresponding values at the sa
 This function is primarily designed to handle minor gaps in the dataset acquired using \code{\link{get_entsoE_data}}. To use this function with other datasets, it is important that the input data frame adheres to the required column naming conventions.
 }
 \examples{
+\dontrun{
 library(ggplot2)
-no_missing_data_example <- fill_missing_data(example_load_data)
-example_df<- as.data.frame(seq.POSIXt(example_load_data$date[841],
-example_load_data$date[870],"hour"))
+example_demand_data_filled <- fill_missing_data(example_demand_data)
+example_df<- as.data.frame(seq.POSIXt(example_demand_data$date[841],
+example_demand_data$date[870],"hour"))
 example_df$before <- NA
-example_df$before[example_df[,1] \%in\% example_load_data$date] <-
-example_load_data$load[example_load_data$date \%in\% example_df[,1]]
-example_df$after <-   no_missing_data_example$load[no_missing_data_example$date \%in\% example_df[,1]]
+example_df$before[example_df[,1] \%in\% example_demand_data$date] <-
+example_demand_data$load[example_demand_data$date \%in\% example_df[,1]]
+example_df$after <-   example_demand_data_filled$load[example_demand_data_filled$date
+\%in\% example_df[,1]]
 ggplot(example_df,aes(x=example_df[,1]))+ geom_line(aes(y=after,colour="after data filling"))+
 geom_line(aes(y=before,colour="before data filling"))+
  xlab("\nHour")+ylab("Load [MW]\n")+theme(legend.title = element_blank())+
  scale_x_continuous(breaks = c(example_df[1,1],example_df[25,1]),
  labels = c(as.Date(example_df[1,1]),as.Date(example_df[25,1])))
+ }
 }

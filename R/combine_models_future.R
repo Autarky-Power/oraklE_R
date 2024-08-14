@@ -1,25 +1,25 @@
-#' Combine forecast models
+#' Combine forecast models for future predictions
 #'
-#' This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.
+#' This function combines the three separate future forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first and should have the same end_year.
 #'
-#' @param longterm_future_predictions Dataframe. The object resulting from function \code{\link{long_term_lm}}.
-#' @param midterm_future_predictions Dataframe. The object resulting from function \code{\link{mid_term_lm}}.
-#' @param short_term_future_predictions Dataframe. The object resulting from function \code{\link{short_term_lm}}.
+#' @param longterm_future_predictions Dataframe. The object resulting from function \code{\link{long_term_future}}.
+#' @param midterm_future_predictions Dataframe. The object resulting from function \code{\link{mid_term_future}}.
+#' @param shortterm_future_predictions Dataframe. The object resulting from function \code{\link{short_term_future}}.
 #' @param longterm_model_number Integer. Specifies which of the 3 best long-term models should be used.
-#' @return The combined model results.
+#' @return Dataframe. The combined model results.
 #' @export
-#'
+#' @seealso See also functions \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the prediction models.
 #' @examples
 #' \dontrun{
-#' combined_model_results <- long_term_lm(longterm_all_data_example,
-#' test_set_steps=2,testquant = 500)
+#' example_full_model_future_predictions <- combine_models_future(example_longterm_future_predictions
+#' ,example_midterm_future_predictions, example_shortterm_future_predictions,longterm_model_number =1)
 #' }
 #'
 
 combine_models_future <- function(longterm_future_predictions, midterm_future_predictions
-                                  ,short_term_future_predictions, longterm_model_number=1){
+                                  ,shortterm_future_predictions, longterm_model_number=1){
 
-  combined_model_results <- short_term_future_predictions[,1:8]
+  combined_model_results <- shortterm_future_predictions[,1:8]
   country = unique(longterm_future_predictions$country)
   combined_model_results$long_term_model <- 0
 
@@ -44,12 +44,12 @@ combine_models_future <- function(longterm_future_predictions, midterm_future_pr
       midterm_future_predictions$midterm_model_fit[i]
   }
 
-  combined_model_results$short_term_model <- short_term_future_predictions$short_term_lm_model_predictions
+  combined_model_results$short_term_model <- shortterm_future_predictions$short_term_lm_model_predictions
 
   combined_model_results$complete_model <- combined_model_results$long_term_model+
     combined_model_results$mid_term_model + combined_model_results$short_term_model
 
-
+  rownames(combined_model_results) <- 1:nrow(combined_model_results)
   test_set_steps <- unique(longterm_future_predictions$test_set_steps)
   unknown_set_start <- min(as.numeric(rownames(longterm_future_predictions[is.na(longterm_future_predictions$avg_hourly_demand), ])))
   year_training_set=unknown_set_start-1 - test_set_steps
@@ -62,6 +62,7 @@ combine_models_future <- function(longterm_future_predictions, midterm_future_pr
   for (i in 1:length(years)){
     index[i] <- min(as.numeric(rownames(combined_model_results[combined_model_results$year==years[i],])))
   }
+
   max_value <- max(c(max(combined_model_results$complete_model),max(combined_model_results$hourly_demand,na.rm = T)))
 
   full_plot <- ggplot(combined_model_results)+geom_line(aes(1:nrow(combined_model_results),combined_model_results$hourly_demand,color="actual"))+

@@ -4,10 +4,10 @@
 \alias{get_weather_data}
 \title{Load weather data via API}
 \usage{
-get_weather_data(midterm)
+get_weather_data(midterm_demand_data)
 }
 \arguments{
-\item{midterm}{The mid-term data series resulting from the function \code{\link{decompose_load_data}}.}
+\item{midterm_demand_data}{The mid-term data series from \code{\link{decompose_load_data}} with added holidays resulting from the function \code{\link{add_holidays_mid_term}}.}
 }
 \value{
 A list containing the mid-term data and temperature data.
@@ -21,9 +21,9 @@ From this data a weighted daily average temperature based on population is calcu
 \dontrun{
 working_directory <- getwd()
 setwd(tempdir())
-midterm_all_example <- get_weather_data(midterm_holidays_example)
-midterm_all_example$midterm
-midterm_all_example$temperature_data
+example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data)
+example_midterm_demand_and_weather_data$demand
+example_midterm_demand_and_weather_data$temperature_data
 setwd(working_directory)
 }
 }

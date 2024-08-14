@@ -4,10 +4,10 @@
 \alias{get_macro_economic_data}
 \title{Load a list of macroeconomic data from WDI}
 \usage{
-get_macro_economic_data(longterm)
+get_macro_economic_data(longterm_data)
 }
 \arguments{
-\item{longterm}{The long-term data series resulting from the function \code{\link{decompose_load_data}}. Contains information on country (longterm$country) and years (longterm$year).}
+\item{longterm_data}{The long-term data series resulting from the function \code{\link{decompose_load_data}}. Contains information on country (longterm$country) and years (longterm$year).}
 }
 \value{
 Data frame with the original time series and 10 additional columns with macroeconomic indicators.
@@ -18,7 +18,7 @@ The variables are suspected to have a predictive capacity for the load data.
 }
 \examples{
 \dontrun{
-longterm_all_data_example <- get_macro_economic_data(decomposed_load_example$longterm)
+example_longterm_and_macro_data <- get_macro_economic_data(example_longterm_data)
 }
 }
 \seealso{

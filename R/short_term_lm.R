@@ -2,8 +2,8 @@
 #'
 #' The short-term load series is forecasted based on the provided hourly load data.
 #'
-#' @param short_term_data Dataframe. Containing the short-term load data and the added holiday dummy resulting from \code{\link{add_holidays_short_term}}.
-#' @param test_set_steps Integer. Number of time periods in the test set.
+#' @param shortterm_demand_data Dataframe. Containing the short-term load data from \code{\link{decompose_load_data}} and the added holiday dummy resulting from \code{\link{add_holidays_short_term}}.
+#' @param test_set_steps Integer. Number of hours used for the test set. The default value of 17520 equals two years (2 * 8760 hours).
 #'
 #' @return A dataframe containing the original data series and the predicted data series.
 #' @export
@@ -12,11 +12,11 @@
 #' \dontrun{
 #' working_directory <- getwd()
 #' setwd(tempdir())
-#' shortterm_model_data_example <- short_term_lm(shortterm_holidays_example)
+#' example_shortterm_predictions <- short_term_lm(example_shortterm_demand_data)
 #' setwd(working_directory)
 #' }
-short_term_lm <- function(short_term_data, test_set_steps=17520){
-
+short_term_lm <- function(shortterm_demand_data, test_set_steps=17520){
+  short_term_data <- shortterm_demand_data
 
   columns_original_df <- ncol(short_term_data)
   short_term_data[,c((columns_original_df+1):(columns_original_df+24))] <- 0
@@ -118,9 +118,9 @@ suppressWarnings(
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
     theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))
-
+  suppressWarnings(
   print(st_plot)
-
+  )
   week_start <- which(short_term_data$wday[(nrow(short_term_data)/2):(nrow(short_term_data)/2+200)]==
                         "Mon")[1]+(nrow(short_term_data)/2)
   sample_year <- short_term_data$year[week_start]
@@ -154,9 +154,9 @@ suppressWarnings(
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
     theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))
-
+  suppressWarnings(
   print(st_plot_sample_week)
-
+  )
   if (! file.exists(paste0("./",country,"/plots"))){
     dir.create(paste0("./",country,"/plots"))}
 
@@ -193,9 +193,9 @@ suppressWarnings(
     theme(legend.text=element_text(size=23))+
     theme(axis.text=element_text(size=20))+
     theme(plot.title = element_text(size=26))+guides(color = guide_legend(override.aes = list(linewidth = 2)))
-
+  suppressWarnings(
   ggsave(filename =paste0("./",country,"/plots/short_term_results.png"), plot=st_plot2, width=12, height=8)
-
+  )
   st_plot_sample_week2 <- ggplot(short_term_data[week_start:(week_start+335),])+geom_line(aes(date,short_term_data$hourly_demand_trend_and_season_corrected[week_start:(week_start+335)],color="actual"))+
     geom_line(aes(date,short_term_data$short_term_lm_model_predictions[week_start:(week_start+335)],color="fitted"))+
     ggthemes::theme_foundation(base_size=14, base_family="sans")+
@@ -231,9 +231,9 @@ suppressWarnings(
     theme(plot.subtitle = element_text(size=20,hjust = 0.5))+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
 
-
+  suppressWarnings(
   ggsave(filename=paste0("./",country,"/plots/short_term_results_sample_weeks.png"), plot=st_plot_sample_week2, width=12, height=8)
-
+  )
 
   return (short_term_data)
 }

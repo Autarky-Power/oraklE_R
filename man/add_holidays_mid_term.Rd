@@ -4,10 +4,10 @@
 \alias{add_holidays_mid_term}
 \title{Add holidays to the mid-term series}
 \usage{
-add_holidays_mid_term(midterm)
+add_holidays_mid_term(midterm_data)
 }
 \arguments{
-\item{midterm}{The mid-term data series resulting from the function \code{\link{decompose_load_data}}.}
+\item{midterm_data}{The mid-term data series resulting from the function \code{\link{decompose_load_data}}.}
 }
 \value{
 The mid-term series with an additional column of holiday dummies.
@@ -16,8 +16,10 @@ The mid-term series with an additional column of holiday dummies.
 This function adds a dummy variable for holidays to the mid-term data series. Information on the holidays is retrieved from "https://date.nager.at/api/v3/publicholidays/".
 }
 \examples{
-midterm_holidays_example <- add_holidays_mid_term(decomposed_load_example$midterm)
-midterm_holidays_example
+\dontrun{
+example_midterm_demand_data <- add_holidays_mid_term(example_decomposed_data$midterm)
+example_midterm_demand_data
+}
 }
 \seealso{
 See also \code{\link{mid_term_lm}} for the prediction model.

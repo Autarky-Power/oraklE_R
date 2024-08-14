@@ -2,56 +2,56 @@
 #'
 #' This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.
 #'
-#' @param longterm_all_data_predicted Dataframe. The object resulting from function \code{\link{long_term_lm}}.
-#' @param midterm_all_data_predicted Dataframe. The object resulting from function \code{\link{mid_term_lm}}.
-#' @param short_term_data_predicted Dataframe. The object resulting from function \code{\link{short_term_lm}}.
+#' @param longterm_predictions Dataframe. The object resulting from function \code{\link{long_term_lm}}.
+#' @param midterm_predictions Dataframe. The object resulting from function \code{\link{mid_term_lm}}.
+#' @param shortterm_predictions Dataframe. The object resulting from function \code{\link{short_term_lm}}.
 #' @param longterm_model_number Integer. Specifies which of the 3 best long-term models should be used.
-#' @return The combined model results.
+#' @return Dataframe. The combined model results.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' combined_model_results <- long_term_lm(longterm_all_data_example,
-#' test_set_steps=2,testquant = 500)
+#' example_full_model_predictions <- combine_models(example_longterm_predictions,
+#' example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
 #' }
 #'
 
-combine_models <- function(longterm_all_data_predicted,midterm_all_data_predicted,short_term_data_predicted, longterm_model_number=1){
+combine_models <- function(longterm_predictions,midterm_predictions,shortterm_predictions, longterm_model_number=1){
 
-  combined_model_results <- short_term_data_predicted[,1:8]
-  country = unique(longterm_all_data_predicted$country)
+  combined_model_results <- shortterm_predictions[,1:8]
+  country = unique(longterm_predictions$country)
   combined_model_results$long_term_model <- 0
 
   for (year in unique(combined_model_results$year)){
   if (longterm_model_number==1){
     combined_model_results$long_term_model[combined_model_results$year==year]  <-
-      longterm_all_data_predicted$longterm_model_predictions1[longterm_all_data_predicted$year==year]
+      longterm_predictions$longterm_model_predictions1[longterm_predictions$year==year]
   } else if (longterm_model_number==2){
 
     combined_model_results$long_term_model[combined_model_results$year==year]  <-
-      longterm_all_data_predicted$longterm_model_predictions2[longterm_all_data_predicted$year==year]
+      longterm_predictions$longterm_model_predictions2[longterm_predictions$year==year]
   }else{
     combined_model_results$long_term_model[combined_model_results$year==year]  <-
-      longterm_all_data_predicted$longterm_model_predictions3[longterm_all_data_predicted$year==year]
+      longterm_predictions$longterm_model_predictions3[longterm_predictions$year==year]
       }
   }
   combined_model_results$mid_term_model <- 0
 
 
-  for (i in 1:nrow(midterm_all_data_predicted)){
+  for (i in 1:nrow(midterm_predictions)){
     combined_model_results$mid_term_model[((i-1)*24+1):(i*24)] <-
-      midterm_all_data_predicted$midterm_model_fit[i]
+      midterm_predictions$midterm_model_fit[i]
   }
 
-  combined_model_results$short_term_model <- short_term_data_predicted$short_term_lm_model_predictions
+  combined_model_results$short_term_model <- shortterm_predictions$short_term_lm_model_predictions
 
   combined_model_results$complete_model <- combined_model_results$long_term_model+
     combined_model_results$mid_term_model + combined_model_results$short_term_model
 
 
-  test_set_steps <- unique(longterm_all_data_predicted$test_set_steps)
-  year_training_set=nrow(longterm_all_data_predicted)- test_set_steps
-  end_of_training_set=max(which(combined_model_results$year== longterm_all_data_predicted$year[year_training_set]))
+  test_set_steps <- unique(longterm_predictions$test_set_steps)
+  year_training_set=nrow(longterm_predictions)- test_set_steps
+  end_of_training_set=max(which(combined_model_results$year== longterm_predictions$year[year_training_set]))
 
 
 

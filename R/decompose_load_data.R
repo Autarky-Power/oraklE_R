@@ -19,7 +19,10 @@
 #'@export
 #' @import ggplot2
 #'
-#' @examples decomposed_load_example <- decompose_load_data(no_missing_data_example)
+#' @examples
+#' \dontrun{
+#'  example_decomposed_data <- decompose_load_data(example_demand_data_filled)
+#'  }
 
 decompose_load_data <- function(load_data){
 

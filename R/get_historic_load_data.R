@@ -9,9 +9,9 @@
 #'
 #' @examples
 #' print("Input dataframe should be in the following form:")
-#' decomposed_load_example$longterm
-#' long_term_example <- get_historic_load_data(decomposed_load_example$longterm)
-#' long_term_example
+#' example_decomposed_data$longterm
+#' example_longterm_data <- get_historic_load_data(example_decomposed_data$longterm)
+#' example_longterm_data
 get_historic_load_data <- function(longterm){
   if(! "country" %in% colnames(longterm)){
     stop("No column named \"country\"")

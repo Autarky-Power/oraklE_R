@@ -2,7 +2,7 @@
 % Please edit documentation in R/long_term_future_data.R
 \name{long_term_future_data}
 \alias{long_term_future_data}
-\title{Title}
+\title{Get future predictions for the macro economic covariates}
 \usage{
 long_term_future_data(longterm_predictions, end_year, dataset = "WEO")
 }
@@ -17,5 +17,12 @@ long_term_future_data(longterm_predictions, end_year, dataset = "WEO")
 The extended initial dataframe until the specified end year with the covariate predictions if dataset="WEO" or with empty values and a note for which covariates forecasts must be supplied.
 }
 \description{
-Title
+This function gets predictions from the World Economic Outlook Database (April 2023 edition) for the covariates utilized in the long-term models. If the dataset argument is not set to "WEO",
+the function will indicate which covariates require user-supplied predictions for \code{\link{long_term_future}}.
+}
+\examples{
+\dontrun{
+example_longterm_future_macro_data <- long_term_future_data(example_longterm_predictions,
+ end_year=2028, dataset="WEO")
+}
 }

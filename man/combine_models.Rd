@@ -5,31 +5,31 @@
 \title{Combine forecast models}
 \usage{
 combine_models(
-  longterm_all_data_predicted,
-  midterm_all_data_predicted,
-  short_term_data_predicted,
+  longterm_predictions,
+  midterm_predictions,
+  shortterm_predictions,
   longterm_model_number = 1
 )
 }
 \arguments{
-\item{longterm_all_data_predicted}{Dataframe. The object resulting from function \code{\link{long_term_lm}}.}
+\item{longterm_predictions}{Dataframe. The object resulting from function \code{\link{long_term_lm}}.}
 
-\item{midterm_all_data_predicted}{Dataframe. The object resulting from function \code{\link{mid_term_lm}}.}
+\item{midterm_predictions}{Dataframe. The object resulting from function \code{\link{mid_term_lm}}.}
 
-\item{short_term_data_predicted}{Dataframe. The object resulting from function \code{\link{short_term_lm}}.}
+\item{shortterm_predictions}{Dataframe. The object resulting from function \code{\link{short_term_lm}}.}
 
 \item{longterm_model_number}{Integer. Specifies which of the 3 best long-term models should be used.}
 }
 \value{
-The combined model results.
+Dataframe. The combined model results.
 }
 \description{
 This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.
 }
 \examples{
 \dontrun{
-combined_model_results <- long_term_lm(longterm_all_data_example,
-test_set_steps=2,testquant = 500)
+example_full_model_predictions <- combine_models(example_longterm_predictions,
+example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
 }
 
 }

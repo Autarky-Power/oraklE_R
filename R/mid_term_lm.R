@@ -2,7 +2,7 @@
 #'
 #' The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with transformed variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.
 #'
-#' @param midterm_all_data Dataframe. Containing the mid-term load data, the holidays and weather data obtained from \code{\link{get_weather_data}}.
+#' @param demand_and_weather_data Dataframe. Containing the mid-term load data, the holidays and weather data obtained from \code{\link{get_weather_data}}.
 #' @param test_set_steps Integer. Number of time periods in the test set.
 #' @param Tref Numeric. Reference temperature as basis for the calculation of cooling and heating days.
 #' @param method String. Indicates which model selection process is used. If method="temperature transformation", the temperature values are transformed to heating and cooling
@@ -15,10 +15,13 @@
 #' \dontrun{
 #' working_directory <- getwd()
 #' setwd(tempdir())
-#' midterm_model_data_example <- mid_term_lm(midterm_all_data_example$midterm)
+#' example_midterm_predictions <- mid_term_lm(example_midterm_demand_and_weather_data$demand,
+#' Tref=18, test_set_steps=730, method="temperature transformation")
 #' setwd(working_directory)
 #' }
-mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="temperature transformation"){
+mid_term_lm <- function(demand_and_weather_data,Tref=18, test_set_steps=730, method="temperature transformation"){
+
+  midterm_all_data <- demand_and_weather_data
   month_list=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec")
 
   for (i in 1:length(month_list)){
@@ -288,8 +291,9 @@ mid_term_lm <- function(midterm_all_data,Tref=18, test_set_steps=730, method="te
     scale_x_continuous(breaks = index,labels = years)+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
 
-
+suppressWarnings(
   ggsave(filename=paste0("./",country,"/plots/Mid_term_results.png"), plot=mt_plot2, width=12, height=8)
+)
 suppressWarnings(
   print(mt_plot)
 )

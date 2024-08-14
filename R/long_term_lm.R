@@ -6,7 +6,7 @@
 #'
 #' where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data}}. For all possible covariate combinations, the three best models are chosen and stored. The included regressors are stored and the predicted and actual time series plotted.
 #'
-#' @param longterm_all_data Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data}}.
+#' @param longterm_and_macro_data Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data}}.
 #' @param test_set_steps Integer. Number of time periods in the test set.
 #' @param testquant Integer. Determines how many of the best ranked models are evaluated with cross validation.
 #'
@@ -18,12 +18,12 @@
 #'
 #' @examples
 #' \dontrun{
-#' longterm_model_data_example <- long_term_lm(longterm_all_data_example,
+#' example_longterm_predictions <- long_term_lm(example_longterm_and_macro_data,
 #' test_set_steps=2,testquant = 500)
 #' }
 
-long_term_lm<- function(longterm_all_data,test_set_steps=2,testquant = 500){
-
+long_term_lm<- function(longterm_and_macro_data,test_set_steps=2,testquant = 500){
+  longterm_all_data <- longterm_and_macro_data
   if(! "avg_hourly_demand" %in% colnames(longterm_all_data)){
     stop("No column named \"avg_hourly_demand\"")
   }

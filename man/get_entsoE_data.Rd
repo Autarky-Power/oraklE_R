@@ -29,10 +29,10 @@ A Data Frame with the following columns
 \description{
 This function makes various API requests to the Transparency Platform of the European Network of
 Transmission System Operators for Electricity (ENTSO-E, https://transparency.entsoe.eu/) and
-stores the downloaded load data in a data frame. The earliest year for the requested load time series is 2017.
+stores the downloaded load data in a data frame. The earliest possible year for the requested load time series is 2017.
 }
 \examples{
 \dontrun{
-example_load_data <- get_entsoE_data(2017,2021,"France")
+example_demand_data <- get_entsoE_data(2017,2021,"France",api_key="default")
 }
 }

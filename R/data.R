@@ -11,4 +11,4 @@
 #' }
 #' @source Describe the source of your data, if applicable.
 #' @keywords datasets
-"example_load_data"
+"example_demand_data"

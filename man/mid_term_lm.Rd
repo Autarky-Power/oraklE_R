@@ -5,14 +5,14 @@
 \title{Mid-term forecast}
 \usage{
 mid_term_lm(
-  midterm_all_data,
+  demand_and_weather_data,
   Tref = 18,
   test_set_steps = 730,
   method = "temperature transformation"
 )
 }
 \arguments{
-\item{midterm_all_data}{Dataframe. Containing the mid-term load data, the holidays and weather data obtained from \code{\link{get_weather_data}}.}
+\item{demand_and_weather_data}{Dataframe. Containing the mid-term load data, the holidays and weather data obtained from \code{\link{get_weather_data}}.}
 
 \item{Tref}{Numeric. Reference temperature as basis for the calculation of cooling and heating days.}
 
@@ -32,7 +32,8 @@ The mid-term load series is forecasted based on the provided load time series an
 \dontrun{
 working_directory <- getwd()
 setwd(tempdir())
-midterm_model_data_example <- mid_term_lm(midterm_all_data_example$midterm)
+example_midterm_predictions <- mid_term_lm(example_midterm_demand_and_weather_data$demand,
+Tref=18, test_set_steps=730, method="temperature transformation")
 setwd(working_directory)
 }
 }

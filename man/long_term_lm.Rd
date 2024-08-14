@@ -4,10 +4,10 @@
 \alias{long_term_lm}
 \title{Long-term forecast}
 \usage{
-long_term_lm(longterm_all_data, test_set_steps = 2, testquant = 500)
+long_term_lm(longterm_and_macro_data, test_set_steps = 2, testquant = 500)
 }
 \arguments{
-\item{longterm_all_data}{Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data}}.}
+\item{longterm_and_macro_data}{Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data}}.}
 
 \item{test_set_steps}{Integer. Number of time periods in the test set.}
 
@@ -27,7 +27,7 @@ where the covariates correspond to the loaded macroeconomic variables from \code
 }
 \examples{
 \dontrun{
-longterm_model_data_example <- long_term_lm(longterm_all_data_example,
+example_longterm_predictions <- long_term_lm(example_longterm_and_macro_data,
 test_set_steps=2,testquant = 500)
 }
 }

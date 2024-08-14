@@ -4,7 +4,7 @@
 #' First the 20 most populated areas in the country are obtained from https://wft-geo-db.p.rapidapi.com . Then the closest weather stations of each area are identified and average daily temperature values are downloaded from https://meteostat.p.rapidapi.com  for the provided time period.
 #' From this data a weighted daily average temperature based on population is calculated for the provided country.
 #'
-#' @param midterm The mid-term data series resulting from the function \code{\link{decompose_load_data}}.
+#' @param midterm_demand_data The mid-term data series from \code{\link{decompose_load_data}} with added holidays resulting from the function \code{\link{add_holidays_mid_term}}.
 #'
 #' @return A list containing the mid-term data and temperature data.
 #' @export
@@ -15,13 +15,13 @@
 #' \dontrun{
 #' working_directory <- getwd()
 #' setwd(tempdir())
-#' midterm_all_example <- get_weather_data(midterm_holidays_example)
-#' midterm_all_example$midterm
-#' midterm_all_example$temperature_data
+#' example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data)
+#' example_midterm_demand_and_weather_data$demand
+#' example_midterm_demand_and_weather_data$temperature_data
 #' setwd(working_directory)
 #' }
-get_weather_data <- function(midterm){
-
+get_weather_data <- function(midterm_demand_data){
+  midterm <- midterm_demand_data
   country=unique(midterm$country)
   start_year=min(unique(midterm$year))
   end_year=max(unique(midterm$year))
@@ -117,6 +117,6 @@ get_weather_data <- function(midterm){
   utils::write.csv(temp_df,paste0("./",country,"/data/temperatures.csv"),row.names = F)
   utils::write.csv(midterm,paste0("./",country,"/data/midterm_data.csv"),row.names = F)
 
-  return(list("midterm"=midterm, "temperature_data"=temp_df))
+  return(list("demand"=midterm, "temperature_data"=temp_df))
 
 }

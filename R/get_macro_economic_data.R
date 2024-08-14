@@ -3,7 +3,7 @@
 #' This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI).
 #' The variables are suspected to have a predictive capacity for the load data.
 #'
-#' @param longterm The long-term data series resulting from the function \code{\link{decompose_load_data}}. Contains information on country (longterm$country) and years (longterm$year).
+#' @param longterm_data The long-term data series resulting from the function \code{\link{decompose_load_data}}. Contains information on country (longterm$country) and years (longterm$year).
 #'
 #' @return Data frame with the original time series and 10 additional columns with macroeconomic indicators.
 #' @export
@@ -12,10 +12,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' longterm_all_data_example <- get_macro_economic_data(decomposed_load_example$longterm)
+#' example_longterm_and_macro_data <- get_macro_economic_data(example_longterm_data)
 #' }
-get_macro_economic_data <- function(longterm){
-
+get_macro_economic_data <- function(longterm_data){
+  longterm <- longterm_data
   country=unique(longterm$country)
   start_year= min(longterm$year)
   end_year= max(longterm$year)

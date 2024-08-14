@@ -4,12 +4,12 @@
 \alias{short_term_lm}
 \title{Short-term forecast}
 \usage{
-short_term_lm(short_term_data, test_set_steps = 17520)
+short_term_lm(shortterm_demand_data, test_set_steps = 17520)
 }
 \arguments{
-\item{short_term_data}{Dataframe. Containing the short-term load data and the added holiday dummy resulting from \code{\link{add_holidays_short_term}}.}
+\item{shortterm_demand_data}{Dataframe. Containing the short-term load data from \code{\link{decompose_load_data}} and the added holiday dummy resulting from \code{\link{add_holidays_short_term}}.}
 
-\item{test_set_steps}{Integer. Number of time periods in the test set.}
+\item{test_set_steps}{Integer. Number of hours used for the test set. The default value of 17520 equals two years (2 * 8760 hours).}
 }
 \value{
 A dataframe containing the original data series and the predicted data series.
@@ -21,7 +21,7 @@ The short-term load series is forecasted based on the provided hourly load data.
 \dontrun{
 working_directory <- getwd()
 setwd(tempdir())
-shortterm_model_data_example <- short_term_lm(shortterm_holidays_example)
+example_shortterm_predictions <- short_term_lm(example_shortterm_demand_data)
 setwd(working_directory)
 }
 }
