@@ -27,9 +27,7 @@ Dataframe. The combined model results.
 This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.
 }
 \examples{
-\dontrun{
 example_full_model_predictions <- combine_models(example_longterm_predictions,
 example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
-}
 
 }
