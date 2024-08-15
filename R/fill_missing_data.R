@@ -15,8 +15,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#'
 #' library(ggplot2)
+#' working_directory <- getwd()
+#' setwd(tempdir())
 #' example_demand_data_filled <- fill_missing_data(example_demand_data)
 #' example_df<- as.data.frame(seq.POSIXt(example_demand_data$date[841],
 #' example_demand_data$date[870],"hour"))
@@ -30,7 +32,10 @@
 #'  xlab("\nHour")+ylab("Load [MW]\n")+theme(legend.title = element_blank())+
 #'  scale_x_continuous(breaks = c(example_df[1,1],example_df[25,1]),
 #'  labels = c(as.Date(example_df[1,1]),as.Date(example_df[25,1])))
-#'  }
+#'
+#'  file_path <- paste0("./FR/data/filled_load_data.csv")
+#'  file.remove(file_path)
+#'  setwd(working_directory)
 
 
 
@@ -121,7 +126,7 @@ fill_missing_data <- function(load_data){
     dir.create(country)}
   if (! file.exists(paste0("./",country,"/data"))){
     dir.create(paste0("./",country,"/data"))}
-  complete_data
+
   utils::write.csv(complete_data,paste0("./",country,"/data/filled_load_data.csv"),row.names = F)
 
 

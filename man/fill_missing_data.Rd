@@ -23,8 +23,10 @@ This function substitutes missing values with the corresponding values at the sa
 This function is primarily designed to handle minor gaps in the dataset acquired using \code{\link{get_entsoE_data}}. To use this function with other datasets, it is important that the input data frame adheres to the required column naming conventions.
 }
 \examples{
-\dontrun{
+
 library(ggplot2)
+working_directory <- getwd()
+setwd(tempdir())
 example_demand_data_filled <- fill_missing_data(example_demand_data)
 example_df<- as.data.frame(seq.POSIXt(example_demand_data$date[841],
 example_demand_data$date[870],"hour"))
@@ -38,5 +40,8 @@ geom_line(aes(y=before,colour="before data filling"))+
  xlab("\nHour")+ylab("Load [MW]\n")+theme(legend.title = element_blank())+
  scale_x_continuous(breaks = c(example_df[1,1],example_df[25,1]),
  labels = c(as.Date(example_df[1,1]),as.Date(example_df[25,1])))
- }
+
+ file_path <- paste0("./FR/data/filled_load_data.csv")
+ file.remove(file_path)
+ setwd(working_directory)
 }
