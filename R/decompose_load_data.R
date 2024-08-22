@@ -20,9 +20,15 @@
 #' @import ggplot2
 #'
 #' @examples
-#' \dontrun{
+#'
+#' working_directory <- getwd()
+#' setwd(tempdir())
 #'  example_decomposed_data <- decompose_load_data(example_demand_data_filled)
-#'  }
+#'  suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
+#' setwd(working_directory)
+#'
 
 decompose_load_data <- function(load_data){
 

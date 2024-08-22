@@ -29,11 +29,14 @@ The forecast of the best model fit is stored and the results are displayed in a 
 The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with transformed variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.
 }
 \examples{
-\dontrun{
+
 working_directory <- getwd()
 setwd(tempdir())
 example_midterm_predictions <- mid_term_lm(example_midterm_demand_and_weather_data$demand,
 Tref=18, test_set_steps=730, method="temperature transformation")
+suppressMessages(
+ unlink("./FR", recursive = TRUE, force = TRUE)
+ )
 setwd(working_directory)
-}
+
 }

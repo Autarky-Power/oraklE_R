@@ -9,12 +9,14 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' working_directory <- getwd()
 #' setwd(tempdir())
 #' example_shortterm_predictions <- short_term_lm(example_shortterm_demand_data)
+#' suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
 #' setwd(working_directory)
-#' }
+
 short_term_lm <- function(shortterm_demand_data, test_set_steps=17520){
   short_term_data <- shortterm_demand_data
 

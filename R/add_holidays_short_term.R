@@ -8,10 +8,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' shortterm_holidays_example <- add_holidays_short_term(decomposed_load_example$shortterm)
-#' shortterm_holidays_example[,c(1,2,11)]
-#' }
+#' example_shortterm_demand_data <- add_holidays_short_term(example_decomposed_data$shortterm)
+#' example_shortterm_demand_data[,c(1,2,11)]
+
 add_holidays_short_term<- function(shortterm){
 
   years=unique(shortterm$year)

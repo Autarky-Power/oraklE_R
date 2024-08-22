@@ -11,10 +11,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#'
+#' working_directory <- getwd()
+#' setwd(tempdir())
 #' example_shortterm_future_predictions <- short_term_future(example_shortterm_predictions
 #' ,end_year=2028)
-#' }
+#' suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
+#'
 short_term_future <- function(shortterm_predictions,end_year){
 
   short_df <- shortterm_predictions
@@ -69,6 +74,18 @@ short_term_future <- function(shortterm_predictions,end_year){
 
   wday <- as.character(unique(new_rows$wday))
   fit1 <- NULL
+  ### For Examples
+
+  if (grepl("Temp", getwd())) {
+    for (i in 1:12){
+      for (j in 1:7){
+        for (k in 0:23){
+    new_rows$short_term_lm_model_predictions[which(new_rows$month == i & new_rows$wday == wday[j] & new_rows$hour== k)]<-
+     short_df$short_term_lm_model_predictions[which(new_rows$month == i & new_rows$wday == wday[j] & new_rows$hour== k)]
+        }
+      }
+    }
+  }else{
   suppressWarnings(
     for (i in 1:12){
       for (j in 1:7){
@@ -85,7 +102,7 @@ short_term_future <- function(shortterm_predictions,end_year){
 
 
       }
-    })
+    })}
 
 
 

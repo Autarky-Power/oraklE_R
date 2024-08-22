@@ -10,11 +10,16 @@
 #' @export
 #' @seealso See also functions \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the prediction models.
 #' @examples
-#' \dontrun{
+
+#' working_directory <- getwd()
+#' setwd(tempdir())
 #' example_full_model_future_predictions <- combine_models_future(example_longterm_future_predictions
 #' ,example_midterm_future_predictions, example_shortterm_future_predictions,longterm_model_number =1)
-#' }
-#'
+#' suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
+#' setwd(working_directory)
+
 
 combine_models_future <- function(longterm_future_predictions, midterm_future_predictions
                                   ,shortterm_future_predictions, longterm_model_number=1){

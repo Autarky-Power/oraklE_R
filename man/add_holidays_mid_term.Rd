@@ -16,10 +16,8 @@ The mid-term series with an additional column of holiday dummies.
 This function adds a dummy variable for holidays to the mid-term data series. Information on the holidays is retrieved from "https://date.nager.at/api/v3/publicholidays/".
 }
 \examples{
-\dontrun{
 example_midterm_demand_data <- add_holidays_mid_term(example_decomposed_data$midterm)
 example_midterm_demand_data
-}
 }
 \seealso{
 See also \code{\link{mid_term_lm}} for the prediction model.

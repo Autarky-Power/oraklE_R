@@ -17,9 +17,10 @@ This function downloads a set of ten macroeconomic variables via API from the Wo
 The variables are suspected to have a predictive capacity for the load data.
 }
 \examples{
-\dontrun{
 example_longterm_and_macro_data <- get_macro_economic_data(example_longterm_data)
-}
+print("Macro economic variables are added:")
+example_longterm_and_macro_data
+
 }
 \seealso{
 See function \code{\link{decompose_load_data}} for the generation of the long-term series and \code{\link{long_term_lm}} for the selection of covariates.

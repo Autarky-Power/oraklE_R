@@ -16,7 +16,9 @@
 #'
 #' @examples
 #'
+#'suppressWarnings(
 #' library(ggplot2)
+#' )
 #' working_directory <- getwd()
 #' setwd(tempdir())
 #' example_demand_data_filled <- fill_missing_data(example_demand_data)
@@ -32,10 +34,11 @@
 #'  xlab("\nHour")+ylab("Load [MW]\n")+theme(legend.title = element_blank())+
 #'  scale_x_continuous(breaks = c(example_df[1,1],example_df[25,1]),
 #'  labels = c(as.Date(example_df[1,1]),as.Date(example_df[25,1])))
-#'
-#'  file_path <- paste0("./FR/data/filled_load_data.csv")
-#'  file.remove(file_path)
+#'  suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
 #'  setwd(working_directory)
+#'
 
 
 

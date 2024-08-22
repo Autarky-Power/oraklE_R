@@ -10,9 +10,16 @@
 #' @export
 #'
 #' @examples
+#
+#' working_directory <- getwd()
+#' setwd(tempdir())
 #' example_full_model_predictions <- combine_models(example_longterm_predictions,
 #' example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
-#'
+#' suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
+#' setwd(working_directory)
+
 
 combine_models <- function(longterm_predictions,midterm_predictions,shortterm_predictions, longterm_model_number=1){
 

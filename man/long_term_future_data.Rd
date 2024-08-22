@@ -21,8 +21,7 @@ This function gets predictions from the World Economic Outlook Database (April 2
 the function will indicate which covariates require user-supplied predictions for \code{\link{long_term_future}}.
 }
 \examples{
-\dontrun{
 example_longterm_future_macro_data <- long_term_future_data(example_longterm_predictions,
  end_year=2028, dataset="WEO")
-}
+
 }

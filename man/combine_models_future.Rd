@@ -27,11 +27,14 @@ Dataframe. The combined model results.
 This function combines the three separate future forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first and should have the same end_year.
 }
 \examples{
-\dontrun{
+working_directory <- getwd()
+setwd(tempdir())
 example_full_model_future_predictions <- combine_models_future(example_longterm_future_predictions
 ,example_midterm_future_predictions, example_shortterm_future_predictions,longterm_model_number =1)
-}
-
+suppressMessages(
+ unlink("./FR", recursive = TRUE, force = TRUE)
+ )
+setwd(working_directory)
 }
 \seealso{
 See also functions \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the prediction models.

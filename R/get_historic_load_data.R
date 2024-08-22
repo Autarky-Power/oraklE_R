@@ -8,10 +8,14 @@
 #' @export
 #'
 #' @examples
+#'
 #' print("Input dataframe should be in the following form:")
 #' example_decomposed_data$longterm
 #' example_longterm_data <- get_historic_load_data(example_decomposed_data$longterm)
+#' print("Historic load data is added starting from 2006:")
 #' example_longterm_data
+#'
+
 get_historic_load_data <- function(longterm){
   if(! "country" %in% colnames(longterm)){
     stop("No column named \"country\"")

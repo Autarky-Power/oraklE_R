@@ -12,10 +12,16 @@
 #' @export
 #' @seealso See also function \code{\link{long_term_future}} and \code{\link{short_term_future}} for the other prediction models.
 #' @examples
-#' \dontrun{
+
+#' working_directory <- getwd()
+#' setwd(tempdir())
 #' example_midterm_future_predictions <- mid_term_future(example_midterm_predictions,
 #' end_year=2028,Tref=18)
-#' }
+#' suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
+#' setwd(working_directory)
+
 mid_term_future <- function(midterm_predictions,end_year, Tref=18){
 
 last_years <- midterm_predictions[(nrow(midterm_predictions)-(3*365)):(nrow(midterm_predictions)),]
@@ -32,7 +38,7 @@ new_data <- data.frame(country=unique(midterm_predictions$country),date = new_da
 new_data$year <- lubridate::year(new_data$date)
 new_data$month <- lubridate::month(new_data$date)
 new_data$day <- lubridate::day(new_data$date)
-new_data$wday<- lubridate::wday(new_data$date,label = T)
+new_data$wday<- lubridate::wday(new_data$date,label = T,locale = "English")
 new_data$avg_hourly_demand <- 0
 new_data$seasonal_avg_hourly_demand <- NA
 
@@ -114,8 +120,17 @@ country <- unique(new_data$country)
 
 globalmodel <- NULL
 best_model <- NULL
-load(paste0("./",country,"/models/midterm/best_model.Rdata"))
+### FOR EXAMPLES
+if (grepl("Temp", getwd())) {
+  y <- midterm_predictions$seasonal_avg_hourly_demand[1:1095]
+  x <- data.matrix(midterm_predictions[1:1095, 9:43])
 
+  cv_model <- glmnet::cv.glmnet(x, y, alpha = 1)
+  best_lambda <- cv_model$lambda.min
+  best_model <- glmnet::glmnet(x, y, alpha = 1, lambda = best_lambda)
+}else{
+load(paste0("./",country,"/models/midterm/best_model.Rdata"))
+}
 
 if ("HD" %in% colnames(midterm_predictions)){
   if (! is.null(globalmodel)){
@@ -126,7 +141,8 @@ if ("HD" %in% colnames(midterm_predictions)){
   else{
     suppressWarnings(
 future_predictions <- stats::predict(best_model, newx = as.matrix(new_data[,9:43]))
-)}
+    )
+    }
 }else{
   suppressWarnings(
 future_predictions <- stats::predict(globalmodel, newdata=new_data)
@@ -139,6 +155,7 @@ new_data$test_set_steps <- unique(midterm_predictions$test_set_steps)
 for(col_name in setdiff(names(midterm_predictions), names(new_data))) {
   new_data[[col_name]] <- NA
 }
+
 
 all_data <- dplyr::bind_rows(midterm_predictions, new_data)
 
@@ -190,6 +207,13 @@ mt_plot <- ggplot(all_data)+geom_line(aes(1:nrow(all_data),all_data$seasonal_avg
   annotate("text", x = (training_set_end+unique(midterm_predictions$test_set_steps)/2), y =    (max_value+max_value*0.1), label = "Test", size = 4, hjust = 0.5, vjust = 0)+
   annotate("text", x = (nrow(midterm_predictions)+future_set/2), y =      (max_value+max_value*0.1), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
 )
+country <- unique(all_data$country)
+if (! file.exists(country)){
+  dir.create(country)}
+if (! file.exists(paste0("./",country,"/data"))){
+  dir.create(paste0("./",country,"/data"))}
+if (! file.exists(paste0("./",country,"/plots"))){
+  dir.create(paste0("./",country,"/plots"))}
 suppressWarnings(
 ggsave(filename=paste0("./",unique(all_data$country),"/plots/mid_term_results_future.png"), plot=mt_plot, width=12, height=8)
 )

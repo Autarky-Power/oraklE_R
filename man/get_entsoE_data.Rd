@@ -35,4 +35,5 @@ stores the downloaded load data in a data frame. The earliest possible year for 
 
 example_demand_data <- get_entsoE_data(2017,2021,"France",api_key="default")
 print(example_demand_data[1:20,])
+
 }

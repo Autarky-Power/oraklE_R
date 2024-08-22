@@ -12,13 +12,16 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#'
 #' working_directory <- getwd()
 #' setwd(tempdir())
 #' example_midterm_predictions <- mid_term_lm(example_midterm_demand_and_weather_data$demand,
 #' Tref=18, test_set_steps=730, method="temperature transformation")
+#' suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
 #' setwd(working_directory)
-#' }
+#'
 mid_term_lm <- function(demand_and_weather_data,Tref=18, test_set_steps=730, method="temperature transformation"){
 
   midterm_all_data <- demand_and_weather_data

@@ -16,8 +16,6 @@ The short-term series with an additional column of holiday dummies.
 This function adds a dummy variable for holidays to the short-term data series. Information on the holidays is retrieved from "https://date.nager.at/api/v3/publicholidays/".
 }
 \examples{
-\dontrun{
-shortterm_holidays_example <- add_holidays_short_term(decomposed_load_example$shortterm)
-shortterm_holidays_example[,c(1,2,11)]
-}
+example_shortterm_demand_data <- add_holidays_short_term(example_decomposed_data$shortterm)
+example_shortterm_demand_data[,c(1,2,11)]
 }

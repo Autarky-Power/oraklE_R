@@ -4,16 +4,32 @@
 \alias{full_forecast}
 \title{Title}
 \usage{
-full_forecast(start_year, end_year, country, test_set_steps = 2)
+full_forecast(
+  start_year,
+  end_year_data,
+  country,
+  test_set_steps = 2,
+  future = "Yes",
+  end_year = 2028
+)
 }
 \arguments{
-\item{start_year}{Specifies the starting year for which predictions and models will be generated}
+\item{start_year}{Specifies the starting year for which predictions and models will be generated.}
 
-\item{end_year}{Specifies the final year for which future predictions and models will be generated}
+\item{end_year_data}{Specifies the final year for which data from the Transparency Platform of the European Network of
+Transmission System Operators for Electricity (ENTSO-E, https://transparency.entsoe.eu/) is retrieved and for which models will be generated.}
 
 \item{country}{String. Specifies the country.}
 
 \item{test_set_steps}{Integer. Specifies how many years are used for generating the test/validation set for the model selection.}
+
+\item{future}{String. Option to enable or disable the future forecasts. If set to "Yes" forecasts will be made until the specified end_year. If set to
+anything else, forecasts will only be generated until the specified end_year_data value.
+
+#' @seealso See also functions \code{\link{long_term_lm}}, \code{\link{mid_term_lm}}, and \code{\link{short_term_lm}} for the prediction models
+and \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the future prediction models.}
+
+\item{end_year}{Specifies the final year for which future predictions will be generated.}
 }
 \value{
 Returns a dataframe with the full prediction results. All models, plots and data is saved to a folder with the corresponding

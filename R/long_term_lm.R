@@ -17,10 +17,15 @@
 #' @seealso See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download.
 #'
 #' @examples
-#' \dontrun{
+#' working_directory <- getwd()
+#' setwd(tempdir())
 #' example_longterm_predictions <- long_term_lm(example_longterm_and_macro_data,
 #' test_set_steps=2,testquant = 500)
-#' }
+#' suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
+#' setwd(working_directory)
+
 
 long_term_lm<- function(longterm_and_macro_data,test_set_steps=2,testquant = 500){
   longterm_all_data <- longterm_and_macro_data
@@ -84,6 +89,10 @@ long_term_lm<- function(longterm_and_macro_data,test_set_steps=2,testquant = 500
 
   used_cores <- floor(no_cores*0.75)
   if (used_cores > 10) {used_cores=10}
+
+  if (grepl("Temp", getwd())) {
+    used_cores <- 2
+  }
 
   cl <- parallel::makeCluster(used_cores)
   doParallel::registerDoParallel(cl)

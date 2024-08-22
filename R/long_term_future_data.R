@@ -11,10 +11,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+
 #' example_longterm_future_macro_data <- long_term_future_data(example_longterm_predictions,
 #'  end_year=2028, dataset="WEO")
-#' }
+#'
 long_term_future_data <- function(longterm_predictions,end_year, dataset="WEO"){
 
   new_data_length <- end_year-max(longterm_predictions$year)
@@ -82,7 +82,7 @@ long_term_future_data <- function(longterm_predictions,end_year, dataset="WEO"){
     message("If you want to use your own dataset you will need predictions for the following macro-economic variables:")
     best_lm_model <- NULL
     for (i in 1:3){
-      model_path= paste0("./", unique(longterm_predictions$country),"/models/longterm/best_lm_model",i,".Rdata")
+      model_path= paste0("./", unique(stats::na.omit(longterm_predictions$country)),"/models/longterm/best_lm_model",i,".Rdata")
       load(model_path)
       print_vars <- paste(attr(best_lm_model$terms , "term.labels"),collapse = ", ")
       cat("\n",print_vars, "for model", i, "\n")
