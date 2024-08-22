@@ -27,7 +27,7 @@ example_shortterm_future_predictions <- short_term_future(example_shortterm_pred
 suppressMessages(
  unlink("./FR", recursive = TRUE, force = TRUE)
  )
-
+setwd(working_directory)
 }
 \seealso{
 See also function \code{\link{long_term_future}} and \code{\link{mid_term_future}} for the other prediction models.

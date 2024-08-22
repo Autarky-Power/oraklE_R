@@ -22,6 +22,11 @@ get_macro_economic_data <- function(longterm_data){
   end_year= max(longterm$year)
 
   res_pop = httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/SP.POP.TOTL?date=",start_year,":",end_year,"&format=json"))
+  if (res_pop$status_code==502){
+    message("The World Development Indicator database of the World Bank is currently unreachable. Please try again in a minute.")
+    return()
+  }
+
   data_pop=jsonlite::fromJSON(rawToChar(res_pop$content))
   df_pop<- as.data.frame(data_pop[2])
   df_pop<- df_pop[order(df_pop$date),]

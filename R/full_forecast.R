@@ -18,13 +18,18 @@
 #' @export
 #'
 #' @examples
+#' ## With future predictions
 #' \dontrun{
-#'   start_year <- 2017
-#'   end_year <- 2023
-#'   country <- "France"
-#'   test_set_steps <- 2
-#'   forecast_data <- full_forecast(start_year, end_year, country, test_set_steps)
+#'   forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
+#'   future="yes", end_year=2028)
 #' }
+#'
+#' ## Without future predictions
+#' \dontrun{
+#'   forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
+#'   future="no")
+#' }
+#'
 full_forecast <- function(start_year, end_year_data, country, test_set_steps=2, future="Yes", end_year=2028){
 
 demand_data <- oRaklE::get_entsoE_data(start_year,end_year_data,country)

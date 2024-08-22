@@ -19,7 +19,8 @@
 #' suppressMessages(
 #'  unlink("./FR", recursive = TRUE, force = TRUE)
 #'  )
-#'
+#' setwd(working_directory)
+
 short_term_future <- function(shortterm_predictions,end_year){
 
   short_df <- shortterm_predictions
@@ -152,9 +153,10 @@ short_term_future <- function(shortterm_predictions,end_year){
   suppressWarnings(
     print(st_plot)
   )
+  if (!grepl("Temp", getwd())) {
   suppressWarnings(
   ggsave(filename=paste0("./",country,"/plots/short_term_results_future.png"), plot=st_plot, width=12, height=8)
-)
+)}
   return(future_short_term)
 
 }
