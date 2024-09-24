@@ -21,7 +21,7 @@ get_macro_economic_data <- function(longterm_data){
   start_year= min(longterm$year)
   end_year= max(longterm$year)
 
-  res_pop = httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/SP.POP.TOTL?date=",start_year,":",end_year,"&format=json"))
+  res_pop = httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/SP.POP.TOTL?date=",start_year,":",end_year,"&format=json"))
   if (res_pop$status_code==502){
     message("The World Development Indicator database of the World Bank is currently unreachable. Please try again in a minute.")
     return()
@@ -34,7 +34,7 @@ get_macro_economic_data <- function(longterm_data){
   for (i in 1:nrow(df_pop)){
   longterm$population[i]<-df_pop$value[i]
   }
-  res_gdp= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.MKTP.KD?date=",start_year,":",end_year,"&format=json"))
+  res_gdp= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.MKTP.KD?date=",start_year,":",end_year,"&format=json"))
 
   data_gdp=jsonlite::fromJSON(rawToChar(res_gdp$content))
   df_gdp<- as.data.frame(data_gdp[2])
@@ -45,7 +45,7 @@ get_macro_economic_data <- function(longterm_data){
   }
 
 
-  res_ind= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NV.IND.TOTL.ZS?date=",start_year,":",end_year,"&format=json"))
+  res_ind= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NV.IND.TOTL.ZS?date=",start_year,":",end_year,"&format=json"))
 
   data_ind=jsonlite::fromJSON(rawToChar(res_ind$content))
   df_ind<- as.data.frame(data_ind[2])
@@ -56,7 +56,7 @@ get_macro_economic_data <- function(longterm_data){
     longterm$industrial_value_added[i]<-df_ind$value[i]
   }
 
-  res_man= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NV.IND.MANF.ZS?date=",start_year,":",end_year,"&format=json"))
+  res_man= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NV.IND.MANF.ZS?date=",start_year,":",end_year,"&format=json"))
 
   data_man=jsonlite::fromJSON(rawToChar(res_man$content))
   df_man<- as.data.frame(data_man[2])
@@ -68,7 +68,7 @@ get_macro_economic_data <- function(longterm_data){
   }
 
 
-  res_gro= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.MKTP.KD.ZG?date=",start_year,":",end_year,"&format=json"))
+  res_gro= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.MKTP.KD.ZG?date=",start_year,":",end_year,"&format=json"))
 
   data_gro=jsonlite::fromJSON(rawToChar(res_gro$content))
   df_gro<- as.data.frame(data_gro[2])
@@ -81,7 +81,7 @@ get_macro_economic_data <- function(longterm_data){
 
 
 
-  res_gdp_defl= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.DEFL.KD.ZG?date=",start_year,":",end_year,"&format=json"))
+  res_gdp_defl= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.DEFL.KD.ZG?date=",start_year,":",end_year,"&format=json"))
 
   data_gdp_defl=jsonlite::fromJSON(rawToChar(res_gdp_defl$content))
   df_gdp_defl<- as.data.frame(data_gdp_defl[2])
@@ -94,7 +94,7 @@ get_macro_economic_data <- function(longterm_data){
 
 
 
-  res_serv= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NV.SRV.TOTL.ZS?date=",start_year,":",end_year,"&format=json"))
+  res_serv= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NV.SRV.TOTL.ZS?date=",start_year,":",end_year,"&format=json"))
 
   data_serv=jsonlite::fromJSON(rawToChar(res_serv$content))
   df_serv<- as.data.frame(data_serv[2])
@@ -108,7 +108,7 @@ get_macro_economic_data <- function(longterm_data){
 
 
 
-  res_gni= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NY.GNP.MKTP.KD?date=",start_year,":",end_year,"&format=json"))
+  res_gni= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NY.GNP.MKTP.KD?date=",start_year,":",end_year,"&format=json"))
 
   data_gni=jsonlite::fromJSON(rawToChar(res_gni$content))
   df_gni<- as.data.frame(data_gni[2])
@@ -121,7 +121,7 @@ get_macro_economic_data <- function(longterm_data){
 
 
 
-  res_hou= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/NE.CON.PRVT.ZS?date=",start_year,":",end_year,"&format=json"))
+  res_hou= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NE.CON.PRVT.ZS?date=",start_year,":",end_year,"&format=json"))
 
   data_hou=jsonlite::fromJSON(rawToChar(res_hou$content))
   df_hou<- as.data.frame(data_hou[2])
@@ -134,7 +134,7 @@ get_macro_economic_data <- function(longterm_data){
   }
 
 
-  res_rural= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/SP.RUR.TOTL?date=",start_year,":",end_year,"&format=json"))
+  res_rural= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/SP.RUR.TOTL?date=",start_year,":",end_year,"&format=json"))
 
   data_rural=jsonlite::fromJSON(rawToChar(res_rural$content))
   df_rural<- as.data.frame(data_rural[2])
@@ -145,7 +145,7 @@ get_macro_economic_data <- function(longterm_data){
     longterm$rural_population[i]<-df_rural$value[i]
   }
 
-  # consumer_price_inflation_pct= httr::GET(paste0("http://api.worldbank.org/v2/country/",country,"/indicator/FP.CPI.TOTL.ZG?date=",start_year,":",end_year,"&format=json"))
+  # consumer_price_inflation_pct= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/FP.CPI.TOTL.ZG?date=",start_year,":",end_year,"&format=json"))
   #
   # data_cpi=jsonlite::fromJSON(rawToChar(consumer_price_inflation_pct$content))
   # df_cpi<- as.data.frame(data_cpi[2])

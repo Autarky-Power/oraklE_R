@@ -18,18 +18,91 @@
 #' @export
 #'
 #' @examples
-#' ## With future predictions
-#' \dontrun{
-#'   forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
-#'   future="yes", end_year=2028)
-#' }
-#'
+#' library(ggplot2)
 #' ## Without future predictions
 #' \dontrun{
 #'   forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
 #'   future="no")
 #' }
+#' ggplot(example_full_model_predictions)+geom_line(aes(date,hourly_demand,color="actual"))+
+#'geom_line(aes(date,complete_model,color="fitted"))+xlab("\nYear")+
+#'  ylab("Hourly Demand\n [MW]\n")+
+#'  geom_vline(xintercept=example_full_model_predictions$date[26280],linetype=2)+
+#'  ggthemes::theme_foundation(base_size=14, base_family="sans")+
+#'  xlab("\nHour")+ylab("Hourly Demand\n [MW]\n")+
+#'  ggtitle(paste("Complete Model Results - FR\n"))+
+#'  theme(plot.title = element_text(face = "bold",
+#'                                  size = rel(1.2), hjust = 0.5),
+#'        text = element_text(),
+#'        panel.background = element_rect(colour = NA),
+#'        plot.background = element_rect(colour = NA),
+#'        panel.border = element_rect(colour = NA),
+#'        axis.title = element_text(face = "bold",size = rel(1)),
+#'        axis.title.y = element_text(angle=90,vjust =2),
+#'        axis.title.x = element_text(vjust = -0.2),
+#'        axis.text = element_text(),
+#'        axis.line.x = element_line(colour="black"),
+#'        axis.line.y = element_line(colour="black"),
+#'        axis.ticks = element_line(),
+#'        panel.grid.major = element_line(colour="#f0f0f0"),
+#'        panel.grid.minor = element_blank(),
+#'        legend.key = element_rect(colour = NA),
+#'        legend.position = "bottom",
+#'        legend.direction = "horizontal",
+#'        legend.key.size= unit(0.2, "cm"),
+#'        plot.margin=unit(c(10,5,5,5),"mm"),
+#'        strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
+#'        strip.text = element_text(face="bold"))+
+#'        theme(legend.title = element_blank())
 #'
+#'## With future predictions
+#' \dontrun{
+#'   forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
+#'   future="yes", end_year=2028)
+#' }
+#'        suppressWarnings(
+#'ggplot(example_full_model_future_predictions)+
+#'  geom_line(aes(1:nrow(example_full_model_future_predictions)
+#'  ,hourly_demand,color="actual"))+
+#'  geom_line(aes(1:nrow(example_full_model_future_predictions),complete_model,color="fitted"))+
+#'  xlab("\nYear")+ylab("Hourly Demand\n [MW]\n")+
+#'  geom_vline(xintercept=26280,linetype=2)+
+#'  geom_vline(xintercept=43800,linetype=3)+
+#'  ggthemes::theme_foundation(base_size=14, base_family="sans")+
+#'  xlab("\nHour")+ylab("Hourly Demand\n [MW]\n")+
+#'  scale_y_continuous(labels = scales::label_number(scalar = 1))+
+#'  ggtitle(paste("Complete Model Results - FR\n"))+
+#'  theme(plot.title = element_text(face = "bold",
+#'                                  size = rel(1.2), hjust = 0.5),
+#'        text = element_text(),
+#'        panel.background = element_rect(colour = NA),
+#'        plot.background = element_rect(colour = NA),
+#'        panel.border = element_rect(colour = NA),
+#'        axis.title = element_text(face = "bold",size = rel(1)),
+#'        axis.title.y = element_text(angle=90,vjust =2),
+#'        axis.title.x = element_text(vjust = -0.2),
+#'        axis.text = element_text(),
+#'        axis.line.x = element_line(colour="black"),
+#'        axis.line.y = element_line(colour="black"),
+#'        axis.ticks = element_line(),
+#'        panel.grid.major = element_line(colour="#f0f0f0"),
+#'        panel.grid.minor = element_blank(),
+#'        legend.key = element_rect(colour = NA),
+#'        legend.position = "bottom",
+#'        legend.direction = "horizontal",
+#'        legend.key.size= unit(0.2, "cm"),
+#'        plot.margin=unit(c(10,5,5,5),"mm"),
+#'        strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
+#'        strip.text = element_text(face="bold"))+
+#'  theme(legend.title = element_blank())+
+#'  scale_x_continuous(breaks = c(1,8761,17521,26281,35041,43801,52561,61321,70081,78841,87601,96361),
+#'  labels = c(2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028))+
+#'  annotate("text", x = 13140, y = 99216.6, label = "Training", size = 4, hjust = 0.5 , vjust = 0)+
+#'  annotate("text", x = 35040, y =    99216.6 , label = "Test", size = 4, hjust = 0.5, vjust = 0)+
+#'  annotate("text", x = 74460, y =     99216.6 , label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
+#')
+
+
 full_forecast <- function(start_year, end_year_data, country, test_set_steps=2, future="Yes", end_year=2028){
 
 demand_data <- oRaklE::get_entsoE_data(start_year,end_year_data,country)

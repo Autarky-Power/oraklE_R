@@ -1,9 +1,15 @@
 Package: oRaklE
-Title: What the Package Does (One Line, Title Case)
+Title: Multi-horizon Electricity Demand Forecasting in High Resolution
 Version: 0.0.0.9000
-Authors@R: 
-    person("Johannes", "Schwenzer", , "schwenzer@europa-uni.de", role = c("aut", "cre"),
-           comment = c(ORCID = "0009-0006-9618-8889"))
+Authors@R:
+    c(
+        person(given = "Johannes", family = "Schwenzer", email = "schwenzer@europa-uni.de", 
+               role = c("aut", "cre", "cph"), 
+               comment = c(ORCID = "0009-0006-9618-8889")),
+        person(given = "Simone", family = "Maxand", email = "maxand@europa-uni.de", 
+               role = c("aut"), 
+               comment = c(ORCID = "0009-0006-9618-8889"))
+    )
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
