@@ -73,7 +73,9 @@ After the data is downloaded and standardized, the load time series is decompose
 demand_data_filled = fill_missing_data(demand_data)
 ```
 
-![Unbenannt](https://github.com/user-attachments/assets/12eb9b34-102e-48b5-806d-de299faf0ab0)
+![Decomposed_load](https://github.com/user-attachments/assets/e5db1014-6e2b-4632-ab00-5923e8414553)
+
+
 
 
 ### Calculate and show the best long-term model
