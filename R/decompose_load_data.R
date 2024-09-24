@@ -159,7 +159,8 @@ decompose_load_data <- function(load_data){
     suppressWarnings(
     shortterm_seasonality_plot <-  ggplot(shortterm)+geom_line(aes(1:nrow(shortterm),shortterm$hourly_demand_trend_and_season_corrected, color="Average hourly demand"),linewidth=1.1)+
       theme(legend.title = element_blank()) +ggtitle('Short-term seasonality \n')+
-      theme(plot.title = element_text(hjust = 0.5),legend.position = "bottom")+ylab("MW")+xlab("Hour\n")
+      theme(plot.title = element_text(hjust = 0.5),legend.position = "bottom")+ylab("MW")+xlab("Hour\n")+
+      scale_color_manual(values = c("#ff7f24"))
   )}
   suppressWarnings(
   trend_plot<- ggplot(longterm)+geom_line(aes(year,longterm$avg_hourly_demand, color="Average hourly demand"),linewidth=1.1)+
@@ -169,7 +170,8 @@ decompose_load_data <- function(load_data){
   suppressWarnings(
   midterm_seasonality_plot <-  ggplot(midterm)+geom_line(aes(1:nrow(midterm),midterm$seasonal_avg_hourly_demand, color="Average hourly demand"),linewidth=1.1)+
     theme(legend.title = element_blank()) +ggtitle('Mid-term seasonality \n')+
-    theme(plot.title = element_text(hjust = 0.5))+ylab("MW")+xlab("Day\n")+ theme(legend.position = "none")
+    theme(plot.title = element_text(hjust = 0.5))+ylab("MW")+xlab("Day\n")+ theme(legend.position = "none")+
+    scale_color_manual(values = c("#4d0272"))
   )
   if (! file.exists(country)){
     dir.create(country)}
