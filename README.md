@@ -75,7 +75,7 @@ demand_data_filled = fill_missing_data(demand_data)
 
 ![Decomposed_load](https://github.com/user-attachments/assets/e5db1014-6e2b-4632-ab00-5923e8414553)
 
-
+The function returns a list of three dataframes —one for each time series component. In the following steps each time series will be modeled individually.
 
 
 ### Calculate and show the best long-term model
