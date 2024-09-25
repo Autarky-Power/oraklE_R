@@ -83,6 +83,7 @@ The function returns a list of three dataframes —one for each time series comp
   
 In the following steps, each time series will be modelled individually.
 
+<br>
 
 ### Calculate and show the best long-term model
 First, historical data from the ENTSO-E archive, starting from 2006, is added to the long-term trend series.
