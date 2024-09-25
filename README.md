@@ -85,12 +85,15 @@ In the following steps, each time series will be modelled individually.
 
 
 ### Calculate and show the best long-term model
-First historical data from the ENTSO-E archive starting from 2006 is added to the series of the long-term trend.
+First, historical data from the ENTSO-E archive, starting from 2006, is added to the long-term trend series.
+A dataset with yearly demand data for each ENTSOE-E member country is included in the library.
 
 ```r
 # Get historical data for the respective country
 longterm <- get_historic_load_data(decomposed_data$longterm)
 ```
+
+The long-term electricity demand trend is estimated with different regression algorithms based on macro-economic covariates. 10 macro-economic indicators are fetched via an API call to the Worldbank Development Indicators. 
 
 ```r
 longterm_all_data <- get_macro_economic_data(longterm)
