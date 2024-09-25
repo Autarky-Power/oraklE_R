@@ -75,18 +75,31 @@ demand_data_filled = fill_missing_data(demand_data)
 
 ![Decomposed_load](https://github.com/user-attachments/assets/e5db1014-6e2b-4632-ab00-5923e8414553)
 
-The function returns a list of three dataframes —one for each time series component. In the following steps each time series will be modeled individually.
+The function returns a list of three dataframes —one for each time series component:
+
+- `demand_data$longterm`
+- `demand_data$midterm`
+- `demand_data$shortterm`
+  
+In the following steps, each time series will be modelled individually.
 
 
 ### Calculate and show the best long-term model
+First historical data from the ENTSO-E archive starting from 2006 is added to the series of the long-term trend.
+
 ```r
-# Longterm model
+# Get historical data for the respective country
 longterm <- get_historic_load_data(decomposed_data$longterm)
+```
+
+```r
 longterm_all_data <- get_macro_economic_data(longterm)
 longterm_predictions <- long_term_lm(longterm_all_data,test_set_steps = 2)
 longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_year = 2028, dataset = "WEO")
 longterm_future_predictions <- long_term_future(longterm_future_macro_data)
+```
 
+```r
 # Midterm model
 midterm_demand_data = add_holidays_mid_term(decomposed_data$midterm)
 midterm_demand_and_weather_data = get_weather_data(midterm_demand_data)
