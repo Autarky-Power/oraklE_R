@@ -108,7 +108,9 @@ head(longterm_all_data)
   FR       2009        55409.97        64710879     2.273252e+12           18.30484
   ...
 ```
-It should be noted that the average hourly demand (*avg_hourly_demand*) refers to the average demand over each hour of the respective year (typically in MW). If the complete demand over one year is of interest it can be calculated by multiplying the *avg_hourly_demand* times 8760 hours. 
+It should be noted that the average hourly demand (*avg_hourly_demand*) refers to the average demand over each hour of the respective year (typically in MW). To calculate the total annual demand, multiply *avg_hourly_demand* by 8760 hours.
+
+
 After the dataset is fully prepared the best long-term prediction models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach are specified in the accompanying paper. The variable for *test_set_steps* defines how many years are used for the test set (also commonly referred to as validation set). The *testquant* variable defines how many of the initial best models are subjected to cross-validation.
 
 ```r
