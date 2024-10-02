@@ -108,7 +108,7 @@ head(longterm_all_data)
   ...
 ```
 
-After the dataset is fully prepared the best long-term models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach  are specified in the accompanying paper. The variable for *test_set_steps* defines how many years are used for the test set (also commonly referred to as validation set) and the *testquant* variable defines how many of the initial best models are subjected to cross-validation.
+After the dataset is fully prepared the best long-term models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach  are specified in the accompanying paper. The variable for *test_set_steps* defines how many years are used for the test set (also commonly referred to as validation set). The *testquant* variable defines how many of the initial best models are subjected to cross-validation.
 
 ```r
 longterm_predictions <- long_term_lm(longterm_all_data,test_set_steps = 2, testquant = 500)
