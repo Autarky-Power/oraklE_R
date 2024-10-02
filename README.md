@@ -97,6 +97,7 @@ longterm <- get_historic_load_data(decomposed_data$longterm)
 The long-term electricity demand trend is estimated with different regression algorithms based on macro-economic covariates. 10 macro-economic indicators are fetched via an API call to the [Worldbank Development Indicators](https://databank.worldbank.org/source/world-development-indicators). Additional macro-economic covariates can be added manually.
 
 ```r
+# Get macro-economic covariates for the respective country
 longterm_all_data <- get_macro_economic_data(longterm)
 
 head(longterm_all_data)
@@ -107,10 +108,11 @@ head(longterm_all_data)
   FR       2009        55409.97        64710879     2.273252e+12           18.30484
   ...
 ```
-
-After the dataset is fully prepared the best long-term models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach  are specified in the accompanying paper. The variable for *test_set_steps* defines how many years are used for the test set (also commonly referred to as validation set). The *testquant* variable defines how many of the initial best models are subjected to cross-validation.
+It should be noted that the average hourly demand (*avg_hourly_demand*) refers to the average demand over each hour of the respective year (typically in MW). If the complete demand over one year is of interest it can be calculated by multiplying the *avg_hourly_demand* times 8760 hours. 
+After the dataset is fully prepared the best long-term prediction models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach are specified in the accompanying paper. The variable for *test_set_steps* defines how many years are used for the test set (also commonly referred to as validation set). The *testquant* variable defines how many of the initial best models are subjected to cross-validation.
 
 ```r
+# Calculate the best prediction models
 longterm_predictions <- long_term_lm(longterm_all_data,test_set_steps = 2, testquant = 500)
 ```
 
@@ -118,6 +120,7 @@ The three best models as well as plots for each model are generated and saved.
 
 ![Long_term_results1](https://github.com/user-attachments/assets/3facab6e-5e7c-4f6a-8e13-c53d6d9591a0)
 
+Once the best models are derived, future predictions can be made
 
 ```r
 longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_year = 2028, dataset = "WEO")
