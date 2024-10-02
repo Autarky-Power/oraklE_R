@@ -85,21 +85,45 @@ In the following steps, each time series will be modelled individually.
 
 <br>
 
-### Calculate and show the best long-term model
+### Calculate and show the best long-term models
 First, historical data from the ENTSO-E archive, starting from 2006, is added to the long-term trend series.
-A dataset with yearly demand data for each ENTSOE-E member country is included in the library.
+A dataset with historic yearly demand data for each ENTSOE-E member country is included in the library.
 
 ```r
 # Get historical data for the respective country
 longterm <- get_historic_load_data(decomposed_data$longterm)
 ```
 
-The long-term electricity demand trend is estimated with different regression algorithms based on macro-economic covariates. 10 macro-economic indicators are fetched via an API call to the Worldbank Development Indicators. 
+The long-term electricity demand trend is estimated with different regression algorithms based on macro-economic covariates. 10 macro-economic indicators are fetched via an API call to the [Worldbank Development Indicators](https://databank.worldbank.org/source/world-development-indicators). Additional macro-economic covariates can be added manually.
 
 ```r
 longterm_all_data <- get_macro_economic_data(longterm)
-longterm_predictions <- long_term_lm(longterm_all_data,test_set_steps = 2)
+
+head(longterm_all_data)
+ country   year  avg_hourly_demand    population        GDP         industrial_value_added   ...
+  FR       2006        54417.12        63628261     2.279283e+12           19.28408
+  FR       2007        54769.12        64021737     2.334550e+12           19.13674
+  FR       2008        56214.75        64379696     2.340502e+12           18.81383
+  FR       2009        55409.97        64710879     2.273252e+12           18.30484
+  ...
+```
+
+After the dataset is fully prepared the best long-term models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach  are specified in the accompanying paper. The variable for *test_set_steps* defines how many years are used for the test set (also commonly referred to as validation set) and the *testquant* variable defines how many of the initial best models are subjected to cross-validation.
+
+```r
+longterm_predictions <- long_term_lm(longterm_all_data,test_set_steps = 2, testquant = 500)
+```
+
+The three best models as well as plots for each model are generated and saved.
+
+![Long_term_results1](https://github.com/user-attachments/assets/3facab6e-5e7c-4f6a-8e13-c53d6d9591a0)
+
+
+```r
 longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_year = 2028, dataset = "WEO")
+```
+
+```r
 longterm_future_predictions <- long_term_future(longterm_future_macro_data)
 ```
 
