@@ -155,6 +155,7 @@ If you want to use your own dataset you will need predictions for the following 
  GDP, industrial_value_added, rural_population, service_value_added for model 3 
 ```
 
+After the dataset for the future predictions is prepared, future forecasts until the designated
 ```r
 longterm_future_predictions <- long_term_future(longterm_future_macro_data)
 ```
