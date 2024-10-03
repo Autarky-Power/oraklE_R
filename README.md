@@ -122,10 +122,37 @@ The three best models as well as plots for each model are generated and saved.
 
 ![Long_term_results1](https://github.com/user-attachments/assets/3facab6e-5e7c-4f6a-8e13-c53d6d9591a0)
 
-Once the best models are derived, future predictions can be made
+Once the best models are derived, future predictions can be made. Since these models rely on macroeconomic covariates, which are unknown for future years, forecasts for these indicators are needed. The library can obtain these forecasts from the [World Economic Outlook Database](https://www.imf.org/en/Publications/WEO/weo-database/2023/October) of the International Monetary Fund, or users can manually include predictions from other sources or specific scenarios.
+
+The *end_year* variable specifies until which year the predictions will be made. If the *WEO* dataset is used, predictions can only be made up to 2028. If the dataset variable is set to any option other than WEO, the function will prepare the data frame structure and list the required macroeconomic indicators. 
 
 ```r
+## Prepare dataset for future predictions
+# With the dataset option set to the default ("WEO")
 longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_year = 2028, dataset = "WEO")
+tail(longterm_future_macro_data)
+
+country   year   avg_hourly_demand     population          GDP           industrial_value_added   ...
+  FR      2021          53225.29        67764304      2.575192e+12               16.39563
+  FR      2022             NA           71764951      2.640147e+12               17.56864
+  FR      2023             NA           75808393      2.665256e+12               17.73190
+  FR      2024             NA           77673096      2.701124e+12               17.71412
+  FR      2025             NA           79192297      2.750043e+12               18.21028
+  FR      2026             NA           80760586      2.795947e+12               18.48387
+  FR      2027             NA           82230070      2.838581e+12               18.72595
+  FR      2028             NA           83540334      2.879402e+12               19.03256
+
+# With the dataset option set to anything else (any string works)
+longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_year = 2028, dataset = "manual")
+
+Output:
+If you want to use your own dataset you will need predictions for the following macro-economic variables:
+
+ GDP, GNI, industrial_value_added, rural_population for model 1 
+
+ GDP_growth, household_consumption_expenditure, rural_population, service_value_added for model 2 
+
+ GDP, industrial_value_added, rural_population, service_value_added for model 3 
 ```
 
 ```r
