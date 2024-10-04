@@ -186,7 +186,18 @@ Daily temperature values are obtained by first retrieving the 20 most populated 
 midterm_demand_and_weather_data = get_weather_data(midterm_demand_data)
 ```
 
+This function returns a list of two dataframes —one with the prepared demand data for the models and a dataframe with the daily temperature values for the 20 regions:
+
+- `midterm_demand_and_weather_data$demand`
+- `midterm_demand_and_weather_data$temperature_data`
+
+The mid-term seasonality can then be modelled using the *midterm_demand_and_weather_data$demand* data frame. 
+Similar to the long-term trend models, the medium-term component is modelled using different regression techniques.  
+
+```r
 midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, Tref = 18, method = "temperature transformation")
+```
+
 midterm_future_predictions = mid_term_future(midterm_predictions, end_year = 2028)
 
 # Calculate and show the best short-term seasonality models
