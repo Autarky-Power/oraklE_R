@@ -179,21 +179,28 @@ The mid-term time series is modelled using seasonal, calendar, and temperature-r
 midterm_demand_data = add_holidays_mid_term(decomposed_data$midterm)
 ```
 
-Daily temperature values are obtained by first retrieving the 20 most populated regions of the respective country or area from [https://wft-geo-db.p.rapidapi.com](https://wft-geo-db.p.rapidapi.com)). Next, the nearest weather station for each region is identified using [https://meteostat.p.rapidapi.com](https://meteostat.p.rapidapi.com) and the daily temperature data is downloaded. A weighted daily average temperature based on population is calculated for the provided country.
+Daily temperature values are obtained by first retrieving the 20 most populated regions of the respective country or area from [https://wft-geo-db.p.rapidapi.com](https://wft-geo-db.p.rapidapi.com)). Next, the nearest weather station for each region is identified using [https://meteostat.p.rapidapi.com](https://meteostat.p.rapidapi.com) and the daily temperature data is downloaded. A weighted daily average temperature for the country is then calculated, using the population share and temperature values of the 20 regions.
 
 ```r
+# Get daily average temperature values
 midterm_demand_and_weather_data = get_weather_data(midterm_demand_data)
 ```
 
 midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, Tref = 18, method = "temperature transformation")
 midterm_future_predictions = mid_term_future(midterm_predictions, end_year = 2028)
 
-# Shortterm model
+# Calculate and show the best short-term seasonality models
+
+
+```r
 shortterm_demand_data= add_holidays_short_term(decomposed_data$shortterm)
 shortterm_predictions <- short_term_lm(shortterm_demand_data)
 shortterm_future_predictions = short_term_future(shortterm_predictions,end_year = 2028)
+```
 
 # Combine all models
+
+```r
 full_model_predictions <- combine_models(example_longterm_predictions,example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
 full_model_future_predictions <- combine_models_future(longterm_future_predictions,midterm_future_predictions,
                                                        shortterm_future_predictions,longterm_model_number =1)
