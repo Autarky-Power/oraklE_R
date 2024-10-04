@@ -85,7 +85,7 @@ In the following steps, each time series will be modelled individually.
 
 <br>
 
-### Calculate and show the best long-term models
+### Calculate and show the best long-term component models
 First, historical data from the ENTSO-E archive, starting from 2006, is added to the long-term trend series.
 A dataset with historic yearly demand data for each ENTSOE-E member country is included in the library.
 
@@ -155,10 +155,23 @@ If you want to use your own dataset you will need predictions for the following 
  GDP, industrial_value_added, rural_population, service_value_added for model 3 
 ```
 
-After the dataset for the future predictions is prepared, future forecasts until the designated
+After the dataset for the future predictions is prepared, long-term forecasts until the designated time period can be made. One forecast with each of the three best models is calculated and the results are saved and plotted.
+
 ```r
+# Generate future long-term component forecasts
 longterm_future_predictions <- long_term_future(longterm_future_macro_data)
 ```
+
+![Long_term_results_future](https://github.com/user-attachments/assets/6ea76ae8-5aea-4d3b-9c48-132da3ebc269)
+
+### Calculate and show the best mid-term seasonality models
+
+The mid-term component is the difference between the yearly hourly average demand and the daily average hourly demand of the respective day:
+
+$$D_M(y,d) = D_m(d)-D_L(y)$$
+
+where $D_M(y,d)$ refers to the mid-term component at day $d$ and year $y$, $D_m(d)$ refers to the average daily hourly load of day $d$, and $D_L(y)$ refers to the yearly average hourly load of year $y$.
+The mid-term time series is modelled using seasonal and calendar variables and temperature related variables.  
 
 ```r
 # Midterm model
