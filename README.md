@@ -171,12 +171,20 @@ The mid-term component is the difference between the yearly hourly average deman
 $$D_M(y,d) = D_m(d)-D_L(y)$$
 
 where $D_M(y,d)$ refers to the mid-term component at day $d$ and year $y$, $D_m(d)$ refers to the average daily hourly load of day $d$, and $D_L(y)$ refers to the yearly average hourly load of year $y$.
-The mid-term time series is modelled using seasonal and calendar variables and temperature related variables.  
+
+The mid-term time series is modelled using seasonal, calendar, and temperature-related variables. Seasonal covariates include the month (January-December), day of the week (Sunday-Saturday), and a dummy variable indicating whether the day is a holiday or a workday. Information about public holidays is retrieved from [https://date.nager.at/api/v3/publicholidays/](https://date.nager.at/api/v3/publicholidays/).
 
 ```r
-# Midterm model
+# Get all national holidays within the respective time period
 midterm_demand_data = add_holidays_mid_term(decomposed_data$midterm)
+```
+
+Daily temperature values are obtained by first retrieving the 20 most populated regions of the respective country or area from [https://wft-geo-db.p.rapidapi.com](https://wft-geo-db.p.rapidapi.com)). Next, the nearest weather station for each region is identified using [https://meteostat.p.rapidapi.com](https://meteostat.p.rapidapi.com) and the daily temperature data is downloaded. A weighted daily average temperature based on population is calculated for the provided country.
+
+```r
 midterm_demand_and_weather_data = get_weather_data(midterm_demand_data)
+```
+
 midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, Tref = 18, method = "temperature transformation")
 midterm_future_predictions = mid_term_future(midterm_predictions, end_year = 2028)
 
