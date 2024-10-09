@@ -192,10 +192,16 @@ This function returns a list of two dataframes —one with the prepared demand d
 - `midterm_demand_and_weather_data$temperature_data`
 
 The mid-term seasonality can then be modelled using the *midterm_demand_and_weather_data$demand* data frame. 
-Similar to the long-term trend models, the medium-term component is modelled using different regression techniques. The relationship between electricity demand and temperature is non-linear (cite), the library implements two different options to account for this non-linearity:
-1.) If *method = "temperature transformation"* the daily temperature values are transformed to heating and cooling degree days (HD and CD)
+Similar to the long-term trend models, the medium-term component is modelled using different regression techniques. The relationship between electricity demand and temperature is non-linear (cite), the library implements two different options to account for this non-linearity: 
+
+1.) If *method = "temperature transformation"*
+
+The daily temperature values are transformed to heating and cooling degree days (HD and CD):
 
 $$HD = \max \lbrace T_{\text{Ref}} - T, 0 \rbrace \quad CD = \max \lbrace T - T_{\text{Ref}}, 0 \rbrace$$
+
+where $T_{\text{Ref}}$ is the reference temperature (usually 18 °C for Central European countries). The reference temperature can be set with the *Tref* option.
+Squared, cubed and up to two-day lagged values of the calculated heating and cooling degree day values, and the original daily temperatures are also included as covariates. 
 
 ```r
 midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, Tref = 18, method = "temperature transformation")
