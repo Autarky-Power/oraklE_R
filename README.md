@@ -114,7 +114,7 @@ It should be noted that the average hourly demand (*avg_hourly_demand*) refers t
 After the dataset is fully prepared the best long-term prediction models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach are specified in the accompanying paper. The variable for *test_set_steps* defines how many years are used for the test set (also commonly referred to as validation set). The *testquant* variable defines how many of the initial best models are subjected to cross-validation.
 
 ```r
-# Calculate the best prediction models
+# Calculate the best long-term trend prediction models
 longterm_predictions <- long_term_lm(longterm_all_data,test_set_steps = 2, testquant = 500)
 ```
 
@@ -201,24 +201,53 @@ The daily temperature values are transformed to heating and cooling degree days 
 $$HD = \max \lbrace T_{\text{Ref}} - T, 0 \rbrace \quad CD = \max \lbrace T - T_{\text{Ref}}, 0 \rbrace$$
 
 where $T_{\text{Ref}}$ is the reference temperature (usually 18 °C for Central European countries). The reference temperature can be set with the *Tref* option.
-Squared, cubed and up to two-day lagged values of the calculated heating and cooling degree day values, and the original daily temperatures are also included as covariates. 
+Squared, cubed, and up to two-day lagged values of the calculated heating and cooling degree day values, along with the original daily temperatures, are also included as covariates. The covariate selection is then done by a LASSO method (cite).
+
+2.) If *method = "spline"*
+
+A spline regression is instead used without the transformation of the temperature data.
 
 ```r
+# Calculate the best mid-term seasonality prediction model
 midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, Tref = 18, method = "temperature transformation")
 ```
 
-midterm_future_predictions = mid_term_future(midterm_predictions, end_year = 2028)
+![Mid_term_results](https://github.com/user-attachments/assets/0451d16b-87d4-4d90-8d9d-685345083e98)
 
-# Calculate and show the best short-term seasonality models
+After identifying the best mid-term model, future seasonality predictions can be generated. While the future calendar and holiday covariates are deterministic, the future daily average temperatures are impossible to know with certainty. To estimate these, the library calculates the average of the past three observations for the same day. For example, the average temperature for July 22, 2025, would be estimated by averaging the temperatures observed on July 22 in 2022, 2023, and 2024. The variable *end_year* specifies the final year up to which future predictions will be made.
+
+```r
+# Generate future mid-term component forecasts
+midterm_future_predictions = mid_term_future(midterm_predictions, end_year = 2028)
+```
+
+![mid_term_results_future](https://github.com/user-attachments/assets/018d1623-7cfe-4579-8373-246fdc87b078)
+
+
+### Calculate and show the best short-term seasonality models
+
+The short-term component corresponds to the respective intra-day patterns. Which are isolated by subtracting the yearly and daily averages $\bar{D}_L(t_L)$, $D_M(t_L,t_M)$ from the hourly load data.is calculated as the difference between the actual hourly demand and both the yearly hourly average demand and the daily average hourly demand for the corresponding day:
+
+$$\bar{D}_S(t_L,t_M, t_S)=D_h(T_S \cdot T_M \cdot (t_L-1)+T_S \cdot (t_M-1)+t_s)-D_M(t_L,t_M)-\bar{D}_L(t_L)$$
+
+where $D_M(y,d)$ refers to the mid-term component at day $d$ and year $y$, $D_m(d)$ refers to the average daily hourly load of day $d$, and $D_L(y)$ refers to the yearly average hourly load of year $y$.
+
+The mid-term time series is modelled using seasonal, calendar, and temperature-related variables. Seasonal covariates include the month (January-December), day of the week (Sunday-Saturday), and a dummy variable indicating whether the day is a holiday or a workday. Information about public holidays is retrieved from [https://date.nager.at/api/v3/publicholidays/](https://date.nager.at/api/v3/publicholidays/).
 
 
 ```r
 shortterm_demand_data= add_holidays_short_term(decomposed_data$shortterm)
+```
+
+```r
 shortterm_predictions <- short_term_lm(shortterm_demand_data)
+```
+
+```r
 shortterm_future_predictions = short_term_future(shortterm_predictions,end_year = 2028)
 ```
 
-# Combine all models
+### Combine all models
 
 ```r
 full_model_predictions <- combine_models(example_longterm_predictions,example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
