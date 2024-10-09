@@ -244,10 +244,11 @@ shortterm_demand_data= add_holidays_short_term(decomposed_data$shortterm)
 ```
 
 A separate short-term model is generated for each combination of day type and month. This results in a total of 84 models (12 months × 7 days). This approach has proven to yield better results compared to using a single model for the entire time series.
+The variable for *test_set_steps* defines how many hours are used for the test set. It should be consistent between all three model components. Because we set the test set steps for the long-term model to 2 years it should be set to 17520 in the short-term model (2 years × 8760 hours). 
 
 ```r
 # Calculate the best short-term seasonality models
-shortterm_predictions <- short_term_lm(shortterm_demand_data)
+shortterm_predictions <- short_term_lm(shortterm_demand_data ,test_set_steps=17520)
 ```
 
 <br>
@@ -272,7 +273,7 @@ shortterm_future_predictions = short_term_future(shortterm_predictions,end_year 
 
 ### Combine all models
 
-After all three components have been modelled successfully, the predictions can combined into the full demand series.
+After all three components have been modelled successfully, the predictions can be combined into the full demand series.
 The *longterm_model_number* option specifies which of the three best long-term models will be used. The function also prints four statistical metrics: MAPE, RMSE, Accuracy, and the R²-value of both the training and the validation set.
 
 ```r
