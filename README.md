@@ -164,6 +164,8 @@ longterm_future_predictions <- long_term_future(longterm_future_macro_data)
 
 ![Long_term_results_future](https://github.com/user-attachments/assets/6ea76ae8-5aea-4d3b-9c48-132da3ebc269)
 
+<br>
+
 ### Calculate and show the best mid-term seasonality models
 
 The mid-term component is the difference between the yearly hourly average demand and the daily average hourly demand of the respective day:
@@ -196,7 +198,7 @@ Similar to the long-term trend models, the medium-term component is modelled usi
 
 1.) If *method = "temperature transformation"*
 
-The daily temperature values are transformed to heating and cooling degree days (HD and CD):
+The daily temperature values are transformed into heating and cooling degree days (HD and CD):
 
 $$HD = \max \lbrace T_{\text{Ref}} - T, 0 \rbrace \quad CD = \max \lbrace T - T_{\text{Ref}}, 0 \rbrace$$
 
@@ -207,14 +209,17 @@ Squared, cubed, and up to two-day lagged values of the calculated heating and co
 
 A spline regression is instead used without the transformation of the temperature data.
 
+The variable for *test_set_steps* defines how many days are used for the test set. It should be consistent between all three model components. Because we set the test set steps for the long-term model to 2 years it should be set to 730  in the mid-term model (2 years × 365 days). 
+
 ```r
 # Calculate the best mid-term seasonality prediction model
-midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, Tref = 18, method = "temperature transformation")
+midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, test_set_steps=730, Tref = 18, method = "temperature transformation")
 ```
 
-![Mid_term_results](https://github.com/user-attachments/assets/0451d16b-87d4-4d90-8d9d-685345083e98)
+![Mid_term_results](https://github.com/user-attachments/assets/9bed2a15-5e3b-40f8-a1a9-a20ee57b0d8e)
 
-After identifying the best mid-term model, future seasonality predictions can be generated. While the future calendar and holiday covariates are deterministic, the future daily average temperatures are impossible to know with certainty. To estimate these, the library calculates the average of the past three observations for the same day. For example, the average temperature for July 22, 2025, would be estimated by averaging the temperatures observed on July 22 in 2022, 2023, and 2024. The variable *end_year* specifies the final year up to which future predictions will be made.
+
+After identifying the best mid-term model, future seasonality predictions can be generated. While the future calendar and holiday covariates are deterministic, the future daily average temperatures are impossible to know with certainty. To estimate these, the library calculates the average of the past three observations for the same day. For example, the average temperature for July 22, 2025, would be estimated by averaging the temperatures observed on July 22 in 2022, 2023, and 2024. The variable *end_year* specifies the final year up to which future predictions will be made and should be consistent over all three model components (long-, medium-, and short-term).
 
 ```r
 # Generate future mid-term component forecasts
@@ -223,35 +228,110 @@ midterm_future_predictions = mid_term_future(midterm_predictions, end_year = 202
 
 ![mid_term_results_future](https://github.com/user-attachments/assets/018d1623-7cfe-4579-8373-246fdc87b078)
 
+<br>
 
 ### Calculate and show the best short-term seasonality models
 
-The short-term component corresponds to the respective intra-day patterns. Which are isolated by subtracting the yearly and daily averages $\bar{D}_L(t_L)$, $D_M(t_L,t_M)$ from the hourly load data.is calculated as the difference between the actual hourly demand and both the yearly hourly average demand and the daily average hourly demand for the corresponding day:
+The short-term  component $D_S(y,d,h)$ corresponds to the respective intra-day patterns. These are isolated by subtracting the yearly and daily averages $D_L(y)$, $D_m(y,d)$ from the hourly load data of year $y$, day $d$, and hour $h$ :
 
-$$\bar{D}_S(t_L,t_M, t_S)=D_h(T_S \cdot T_M \cdot (t_L-1)+T_S \cdot (t_M-1)+t_s)-D_M(t_L,t_M)-\bar{D}_L(t_L)$$
+$$D_S(y,d,h) =D_s(h) - D_m(y,d)-D_L(y)$$
 
-where $D_M(y,d)$ refers to the mid-term component at day $d$ and year $y$, $D_m(d)$ refers to the average daily hourly load of day $d$, and $D_L(y)$ refers to the yearly average hourly load of year $y$.
-
-The mid-term time series is modelled using seasonal, calendar, and temperature-related variables. Seasonal covariates include the month (January-December), day of the week (Sunday-Saturday), and a dummy variable indicating whether the day is a holiday or a workday. Information about public holidays is retrieved from [https://date.nager.at/api/v3/publicholidays/](https://date.nager.at/api/v3/publicholidays/).
-
+The short-term time series is modelled with multiple regression using only the type of hour and a holiday indicator as covariates. Information about public holidays is again retrieved from [https://date.nager.at/api/v3/publicholidays/](https://date.nager.at/api/v3/publicholidays/).
 
 ```r
+# Get all national holidays within the respective time period
 shortterm_demand_data= add_holidays_short_term(decomposed_data$shortterm)
 ```
 
+A separate short-term model is generated for each combination of day type and month. This results in a total of 84 models (12 months × 7 days). This approach has proven to yield better results compared to using a single model for the entire time series.
+
 ```r
+# Calculate the best short-term seasonality models
 shortterm_predictions <- short_term_lm(shortterm_demand_data)
 ```
 
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b77ed5c0-0021-4189-ae07-c142a17221bd" alt="short_term_results_sample_weeks" width="45%" style="display: inline-block;" />
+  <img src="https://github.com/user-attachments/assets/3bc98573-4c5b-4057-8b21-3db3dfe37c5f" alt="short_term_results" width="45%" style="display: inline-block;" />
+</p>
+
+<br>
+
+Because all used covariates are deterministic the future short-term seasonality forecast can easily be generated.
+
 ```r
+# Generate future short-term component forecasts
 shortterm_future_predictions = short_term_future(shortterm_predictions,end_year = 2028)
 ```
 
+![short_term_results_future](https://github.com/user-attachments/assets/2d1bc6b9-70e3-47ea-9d68-9259cb02c849)
+
+<br>
+
 ### Combine all models
 
+After all three components have been modelled successfully, the predictions can combined into the full demand series.
+The *longterm_model_number* option specifies which of the three best long-term models will be used. The function also prints four statistical metrics: MAPE, RMSE, Accuracy, and the R²-value of both the training and the validation set.
+
 ```r
-full_model_predictions <- combine_models(example_longterm_predictions,example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
+# Combine all model predictions and evaluate the accuracy
+full_model_predictions <- combine_models(longterm_predictions,midterm_predictions,shortterm_predictions,longterm_model_number =1)
+
+Output:
+*** Final Model Metrics ***
+
+    MAPE
+Training Set: 0.0267 
+Test Set:     0.0384 
+
+    RSQUARE
+Training Set: 0.9754 
+Test Set:     0.9474 
+
+    ACCURACY
+Training Set: 97.33 %
+Test Set:     96.16 %
+
+    RMSE
+Training Set: 1863.2 MW
+Test Set:     2635.4 MW
+```
+
+Note that the algorithm reaches a MAPE below 4% over the validation set of 17520 hours (2 years) for French demand data.
+
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/af339a58-beeb-4a84-ae0c-9169e7c2708b" alt="complete_model_sample_weeks" width="45%" style="display: inline-block;" />
+  <img src="https://github.com/user-attachments/assets/9d99c117-9dc0-475d-a6b8-a8c027b8f758" alt="complete_model_results" width="45%" style="display: inline-block;" />
+</p>
+
+<br>
+
+Similarly, full future predictions up to the specified end year can be generated.
+
+```r
+# Generate full future demand predictions in hourly resolution
 full_model_future_predictions <- combine_models_future(longterm_future_predictions,midterm_future_predictions,
                                                        shortterm_future_predictions,longterm_model_number =1)
+```
+
+<br>
+
+![complete_model_results2](https://github.com/user-attachments/assets/ca5c1ba8-15e3-4016-9c16-ee112f204128)
+
+<br>
+
+
+### All-in-One function
+
+The *full_forecast* function automatically performs all the steps described above and generates a complete forecast for a specified country. 
+The *future* option determines whether future forecasts should be made, and if so, up to which *end_year*.
+
+```r
+forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
+   future="yes", end_year=2028)
 ```
 
