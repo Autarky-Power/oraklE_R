@@ -1,0 +1,202 @@
+---
+title: "oRaklE: Multi-Horizon Electricity Demand Forecasting in High Resolution"
+author: "Johannes Schwenzer, Simone Maxand, Tatiana C. G. Grandón"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{oRaklE: Multi-Horizon Electricity Demand Forecasting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+The **oRaklE** R package provides tools for long-term electricity demand forecasting with hourly resolution on a country-wide scale. Designed for scalability and precision, it supports stepwise modeling of electricity demand components (long-term, mid-term, and short-term) and enables detailed analysis and forecasting. 
+
+This vignette provides a comprehensive overview of the package's features and demonstrates how to use its functionalities.
+
+---
+
+# Package Workflow
+
+The package's functions can be used independently or combined using the `full_forecast()` function. Below is the flowchart that outlines the package workflow:
+
+```{r, echo=FALSE, out.width='600px', fig.align='center'}
+knitr::include_graphics("https://github.com/Autarky-Power/oraklE_R/assets/45041403/c166e930-876a-4e90-873a-3f4bcda249a7")
+```
+
+---
+
+# Installation
+
+## From CRAN (planned):
+```r
+install.packages("oRaklE")
+```
+
+## From GitHub:
+Install the development version using `devtools`:
+
+```r
+install.packages("devtools")
+devtools::install_github("Autarky-Power/oraklE_R")
+```
+
+## Install Required Dependencies:
+```r
+packages <- c("caret", "countrycode", "doParallel", "dplyr", "ggplot2", "ggthemes", "glmnet", "httr",
+              "jsonlite", "lubridate", "MLmetrics", "MuMIn", "parallel", "patchwork", "purrr", 
+              "R.utils", "readxl", "xml2")
+install.packages(setdiff(packages, rownames(installed.packages())))
+```
+
+Load the package:
+
+```r
+library("oRaklE")
+```
+
+---
+
+# Usage
+
+## Step 1: Data Acquisition and Preparation
+
+The package retrieves load data from the ENTSO-E Transparency Platform. If the data is unavailable, a custom dataset can be supplied.
+
+### Retrieve Load Data:
+```r
+demand_data <- get_entsoE_data(2017, 2021, "France")
+```
+```{r, echo=FALSE, out.width='600px', fig.align='center'}
+knitr::include_graphics("https://github.com/user-attachments/assets/24450818-c869-4142-a5b3-cb2a2ec7ff36")
+```
+
+### Fill Missing Data:
+Replace missing values with corresponding values from the previous week and standardize the data:
+
+```r
+demand_data_filled <- fill_missing_data(demand_data)
+```
+
+---
+
+## Step 2: Decomposition of Load Data
+
+The load data is decomposed into three components:
+- **Long-term trend**
+- **Mid-term seasonality**
+- **Short-term seasonality**
+
+```r
+decomposed_data <- decompose_load_data(demand_data_filled)
+```
+```{r, echo=FALSE, out.width='600px', fig.align='center'}
+knitr::include_graphics("https://github.com/user-attachments/assets/e5db1014-6e2b-4632-ab00-5923e8414553")
+```
+---
+
+## Step 3: Long-Term Trend Modeling
+
+### Retrieve Historical Data:
+```r
+longterm <- get_historic_load_data(decomposed_data$longterm)
+```
+
+### Add Macroeconomic Covariates:
+```r
+longterm_all_data <- get_macro_economic_data(longterm)
+```
+
+### Derive Long-Term Prediction Models:
+```r
+longterm_predictions <- long_term_lm(longterm_all_data, test_set_steps = 2, testquant = 500)
+```
+
+### Generate Future Predictions:
+```r
+longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_year = 2028)
+longterm_future_predictions <- long_term_future(longterm_future_macro_data)
+```
+
+---
+
+## Step 4: Mid-Term Seasonality Modeling
+
+### Add Holidays:
+```r
+midterm_demand_data <- add_holidays_mid_term(decomposed_data$midterm)
+```
+
+### Retrieve Weather Data:
+```r
+midterm_demand_and_weather_data <- get_weather_data(midterm_demand_data)
+```
+
+### Derive Mid-Term Prediction Models:
+```r
+midterm_predictions <- mid_term_lm(midterm_demand_and_weather_data$demand, 
+                                    test_set_steps = 730, Tref = 18, 
+                                    method = "temperature transformation")
+```
+
+### Generate Future Predictions:
+```r
+midterm_future_predictions <- mid_term_future(midterm_predictions, end_year = 2028)
+```
+
+---
+
+## Step 5: Short-Term Seasonality Modeling
+
+### Add Holidays:
+```r
+shortterm_demand_data <- add_holidays_short_term(decomposed_data$shortterm)
+```
+
+### Derive Short-Term Prediction Models:
+```r
+shortterm_predictions <- short_term_lm(shortterm_demand_data, test_set_steps = 17520)
+```
+
+### Generate Future Predictions:
+```r
+shortterm_future_predictions <- short_term_future(shortterm_predictions, end_year = 2028)
+```
+
+---
+
+## Step 6: Combine All Models
+
+Finally, the individual models are combined into a complete demand forecast:
+
+```r
+full_model_predictions <- combine_models(longterm_predictions, 
+                                         midterm_predictions, 
+                                         shortterm_predictions, 
+                                         longterm_model_number = 1)
+```
+
+### Generate Future Forecasts:
+```r
+full_model_future_predictions <- combine_models_future(longterm_future_predictions, 
+                                                       midterm_future_predictions, 
+                                                       shortterm_future_predictions, 
+                                                       longterm_model_number = 1)
+```
+
+---
+
+# All-in-One Function
+
+The `full_forecast()` function automates all the steps described above. Example usage:
+
+```r
+forecast_data <- full_forecast(start_year = 2017, end_year = 2021, country = "France", 
+                               test_set_steps = 2, future = "yes", end_year = 2028)
+```
+
+---
+
+# Conclusion
+
+The **oRaklE** package provides a comprehensive framework for long-term electricity demand forecasting. By combining data preprocessing, component decomposition, and model generation, it ensures scalability, precision, and transparency in the forecasting process. This vignette has demonstrated its key functionalities and workflow.

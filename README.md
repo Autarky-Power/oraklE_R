@@ -5,7 +5,8 @@ R package for Long-term Electricity Demand Forecasting in hourly resolution on a
 
 
 
-[![Github All Releases](https://img.shields.io/github/downloads/Autarky-Power/orakle/total.svg)]()
+![Github All Releases](https://img.shields.io/github/downloads/Autarky-Power/orakle/total.svg)
+
 
 ## Flowchart for package use
 
@@ -174,14 +175,14 @@ $$D_M(y,d) = D_m(d)-D_L(y)$$
 
 where $D_M(y,d)$ refers to the mid-term component at day $d$ and year $y$, $D_m(d)$ refers to the average daily hourly load of day $d$, and $D_L(y)$ refers to the yearly average hourly load of year $y$.
 
-The mid-term time series is modelled using seasonal, calendar, and temperature-related variables. Seasonal covariates include the month (January-December), day of the week (Sunday-Saturday), and a dummy variable indicating whether the day is a holiday or a workday. Information about public holidays is retrieved from [https://date.nager.at/api/v3/publicholidays/](https://date.nager.at/api/v3/publicholidays/).
+The mid-term time series is modelled using seasonal, calendar, and temperature-related variables. Seasonal covariates include the month (January-December), day of the week (Sunday-Saturday), and a dummy variable indicating whether the day is a holiday or a workday. Information about public holidays is retrieved from [https://date.nager.at](https://date.nager.at).
 
 ```r
 # Get all national holidays within the respective time period
 midterm_demand_data = add_holidays_mid_term(decomposed_data$midterm)
 ```
 
-Daily temperature values are obtained by first retrieving the 20 most populated regions of the respective country or area from [https://wft-geo-db.p.rapidapi.com](https://wft-geo-db.p.rapidapi.com)). Next, the nearest weather station for each region is identified using [https://meteostat.p.rapidapi.com](https://meteostat.p.rapidapi.com) and the daily temperature data is downloaded. A weighted daily average temperature for the country is then calculated, using the population share and temperature values of the 20 regions.
+Daily temperature values are obtained by first retrieving the 20 most populated regions of the respective country or area from [https://rapidapi.com/wirefreethought/api/geodb-cities](https://rapidapi.com/wirefreethought/api/geodb-cities). Next, the nearest weather station for each region is identified using [https://rapidapi.com/meteostat/api/meteostat](https://rapidapi.com/meteostat/api/meteostat) and the daily temperature data is downloaded. A weighted daily average temperature for the country is then calculated, using the population share and temperature values of the 20 regions.
 
 ```r
 # Get daily average temperature values
@@ -236,7 +237,7 @@ The short-term  component $D_S(y,d,h)$ corresponds to the respective intra-day p
 
 $$D_S(y,d,h) =D_s(h) - D_m(y,d)-D_L(y)$$
 
-The short-term time series is modelled with multiple regression using only the type of hour and a holiday indicator as covariates. Information about public holidays is again retrieved from [https://date.nager.at/api/v3/publicholidays/](https://date.nager.at/api/v3/publicholidays/).
+The short-term time series is modelled with multiple regression using only the type of hour and a holiday indicator as covariates. Information about public holidays is again retrieved from [https://date.nager.at](https://date.nager.at) via APIS.
 
 ```r
 # Get all national holidays within the respective time period
