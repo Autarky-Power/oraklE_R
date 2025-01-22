@@ -4,8 +4,7 @@ R package for Long-term Electricity Demand Forecasting in hourly resolution on a
 
 
 
-
-[![Github All Releases](https://img.shields.io/github/downloads/Autarky-Power/orakle/total.svg)]()
+![Github All Releases](https://img.shields.io/github/downloads/Autarky-Power/orakle/total.svg)
 
 ## Flowchart for package use
 
