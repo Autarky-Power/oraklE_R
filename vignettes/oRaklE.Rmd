@@ -195,8 +195,4 @@ forecast_data <- full_forecast(start_year = 2017, end_year = 2021, country = "Fr
                                test_set_steps = 2, future = "yes", end_year = 2028)
 ```
 
----
 
-# Conclusion
-
-The **oRaklE** package provides a comprehensive framework for long-term electricity demand forecasting. By combining data preprocessing, component decomposition, and model generation, it ensures scalability, precision, and transparency in the forecasting process. This vignette has demonstrated its key functionalities and workflow.
