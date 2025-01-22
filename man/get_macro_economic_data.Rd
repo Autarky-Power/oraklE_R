@@ -13,7 +13,7 @@ get_macro_economic_data(longterm_data)
 Data frame with the original time series and 10 additional columns with macroeconomic indicators.
 }
 \description{
-This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI).
+This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI) of the World Bank (https://databank.worldbank.org/source/world-development-indicators).
 The variables are suspected to have a predictive capacity for the load data.
 }
 \examples{

@@ -287,10 +287,10 @@ mid_term_lm <- function(demand_and_weather_data,Tref=18, test_set_steps=730, met
           strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
           strip.text = element_text(face="bold"))+
     theme(legend.title = element_blank())+
-    theme(axis.title=element_text(size=23))+
-    theme(legend.text=element_text(size=23))+
-    theme(axis.text=element_text(size=20))+
-    theme(plot.title = element_text(size=26))+
+    theme(axis.title=element_text(size=18))+
+    theme(legend.text=element_text(size=18))+
+    theme(axis.text=element_text(size=16))+
+    theme(plot.title = element_text(size=22))+
     scale_x_continuous(breaks = index,labels = years)+guides(color = guide_legend(override.aes = list(linewidth = 2)))
 
 

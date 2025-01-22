@@ -1,6 +1,6 @@
 #' Load a list of macroeconomic data from WDI
 #'
-#' This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI).
+#' This function downloads a set of ten macroeconomic variables via API from the World Development Indicators (WDI) of the World Bank (https://databank.worldbank.org/source/world-development-indicators).
 #' The variables are suspected to have a predictive capacity for the load data.
 #'
 #' @param longterm_data The long-term data series resulting from the function \code{\link{decompose_load_data}}. Contains information on country (longterm$country) and years (longterm$year).

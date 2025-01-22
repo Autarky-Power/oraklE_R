@@ -1,5 +1,5 @@
 Package: oRaklE
-Title: Multi-horizon Electricity Demand Forecasting in High Resolution
+Title: Multi-Horizon Electricity Demand Forecasting in High Resolution
 Version: 0.0.0.9000
 Authors@R:
     c(
@@ -8,9 +8,12 @@ Authors@R:
                comment = c(ORCID = "0009-0006-9618-8889")),
         person(given = "Simone", family = "Maxand", email = "maxand@europa-uni.de", 
                role = c("aut"), 
-               comment = c(ORCID = "0009-0006-9618-8889"))
+               comment = c(ORCID = "0000-0002-3153-7922")),
+        person(given = "Tatiana", family = "Gonzalez Grandón", email = "t.c.g.grandon@ntnu.no", 
+               role = c("aut"), 
+               comment = c(ORCID = "0000-0001-6587-0144"))
     )
-Description: What the package does (one paragraph).
+Description: The oRaklE package is designed to provide researchers and practitioners with highly accurate long-term electricity demand predictions on a country scale in hourly resolution. The package offers real-time data like power demand, weather data, and macro-economic indicators through automated API integrations from various institutions, ensuring access to up-to-date information. It incorporates advanced forecasting techniques and helps with selecting the best models. The stepwise approach maintains transparency on the various model selection processes and encompasses the ability to be adapted to individual needs. With a focus on scalability and precision, oRaklE facilitates robust decision-making in energy management and planning.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
