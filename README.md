@@ -23,7 +23,7 @@ The functions included in the package can be used separately or combined in the 
 <br>
 
 <div align="center">
-<img src="https://github.com/Autarky-Power/oraklE_R/assets/45041403/93286ddc-13d4-4e92-a254-0d68eb608d7b)https://github.com/Autarky-Power/oraklE_R/assets/93286ddc-13d4-4e92-a254-0d68eb608d7b" width="600">
+<img src="https://github.com/Autarky-Power/oraklE_R/assets/45041403/93286ddc-13d4-4e92-a254-0d68eb608d7b)https://github.com/Autarky-Power/oraklE_R/assets/93286ddc-13d4-4e92-a254-0d68eb608d7b" width="700">
 </div>
 
 <br>
