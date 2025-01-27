@@ -20,6 +20,23 @@ The functions included in the package can be used separately or combined in the 
 
 <br>
 
+<br>
+
+<div align="center">
+<img src="https://github.com/Autarky-Power/oraklE_R/assets/45041403/c166e930-876a-4e90-873a-3f4bcda249a7)https://github.com/Autarky-Power/oraklE_R/assets/93286ddc-13d4-4e92-a254-0d68eb608d7b" width="600">
+</div>
+
+<br>
+
+
+<br>
+
+<div align="center">
+<img src="https://github.com/Autarky-Power/oraklE_R/assets/45041403/c166e930-876a-4e90-873a-3f4bcda249a7)https://github.com/Autarky-Power/oraklE_R/assets/40430d61-77e0-462a-b634-574fa1a224cb" width="600">
+</div>
+
+<br>
+
 ## Installation
 (Aspirational) Once on CRAN:
 ```r
