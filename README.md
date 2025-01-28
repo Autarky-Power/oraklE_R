@@ -20,6 +20,11 @@ The functions included in the package can be used separately or combined in the 
 
 <br>
 
+<br>
+
+
+
+<br> <div align="center"> <img src="https://github.com/user-attachments/assets/26ffb2f7-de0c-471e-8226-f133a095ee41" width="700"> </div> <br> 
 ## Installation
 (Aspirational) Once on CRAN:
 ```r
