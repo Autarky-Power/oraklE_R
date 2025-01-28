@@ -18,15 +18,16 @@ First the 20 most populated areas in the country are obtained from https://wft-g
 From this data a weighted daily average temperature based on population is calculated for the provided country.
 }
 \examples{
-working_directory <- getwd()
-setwd(tempdir())
-example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data)
-example_midterm_demand_and_weather_data$demand
-example_midterm_demand_and_weather_data$temperature_data
-suppressMessages(
- unlink("./FR", recursive = TRUE, force = TRUE)
- )
-setwd(working_directory)
+
+#working_directory <- getwd()
+#setwd(tempdir())
+#example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data)
+head(example_midterm_demand_and_weather_data$demand)
+head(example_midterm_demand_and_weather_data$temperature_data)
+#suppressMessages(
+ #unlink("./FR", recursive = TRUE, force = TRUE)
+ #)
+#setwd(working_directory)
 }
 \seealso{
 See function \code{\link{decompose_load_data}} for the generation of the mid-term series.

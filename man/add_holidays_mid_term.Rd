@@ -17,7 +17,7 @@ This function adds a dummy variable for holidays to the mid-term data series. In
 }
 \examples{
 example_midterm_demand_data <- add_holidays_mid_term(example_decomposed_data$midterm)
-example_midterm_demand_data
+head(example_midterm_demand_data)
 }
 \seealso{
 See also \code{\link{mid_term_lm}} for the prediction model.

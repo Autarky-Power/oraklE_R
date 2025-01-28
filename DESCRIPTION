@@ -27,6 +27,7 @@ Imports:
     MuMIn,
     R.utils,
     caret,
+    survival,
     countrycode,
     doParallel,
     dplyr,

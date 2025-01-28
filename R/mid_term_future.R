@@ -121,7 +121,7 @@ country <- unique(new_data$country)
 globalmodel <- NULL
 best_model <- NULL
 ### FOR EXAMPLES
-if (grepl("Temp", getwd())) {
+if (grepl("Rtmp", getwd())) {
   y <- midterm_predictions$seasonal_avg_hourly_demand[1:1095]
   x <- data.matrix(midterm_predictions[1:1095, 9:43])
 

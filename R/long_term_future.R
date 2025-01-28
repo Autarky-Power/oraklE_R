@@ -24,7 +24,8 @@ long_term_future <- function(longterm_future_macro_data){
   new_row_start <- min(which(is.na(longterm_future_macro_data$avg_hourly_demand)))
 
   ### FOR EXAMPLES
-  if (grepl("Temp", getwd())) {
+  if (grepl("Rtmp", getwd())) {
+
     variable_list = list(c("GDP", "GNI", "industrial_value_added", "rural_population"),
                          c("GDP_growth", "household_consumption_expenditure", "rural_population", "service_value_added"),
                          c("GDP", "industrial_value_added", "rural_population", "service_value_added"))

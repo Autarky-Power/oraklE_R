@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' example_midterm_demand_data <- add_holidays_mid_term(example_decomposed_data$midterm)
-#' example_midterm_demand_data
+#' head(example_midterm_demand_data)
 
 add_holidays_mid_term<- function(midterm_data){
   midterm <- midterm_data
