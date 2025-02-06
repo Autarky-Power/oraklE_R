@@ -12,17 +12,6 @@ R package for Long-term Electricity Demand Forecasting in hourly resolution on a
 
 The functions included in the package can be used separately or combined in the function full_forecast()
 
-<br>
-
-<div align="center">
-<img src="https://github.com/Autarky-Power/oraklE_R/assets/45041403/c166e930-876a-4e90-873a-3f4bcda249a7)https://github.com/Autarky-Power/oraklE_R/assets/45041403/c166e930-876a-4e90-873a-3f4bcda249a7" width="600">
-</div>
-
-<br>
-
-<br>
-
-
 
 <br> <div align="center"> <img src="https://github.com/user-attachments/assets/26ffb2f7-de0c-471e-8226-f133a095ee41" width="700"> </div> <br> 
 ## Installation
@@ -200,7 +189,7 @@ This function returns a list of two dataframes —one with the prepared demand d
 - `midterm_demand_and_weather_data$temperature_data`
 
 The mid-term seasonality can then be modelled using the *midterm_demand_and_weather_data$demand* data frame. 
-Similar to the long-term trend models, the medium-term component is modelled using different regression techniques. The relationship between electricity demand and temperature is non-linear (cite), the library implements two different options to account for this non-linearity: 
+Similar to the long-term trend models, the medium-term component is modelled using different regression techniques. The relationship between electricity demand and temperature is non-linear, the library implements two different options to account for this non-linearity: 
 
 1.) If *method = "temperature transformation"*
 
