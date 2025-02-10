@@ -232,7 +232,7 @@ The short-term  component $D_S(y,d,h)$ corresponds to the respective intra-day p
 
 $$D_S(y,d,h) =D_s(h) - D_m(y,d)-D_L(y)$$
 
-The short-term time series is modelled with multiple regression using only the type of hour and a holiday indicator as covariates. Information about public holidays is again retrieved from [https://date.nager.at](https://date.nager.at) via APIS.
+The short-term time series is modelled with multiple regression using only the type of hour and a holiday indicator as covariates. Information about public holidays is again retrieved from [https://date.nager.at](https://date.nager.at) via API.
 
 ```r
 # Get all national holidays within the respective time period
