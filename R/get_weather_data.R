@@ -4,8 +4,8 @@
 #' First the 20 most populated areas in the country are obtained from https://wft-geo-db.p.rapidapi.com . Then the closest weather stations of each area are identified and average daily temperature values are downloaded from https://meteostat.p.rapidapi.com  for the provided time period.
 #' From this data a weighted daily average temperature based on population is calculated for the provided country.
 #'
-#' @param midterm_demand_data The mid-term data series from \code{\link{decompose_load_data}} with added holidays resulting from the function \code{\link{add_holidays_mid_term}}.
-#'
+#' @param midterm_demand_data Dataframe. The mid-term data series from \code{\link{decompose_load_data}} with added holidays resulting from the function \code{\link{add_holidays_mid_term}}.
+#' @param api_key Character. A valid API key from rapidapi that is subscribed to wft-geo-db and meteostat. If set to "default", one of the deposited keys will be used.
 #' @return A list containing the mid-term data and temperature data.
 #' @export
 #'
@@ -13,17 +13,18 @@
 #'
 #' @examples
 #'
-#' #working_directory <- getwd()
-#' #setwd(tempdir())
-#' #example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data)
+#' working_directory <- getwd()
+#' setwd(tempdir())
+#' example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data,
+#'                                                             api_key="default")
 #' head(example_midterm_demand_and_weather_data$demand)
 #' head(example_midterm_demand_and_weather_data$temperature_data)
-#' #suppressMessages(
-#'  #unlink("./FR", recursive = TRUE, force = TRUE)
-#'  #)
-#' #setwd(working_directory)
+#' suppressMessages(
+#'  unlink("./FR", recursive = TRUE, force = TRUE)
+#'  )
+#' setwd(working_directory)
 
-get_weather_data <- function(midterm_demand_data){
+get_weather_data <- function(midterm_demand_data, api_key="default"){
   midterm <- midterm_demand_data
   country=unique(midterm$country)
   start_year=min(unique(midterm$year))
@@ -46,8 +47,12 @@ get_weather_data <- function(midterm_demand_data){
                   )
 
   key_integer <- sample(1:14, 1 )
+  if (api_key=="default"){
   rAPI_key <- rAPI_keys[key_integer]
+  } else{rAPI_key <- api_key}
 
+  tryCatch(
+    {
   cities1<- httr::GET(paste0("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=",country,"&sort=-population&offset=0&limit=10&types=CITY"),
                       httr::accept_json(),
                       httr::add_headers("x-rapidapi-host" = "wft-geo-db.p.rapidapi.com",
@@ -58,6 +63,26 @@ get_weather_data <- function(midterm_demand_data){
                       httr::accept_json(),
                       httr::add_headers("x-rapidapi-host" = "wft-geo-db.p.rapidapi.com",
                                         "x-rapidapi-key" = rAPI_key))
+  },error = function(e) {
+    stop("Error during GET request from wft-geo-db.p.rapidapi.com: ", e$message,
+         "\nAre you connected to the internet?",call. = FALSE)
+  }
+  )
+
+  if ( cities1$status_code== 403 || cities2$status_code== 403){
+   stop("The used API key for wft-geo-db.p.rapidapi.com is either invalid or has reached it's monthly limit.\nYou can try again and a different API key will be used or you can provide your own." ,call. = FALSE)
+  }
+  if (httr::http_error(cities1)) {
+    status <- httr::status_code(cities1)
+    error_info <- httr::http_status(cities1)$message
+    stop("HTTP request failed from wft-geo-db.p.rapidapi.com (status ", status, "): ", error_info ,call. = FALSE)
+  }
+
+  if (httr::http_error(cities2)) {
+    status <- httr::status_code(cities2)
+    error_info <- httr::http_status(cities2)$message
+    stop("HTTP request failed from wft-geo-db.p.rapidapi.com (status ", status, "): ", error_info ,call. = FALSE)
+  }
 
 
   big_cities <- rbind(jsonlite::fromJSON(rawToChar(cities1$content))$data,jsonlite::fromJSON(rawToChar(cities2$content))$data)
@@ -69,11 +94,28 @@ get_weather_data <- function(midterm_demand_data){
   for (i in 1:nrow(big_cities)){
     lon=round(big_cities$longitude[i],digits=4 )
     lat=round(big_cities$latitude[i],digits=4)
+
+    tryCatch(
+      {
     stations <- httr::GET(paste0("https://meteostat.p.rapidapi.com/stations/nearby?lat=",lat,"&lon=",lon),
                           httr::accept_json(),
                           httr::add_headers("x-rapidapi-host" = "meteostat.p.rapidapi.com",
                                             "x-rapidapi-key" = rAPI_key))
+      },error = function(e) {
+        stop("Error during GET request from meteostat.p.rapidapi: ", e$message,
+             "\nAre you connected to the internet?",call. = FALSE)
+      }
+    )
 
+    if ( stations$status_code== 403) {
+      stop("The used API key for meteostat.p.rapidapi.com is either invalid or has reached it's monthly limit.\nYou can try again and a different API key will be used or you can provide your own." ,call. = FALSE)
+    }
+
+    if (httr::http_error(stations)) {
+      status <- httr::status_code(stations)
+      error_info <- httr::http_status(stations)$message
+      stop("HTTP request failed from meteostat.p.rapidapi.com (status ", status, "): ", error_info ,call. = FALSE)
+    }
     stations_list <- jsonlite::fromJSON(rawToChar(stations$content))$data
     big_cities$weather_station[i] <- stations_list$id[1]
     Sys.sleep(0.5)
@@ -87,9 +129,10 @@ get_weather_data <- function(midterm_demand_data){
   for (i in 1:nrow(big_cities)){
     tryCatch({
       station_id <- big_cities$weather_station[i]
+      suppressWarnings(
       utils::download.file(paste0("https://bulk.meteostat.net/v2/daily/",station_id,".csv.gz"),
                     destfile = "temp.csv.gz")
-
+      )
       R.utils::gunzip("temp.csv.gz")
       temp_data <- utils::read.csv("temp.csv")
       colnames(temp_data)[c(1,2)] <- c("date","daily_avg_temp")
@@ -98,7 +141,9 @@ get_weather_data <- function(midterm_demand_data){
                                (lubridate::year(temp_data$date)<=end_year),1:2]
       temp_df[,(i+1)][temp_df$date %in% temp_data$date]<- temp_data[,2]
       file.remove("temp.csv")
-    },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+    },error=function(e){
+      # Fail silently
+      })
   }
 
   population <- big_cities$population
@@ -119,6 +164,7 @@ get_weather_data <- function(midterm_demand_data){
     dir.create(paste0("./",country,"/data"))}
   utils::write.csv(temp_df,paste0("./",country,"/data/temperatures.csv"),row.names = F)
   utils::write.csv(midterm,paste0("./",country,"/data/midterm_data.csv"),row.names = F)
+
 
   return(list("demand"=midterm, "temperature_data"=temp_df))
 

@@ -38,7 +38,7 @@ new_data <- data.frame(country=unique(midterm_predictions$country),date = new_da
 new_data$year <- lubridate::year(new_data$date)
 new_data$month <- lubridate::month(new_data$date)
 new_data$day <- lubridate::day(new_data$date)
-new_data$wday<- lubridate::wday(new_data$date,label = T,locale = "English")
+new_data$wday<- lubridate::wday(new_data$date,label = T,locale = "en_US.UTF-8")
 new_data$avg_hourly_demand <- 0
 new_data$seasonal_avg_hourly_demand <- NA
 
@@ -47,10 +47,16 @@ years=unique(new_data$year)
 country= (unique(new_data$country))
 for (i in 1:length(years)){
   year= years[i]
+  tryCatch(
+    {
   response = jsonlite::fromJSON(paste0("https://date.nager.at/api/v3/publicholidays/"
                                        ,year,"/",country) )
-  holiday_list[[i]] <- response$date
+  holiday_list[[i]] <- response$date},
+error = function(e) {
+  stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+})
 }
+
 
 holidays = unlist(holiday_list)
 holidays = as.Date(holidays)

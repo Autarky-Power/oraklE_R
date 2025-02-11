@@ -32,9 +32,7 @@
 
 decompose_load_data <- function(load_data){
 
-
   resolution <- as.numeric(difftime(load_data$date[2], load_data$date[1],units="hours"))
-
   if (resolution <= 1){
     timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))),'-01-01 00:00'),tz="UTC"),
                      as.POSIXct(paste0(as.character(max(unique(load_data$year))),'-12-31 23:00'),tz="UTC"),by="hour")
@@ -55,7 +53,7 @@ decompose_load_data <- function(load_data){
   ordered_data$year <- lubridate::year(ordered_data$date)
   ordered_data$month <- lubridate::month(ordered_data$date)
   ordered_data$day <- lubridate::day(ordered_data$date)
-  ordered_data$wday <- lubridate::wday(ordered_data$date,label = T,locale = "English")
+  ordered_data$wday <- lubridate::wday(ordered_data$date,label = T,locale = "en_US.UTF-8")
   ordered_data$load <-0
   years= unique(load_data$year)
   suppressWarnings(
@@ -73,7 +71,7 @@ decompose_load_data <- function(load_data){
           year_load <- c(year_load,load_mean)
         }
       }else{
-        year_load <- colMeans(matrix(load_data$load[load_data$year==year], nrow=60/intervals[1]))
+        year_load <- colMeans(matrix(load_data$load[load_data$year==year], nrow=60/as.numeric(intervals[1])))
       }
       ordered_data$load[ordered_data$year==year] <- year_load
        }
@@ -126,6 +124,7 @@ decompose_load_data <- function(load_data){
 
 
   if (resolution <= 1){
+
     shortterm <- data.frame(matrix(nrow=(nrow(all_data)),ncol=1))
     colnames(shortterm) <- "country"
 

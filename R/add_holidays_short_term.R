@@ -19,10 +19,16 @@ add_holidays_short_term<- function(shortterm){
   holiday_list <- list()
   for (i in 1:length(years)){
     year= years[i]
+    tryCatch(
+      {
     response = jsonlite::fromJSON(paste0("https://date.nager.at/api/v3/publicholidays/"
                                          ,year,"/",country) )
     holiday_list[[i]] <- response$date
+    }, error = function(e) {
+      stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+    })
   }
+
 
   holidays = unlist(holiday_list)
   holidays = as.Date(holidays)

@@ -41,8 +41,8 @@ short_term_lm <- function(shortterm_demand_data, test_set_steps=17520){
     dir.create(country)}
   if (! file.exists(paste0("./",country,"/models"))){
     dir.create(paste0("./",country,"/models"))}
-  if (! file.exists(paste0("./",country,"./models/shortterm_lm"))){
-    dir.create(paste0("./",country,"./models/shortterm_lm"))}
+  if (! file.exists(paste0("./",country,"/models/shortterm_lm"))){
+    dir.create(paste0("./",country,"/models/shortterm_lm"))}
 
   variables <- colnames(training_data)[(columns_original_df):(columns_original_df+24)]
 
@@ -85,9 +85,9 @@ suppressWarnings(
   short_term_data <- rbind(training_data,test_data)
 
   short_term_data$test_set_steps <- test_set_steps
-  if (! file.exists(paste0("./",country,"./data/"))){
-    dir.create(paste0("./",country,"./data/"))}
-  utils::write.csv(short_term_data,paste0("./",country,"./data/short_term_data.csv"),row.names = F)
+  if (! file.exists(paste0("./",country,"/data/"))){
+    dir.create(paste0("./",country,"/data/"))}
+  utils::write.csv(short_term_data,paste0("./",country,"/data/short_term_data.csv"),row.names = F)
 
   colnames(short_term_data) <- make.unique(names(short_term_data))
 

@@ -15,6 +15,7 @@
 #' @export
 #' @seealso See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download.
 #' @import survival
+#' @importFrom survival Surv is.Surv survfit
 #' @examples
 #' working_directory <- getwd()
 #' setwd(tempdir())
@@ -66,10 +67,8 @@ long_term_lm<- function(longterm_and_macro_data,test_set_steps=2,testquant = 500
   }
 
   rdm=421
-  message("log2")
-  library(survival)
+
   ctrl <- caret::trainControl(method = "repeatedcv", number = 5, repeats = 5)
-  message("log3")
 
   message(paste("Cross-validating the best",testquant,"models."))
   cross_val <- function(i){
@@ -98,7 +97,6 @@ long_term_lm<- function(longterm_and_macro_data,test_set_steps=2,testquant = 500
 
   cl <- parallel::makeCluster(used_cores)
   doParallel::registerDoParallel(cl)
-  message("log4")
   parallel::clusterExport(cl,list("combinations","ctrl","training_data","rdm"),envir=environment())
 
   results_list <-  parallel::parLapply(cl,1:testquant,cross_val)
@@ -106,7 +104,7 @@ long_term_lm<- function(longterm_and_macro_data,test_set_steps=2,testquant = 500
   doParallel::stopImplicitCluster()
   parallel::stopCluster(cl)
 
-  message("log5")
+
   results <-as.data.frame(do.call(rbind, results_list))
   colnames(results)= c("RMSE_k_fold","Rsquare_k_fold","MAE_k_fold","index")
 

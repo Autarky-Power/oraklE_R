@@ -4,10 +4,12 @@
 \alias{get_weather_data}
 \title{Load weather data via API}
 \usage{
-get_weather_data(midterm_demand_data)
+get_weather_data(midterm_demand_data, api_key = "default")
 }
 \arguments{
-\item{midterm_demand_data}{The mid-term data series from \code{\link{decompose_load_data}} with added holidays resulting from the function \code{\link{add_holidays_mid_term}}.}
+\item{midterm_demand_data}{Dataframe. The mid-term data series from \code{\link{decompose_load_data}} with added holidays resulting from the function \code{\link{add_holidays_mid_term}}.}
+
+\item{api_key}{Character. A valid API key from rapidapi that is subscribed to wft-geo-db and meteostat. If set to "default", one of the deposited keys will be used.}
 }
 \value{
 A list containing the mid-term data and temperature data.
@@ -19,15 +21,16 @@ From this data a weighted daily average temperature based on population is calcu
 }
 \examples{
 
-#working_directory <- getwd()
-#setwd(tempdir())
-#example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data)
+working_directory <- getwd()
+setwd(tempdir())
+example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data,
+                                                            api_key="default")
 head(example_midterm_demand_and_weather_data$demand)
 head(example_midterm_demand_and_weather_data$temperature_data)
-#suppressMessages(
- #unlink("./FR", recursive = TRUE, force = TRUE)
- #)
-#setwd(working_directory)
+suppressMessages(
+ unlink("./FR", recursive = TRUE, force = TRUE)
+ )
+setwd(working_directory)
 }
 \seealso{
 See function \code{\link{decompose_load_data}} for the generation of the mid-term series.

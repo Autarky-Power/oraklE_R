@@ -104,12 +104,32 @@ get_entsoE_data <- function(start_year,end_year,country,api_key="default"){
   for (i in start:end){
     starting_year=i
     print(paste("Getting data for",i))
+    tryCatch(
+      {
     entso_response = httr::GET(paste0("https://web-api.tp.entsoe.eu/api?securityToken=",api_key,"&documentType=A65&processType=A16&outBiddingZone_Domain=",domain,"&periodStart=",starting_year,"01010000&periodEnd=",(starting_year+1),"01010000"))
+      },
+    error = function(e) {
+      stop("Error during GET request for year ", i, ": ", e$message,
+           "\nAre you connected to the internet?",call. = FALSE)
+    }
+    )
+
     if (entso_response$status_code == 503){
       message("The ENTSO_E Transparency platform seems to be unavailable.\n
               Please check https://transparency.entsoe.eu/ and try again later.")
       return()
     }
+    if (entso_response$status_code == 401){
+      message("Your API key seems to be invalid.")
+      return()
+    }
+    if (httr::http_error(entso_response)) {
+           status <- httr::status_code(entso_response)
+           error_info <- httr::http_status(entso_response)$message
+           stop("HTTP request failed for year ", i, " (status ", status, "): ", error_info)
+       }
+
+
     entso_content <- httr::content(entso_response, encoding = "UTF-8")
     entso_content_list <- xml2::as_list(entso_content)
 

@@ -43,7 +43,7 @@ short_term_future <- function(shortterm_predictions,end_year){
   new_rows$year <- lubridate::year(new_rows$date)
   new_rows$month <- lubridate::month(new_rows$date)
   new_rows$day <- lubridate::day(new_rows$date)
-  new_rows$wday <- lubridate::wday(new_rows$date,label = T,locale = "English")
+  new_rows$wday <- lubridate::wday(new_rows$date,label = T,locale = "en_US.UTF-8")
   new_rows$hour <- lubridate::hour(new_rows$date)#0:23
 
   for (i in (0:23)){
@@ -60,8 +60,12 @@ short_term_future <- function(shortterm_predictions,end_year){
   holiday_list <- list()
   for (i in 1:length(years)){
     year= years[i]
+    tryCatch({
     response = jsonlite::fromJSON(paste0("https://date.nager.at/api/v3/publicholidays/"
                                          ,year,"/",country) )
+    },error = function(e) {
+      stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+    })
     holiday_list[[i]] <- response$date
   }
 
@@ -77,7 +81,7 @@ short_term_future <- function(shortterm_predictions,end_year){
   fit1 <- NULL
   ### For Examples
 
-  if (grepl("Temp", getwd())) {
+  if (grepl("Rtmp", getwd())) {
     for (i in 1:12){
       for (j in 1:7){
         for (k in 0:23){
@@ -153,7 +157,7 @@ short_term_future <- function(shortterm_predictions,end_year){
   suppressWarnings(
     print(st_plot)
   )
-  if (!grepl("Temp", getwd())) {
+  if (!grepl("Rtmp", getwd())) {
   suppressWarnings(
   ggsave(filename=paste0("./",country,"/plots/short_term_results_future.png"), plot=st_plot, width=12, height=8)
 )}
