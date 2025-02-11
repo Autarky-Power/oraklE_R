@@ -12,17 +12,6 @@ R package for Long-term Electricity Demand Forecasting in hourly resolution on a
 
 The functions included in the package can be used separately or combined in the function full_forecast()
 
-<br>
-
-<div align="center">
-<img src="https://github.com/Autarky-Power/oraklE_R/assets/45041403/c166e930-876a-4e90-873a-3f4bcda249a7)https://github.com/Autarky-Power/oraklE_R/assets/45041403/c166e930-876a-4e90-873a-3f4bcda249a7" width="600">
-</div>
-
-<br>
-
-<br>
-
-
 
 <br> <div align="center"> <img src="https://github.com/user-attachments/assets/26ffb2f7-de0c-471e-8226-f133a095ee41" width="700"> </div> <br> 
 ## Installation
@@ -56,10 +45,11 @@ library("oRaklE")
 ### Get and prepare the data
 As a first step, the package gets the load data from the Transparency Platform of the European Network of
 Transmission System Operators for Electricity (ENTSO-E) [https://transparency.entsoe.eu/](https://transparency.entsoe.eu/). If the country is not a member of the ENTSO-E a dataset needs to be supplied manually. An example with South African load data is included at the end of this section. 
+You can either supply your own ENTSO-E Transparency Platform API key or use one of the deposited keys if *api_key* is set to "default".
 
 ```r
 # Get initial Data
-demand_data = get_entsoE_data(2017,2021,"France")
+demand_data = get_entsoE_data(2017,2021,"France",api_key="default")
 ```
 
 ![Load](https://github.com/user-attachments/assets/24450818-c869-4142-a5b3-cb2a2ec7ff36)
@@ -187,11 +177,11 @@ The mid-term time series is modelled using seasonal, calendar, and temperature-r
 midterm_demand_data = add_holidays_mid_term(decomposed_data$midterm)
 ```
 
-Daily temperature values are obtained by first retrieving the 20 most populated regions of the respective country or area from [https://rapidapi.com/wirefreethought/api/geodb-cities](https://rapidapi.com/wirefreethought/api/geodb-cities). Next, the nearest weather station for each region is identified using [https://rapidapi.com/meteostat/api/meteostat](https://rapidapi.com/meteostat/api/meteostat) and the daily temperature data is downloaded. A weighted daily average temperature for the country is then calculated, using the population share and temperature values of the 20 regions.
+Daily temperature values are obtained by first retrieving the 20 most populated regions of the respective country or area from [https://rapidapi.com/wirefreethought/api/geodb-cities](https://rapidapi.com/wirefreethought/api/geodb-cities). Next, the nearest weather station for each region is identified using [https://rapidapi.com/meteostat/api/meteostat](https://rapidapi.com/meteostat/api/meteostat) and the daily temperature data is downloaded. A weighted daily average temperature for the country is then calculated, using the population share and temperature values of the 20 regions. You can either supply your own API key (from  [https://rapidapi.com/](https://rapidapi.com/)) that is subscribed to geo-db cities and meteostat or use one of the deposited keys if *api_key* is set to "default".
 
 ```r
 # Get daily average temperature values
-midterm_demand_and_weather_data = get_weather_data(midterm_demand_data)
+midterm_demand_and_weather_data = get_weather_data(midterm_demand_data, api_key="default")
 ```
 
 This function returns a list of two dataframes —one with the prepared demand data for the models and a dataframe with the daily temperature values for the 20 regions:
@@ -200,7 +190,7 @@ This function returns a list of two dataframes —one with the prepared demand d
 - `midterm_demand_and_weather_data$temperature_data`
 
 The mid-term seasonality can then be modelled using the *midterm_demand_and_weather_data$demand* data frame. 
-Similar to the long-term trend models, the medium-term component is modelled using different regression techniques. The relationship between electricity demand and temperature is non-linear (cite), the library implements two different options to account for this non-linearity: 
+Similar to the long-term trend models, the medium-term component is modelled using different regression techniques. The relationship between electricity demand and temperature is non-linear, the library implements two different options to account for this non-linearity: 
 
 1.) If *method = "temperature transformation"*
 
@@ -242,7 +232,7 @@ The short-term  component $D_S(y,d,h)$ corresponds to the respective intra-day p
 
 $$D_S(y,d,h) =D_s(h) - D_m(y,d)-D_L(y)$$
 
-The short-term time series is modelled with multiple regression using only the type of hour and a holiday indicator as covariates. Information about public holidays is again retrieved from [https://date.nager.at](https://date.nager.at) via APIS.
+The short-term time series is modelled with multiple regression using only the type of hour and a holiday indicator as covariates. Information about public holidays is again retrieved from [https://date.nager.at](https://date.nager.at) via API.
 
 ```r
 # Get all national holidays within the respective time period
