@@ -9,15 +9,18 @@
 #' @export
 #'
 #' @examples
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_shortterm_predictions <- short_term_lm(example_shortterm_demand_data)
-#' suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
+
 
 short_term_lm <- function(shortterm_demand_data, test_set_steps=17520){
+
+  if ("example" %in% colnames(shortterm_demand_data)){
+    if (unique(shortterm_demand_data$example) == TRUE){
+      message("Calculating the best short-term model for each combination of type of month and type of day.")
+      message("Calculating 84 models in total (12 months x 7 weekdays).")
+      return(oRaklE::example_shortterm_predictions)
+    }
+  }
   short_term_data <- shortterm_demand_data
 
   columns_original_df <- ncol(short_term_data)

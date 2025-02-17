@@ -16,6 +16,7 @@ A list with three dataframes:
 \item{\code{longterm.country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{longterm.year}}{The respective year.}
 \item{\code{longterm.avg_hourly_demand}}{The average hourly electricity demand (in megawatts) for each year.}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 \strong{Midterm Data Frame}:
 \describe{
@@ -27,6 +28,7 @@ A list with three dataframes:
 \item{\code{midterm.wday}}{The type of weekday (e.g., \code{Sun}, \code{Mon})}
 \item{\code{midterm.avg_hourly_demand}}{The average hourly electricity demand (in megawatts) for each day.}
 \item{\code{midterm.seasonal_avg_hourly_demand}}{The seasonal mid-term component of the demand (in megawatts).}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 \strong{Shortterm Data Frame}
 \describe{
@@ -42,6 +44,7 @@ A list with three dataframes:
 \item{\code{shortterm.yearly}}{The yearly average electricity demand in the respective year.}
 \item{\code{shortterm.daily}}{The daily average electricity demand in the respective day.}
 \item{\code{shortterm.hourly_demand_trend_and_season_corrected}}{The short-term seasonal component which is the hourly demand, substracted by both the long-term trend and the mid-term seasonality.}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

@@ -19,8 +19,6 @@
 #'suppressWarnings(
 #' library(ggplot2)
 #' )
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_demand_data_filled <- fill_missing_data(example_demand_data)
 #' example_df<- as.data.frame(seq.POSIXt(example_demand_data$date[841],
 #' example_demand_data$date[870],"hour"))
@@ -34,16 +32,14 @@
 #'  xlab("\nHour")+ylab("Load [MW]\n")+theme(legend.title = element_blank())+
 #'  scale_x_continuous(breaks = c(example_df[1,1],example_df[25,1]),
 #'  labels = c(as.Date(example_df[1,1]),as.Date(example_df[25,1])))
-#'  suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#'  setwd(working_directory)
-#'
-
-
 
 
 fill_missing_data <- function(load_data){
+  if ("example" %in% colnames(load_data)){
+    if (unique(load_data$example) == TRUE){
+    return(oRaklE::example_demand_data_filled)
+      }
+  }
   years <- unique(lubridate::year(load_data$date))
   min_year <- min(unique(lubridate::year(load_data$date)))
   min_month <- min(unique(lubridate::month(load_data$date[load_data$year==min_year])))

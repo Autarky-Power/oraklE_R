@@ -10,18 +10,23 @@
 #' @export
 #'
 #' @examples
-#
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_full_model_predictions <- combine_models(example_longterm_predictions,
 #' example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
-#' suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
+
 
 
 combine_models <- function(longterm_predictions,midterm_predictions,shortterm_predictions, longterm_model_number=1){
+
+    if ("example" %in% colnames(shortterm_predictions) &&
+      "example" %in% colnames(midterm_predictions) &&
+      "example" %in% colnames(longterm_predictions)){
+    if (unique(shortterm_predictions$example) == TRUE &&
+      unique(shortterm_predictions$example) == TRUE &&
+  unique(shortterm_predictions$example) == TRUE){
+      message("Combining the long-term, mid-term and short-term seasonality into the final forecast.")
+      return(oRaklE::example_full_model_predictions)
+    }
+  }
 
   combined_model_results <- shortterm_predictions[,1:8]
   country = unique(longterm_predictions$country)

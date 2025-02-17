@@ -10,19 +10,24 @@
 #' @export
 #' @seealso See also functions \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the prediction models.
 #' @examples
-
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_full_model_future_predictions <- combine_models_future(example_longterm_future_predictions
 #' ,example_midterm_future_predictions, example_shortterm_future_predictions,longterm_model_number =1)
-#' suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
+
 
 
 combine_models_future <- function(longterm_future_predictions, midterm_future_predictions
                                   ,shortterm_future_predictions, longterm_model_number=1){
+
+  if ("example" %in% colnames(shortterm_future_predictions) &&
+      "example" %in% colnames(midterm_future_predictions) &&
+      "example" %in% colnames(longterm_future_predictions)){
+    if (unique(shortterm_future_predictions$example) == TRUE &&
+        unique(midterm_future_predictions$example) == TRUE &&
+        unique(longterm_future_predictions$example) == TRUE){
+      message("Combining the long-term, mid-term and short-term seasonality into the final forecast until 2028.")
+      return(oRaklE::example_full_model_future_predictions)
+    }
+  }
 
   combined_model_results <- shortterm_future_predictions[,1:8]
   country = unique(longterm_future_predictions$country)

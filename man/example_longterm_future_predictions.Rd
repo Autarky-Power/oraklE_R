@@ -5,7 +5,7 @@
 \alias{example_longterm_future_predictions}
 \title{Example Longterm Future Predictions Data}
 \format{
-A data frame with 23 rows and 17 columns:
+A data frame with 23 rows and 18 columns:
 \describe{
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{year}}{The year of the observation.}
@@ -24,6 +24,7 @@ A data frame with 23 rows and 17 columns:
 \item{\code{longterm_model_predictions2}}{Predictions for the long-term trend component of electricity demand based on Model 2.}
 \item{\code{longterm_model_predictions3}}{Predictions for the long-term trend component of electricity demand based on Model 3.}
 \item{\code{test_set_steps}}{The number of years used in the test or validation set for the model evaluation.}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 @source Demand predictions until 2021: \code{\link{long_term_lm}}; Demand predictions from 2022-2028: \code{\link{long_term_future}} ;World Economic Outlook Database (April 2023 edition) of the International Monetary Fund (IMF) (https://www.imf.org/en/Publications/WEO/weo-database/2023/October); World Development Indicators (WDI) of the World Bank (https://databank.worldbank.org/source/world-development-indicators); Transparency Platform of the European Network of
 Transmission System Operators for Electricity (ENTSO-E, https://transparency.entsoe.eu/); ENTSO-E Power Stats Archive of https://www.entsoe.eu/data/power-stats/

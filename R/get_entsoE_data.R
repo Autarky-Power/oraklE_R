@@ -8,6 +8,7 @@
 #' @param end_year  Numeric. The final year for which load data will be requested.
 #' @param country  Character. The country name for which load data will be requested provided as the English name of the country.
 #' @param api_key  Character. A valid API key for the ENTSO-E Transparency Platform. If set to "default", one of the deposited keys will be used.
+#' @param dry_run  Boolean. Defaults to FALSE. This is only set to TRUE for the example run.
 #'
 #' @return A Data Frame with the following columns
 #' \describe{
@@ -21,13 +22,17 @@
 #' @export
 #'
 #' @examples
-#' example_demand_data <- get_entsoE_data(2017,2021,"France",api_key="default")
+#' example_demand_data <- get_entsoE_data(2017,2021,"France",api_key="default",dry_run=TRUE)
 #' print(example_demand_data[1:20,])
 #'
 
 
-get_entsoE_data <- function(start_year,end_year,country,api_key="default"){
+get_entsoE_data <- function(start_year,end_year,country,api_key="default", dry_run=FALSE){
 
+  if (dry_run== TRUE){
+    message("Getting data for each year from ENTSO-E Transparency Platform")
+    return(oRaklE::example_demand_data)
+  }
   Sys.setlocale("LC_TIME", "English")
   # Convert country names to iso2c code ----
   if (country != "United Kingdom"){

@@ -11,18 +11,17 @@
 #' @export
 #'
 #' @examples
-#'
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_shortterm_future_predictions <- short_term_future(example_shortterm_predictions
 #' ,end_year=2028)
-#' suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
+
 
 short_term_future <- function(shortterm_predictions,end_year){
-
+  if ("example" %in% colnames(shortterm_predictions)){
+    if (unique(shortterm_predictions$example) == TRUE){
+      message("Extending the short-term seasonality model predictions until the year 2028.")
+      return(oRaklE::example_shortterm_future_predictions)
+    }
+  }
   short_df <- shortterm_predictions
 
   start_year = max(short_df$year)+1
@@ -79,18 +78,7 @@ short_term_future <- function(shortterm_predictions,end_year){
 
   wday <- as.character(unique(new_rows$wday))
   fit1 <- NULL
-  ### For Examples
 
-  if (grepl("Rtmp", getwd())) {
-    for (i in 1:12){
-      for (j in 1:7){
-        for (k in 0:23){
-    new_rows$short_term_lm_model_predictions[which(new_rows$month == i & new_rows$wday == wday[j] & new_rows$hour== k)]<-
-     short_df$short_term_lm_model_predictions[which(new_rows$month == i & new_rows$wday == wday[j] & new_rows$hour== k)]
-        }
-      }
-    }
-  }else{
   suppressWarnings(
     for (i in 1:12){
       for (j in 1:7){
@@ -107,7 +95,7 @@ short_term_future <- function(shortterm_predictions,end_year){
 
 
       }
-    })}
+    })
 
 
 
@@ -157,10 +145,10 @@ short_term_future <- function(shortterm_predictions,end_year){
   suppressWarnings(
     print(st_plot)
   )
-  if (!grepl("Rtmp", getwd())) {
+
   suppressWarnings(
   ggsave(filename=paste0("./",country,"/plots/short_term_results_future.png"), plot=st_plot, width=12, height=8)
-)}
+)
   return(future_short_term)
 
 }

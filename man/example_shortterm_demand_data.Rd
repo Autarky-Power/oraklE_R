@@ -5,7 +5,7 @@
 \alias{example_shortterm_demand_data}
 \title{Example Short-term Demand Data}
 \format{
-A data frame with 43,800 rows and 13 columns:
+A data frame with 43,800 rows and 14 columns:
 \describe{
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{date}}{The date (in \code{YYYY-MM-DD} format).}
@@ -20,6 +20,7 @@ A data frame with 43,800 rows and 13 columns:
 \item{\code{daily}}{The daily average electricity demand.}
 \item{\code{hourly_demand_trend_and_season_corrected}}{The hourly demand corrected for both long-term trends and seasonal variations.}
 \item{\code{holiday}}{A binary indicator for whether the day is a public holiday (\code{1} for holiday, \code{0} for non-holiday).}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

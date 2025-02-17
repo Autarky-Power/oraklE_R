@@ -5,11 +5,12 @@
 \alias{example_longterm_data}
 \title{Example Longterm Data}
 \format{
-A data frame with 16 rows and 3 columns:
+A data frame with 16 rows and 4 columns:
 \describe{
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{year}}{The year of the observation.}
 \item{\code{avg_hourly_demand}}{The average hourly electricity demand (in megawatts) for each year.}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

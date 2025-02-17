@@ -5,7 +5,7 @@
 \alias{example_demand_data}
 \title{Example Demand Data}
 \format{
-A data frame with 43,769 rows and 6 columns:
+A data frame with 43,769 rows and 7 columns:
 \describe{
 \item{\code{date}}{The date and time of the demand measurement (in \verb{YYYY-MM-DD HH:MM:SS} format).}
 \item{\code{load}}{The electricity demand.}
@@ -13,6 +13,7 @@ A data frame with 43,769 rows and 6 columns:
 \item{\code{year}}{The year of the respective timepoint.}
 \item{\code{time_interval}}{The time interval at which the demand was reported (e.g., \verb{60 mins}).}
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

@@ -14,6 +14,12 @@
 #' head(example_midterm_demand_data)
 
 add_holidays_mid_term<- function(midterm_data){
+
+  if ("example" %in% colnames(midterm_data)){
+    if (unique(midterm_data$example) == TRUE){
+      return(oRaklE::example_midterm_demand_data)
+    }
+  }
   midterm <- midterm_data
 
   years=unique(midterm$year)

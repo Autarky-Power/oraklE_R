@@ -12,19 +12,19 @@
 #' @seealso See function \code{\link{decompose_load_data}} for the generation of the mid-term series.
 #'
 #' @examples
-#'
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data,
 #'                                                             api_key="default")
 #' head(example_midterm_demand_and_weather_data$demand)
 #' head(example_midterm_demand_and_weather_data$temperature_data)
-#' suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
+
 
 get_weather_data <- function(midterm_demand_data, api_key="default"){
+
+  if ("example" %in% colnames(midterm_demand_data)){
+    if (unique(midterm_demand_data$example) == TRUE){
+      return(oRaklE::example_midterm_demand_and_weather_data)
+    }
+  }
   midterm <- midterm_demand_data
   country=unique(midterm$country)
   start_year=min(unique(midterm$year))

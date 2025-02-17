@@ -7,7 +7,7 @@
 This dataset contains the seasonal mid-term demand (the difference between the yearly average hourly electricity demand and the daily average hourly electricity demand)
 for each day for France from 2017 until 2021.}
 \format{
-A data frame with 1,825 rows and 9 columns:
+A data frame with 1,825 rows and 10 columns:
 \describe{
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{date}}{The date of the mid-term demand measurement (in \code{YYYY-MM-DD} format).}
@@ -18,6 +18,7 @@ A data frame with 1,825 rows and 9 columns:
 \item{\code{avg_hourly_demand}}{The average hourly electricity demand (in megawatts) for the day.}
 \item{\code{seasonal_avg_hourly_demand}}{The seasonal average hourly demand (in megawatts) for the day.}
 \item{\code{holiday}}{Indicates whether the day is a public holiday (\code{1} for holiday, \code{0} for non-holiday).}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

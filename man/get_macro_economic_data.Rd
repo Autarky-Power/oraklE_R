@@ -18,7 +18,7 @@ The variables are suspected to have a predictive capacity for the load data.
 }
 \examples{
 example_longterm_and_macro_data <- get_macro_economic_data(example_longterm_data)
-print("Macro economic variables are added:")
+print("Macro economic variables are added from the World Bank Developer Indicators:")
 example_longterm_and_macro_data
 
 }

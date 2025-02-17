@@ -22,6 +22,7 @@ A list containing two data frames:
 \item{\code{demand.avg_hourly_demand}}{The average hourly electricity demand (in megawatts) for each day.}
 \item{\code{demand.seasonal_avg_hourly_demand}}{The seasonal mid-term component of the demand (in megawatts).}
 \item{\code{demand.weighted_temperature}}{The weighted average temperature for France on that day (in degrees Celsius).}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 
 \strong{Temperature Data Frame}:

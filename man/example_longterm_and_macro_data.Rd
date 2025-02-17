@@ -5,7 +5,7 @@
 \alias{example_longterm_and_macro_data}
 \title{Example Longterm and Macro Data}
 \format{
-A data frame with 16 rows and 13 columns:
+A data frame with 16 rows and 14 columns:
 \describe{
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{year}}{The year of the observation.}
@@ -20,6 +20,7 @@ A data frame with 16 rows and 13 columns:
 \item{\code{GNI}}{Gross National Income (in constant 2015 USD) in the respective year.}
 \item{\code{household_consumption_expenditure}}{The percentage of GDP attributed to household consumption expenditure.}
 \item{\code{rural_population}}{The rural population in the respective year.}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

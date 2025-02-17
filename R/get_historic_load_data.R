@@ -27,6 +27,12 @@ get_historic_load_data <- function(longterm){
     stop("No column named \"year\"")
   }
 
+  if ("example" %in% colnames(longterm)){
+    if (unique(longterm$example) == TRUE){
+      return(oRaklE::example_longterm_data)
+    }
+  }
+
   country=unique(longterm$country)
   if (country=="UK"){country="GB"}
 

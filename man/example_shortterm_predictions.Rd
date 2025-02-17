@@ -5,7 +5,7 @@
 \alias{example_shortterm_predictions}
 \title{Example Shortterm Predictions Data}
 \format{
-A data frame with 43,800 rows and 39 columns:
+A data frame with 43,800 rows and 40 columns:
 \describe{
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{date}}{The date (in \code{YYYY-MM-DD} format).}
@@ -23,6 +23,7 @@ A data frame with 43,800 rows and 39 columns:
 \item{\code{Hour0}, \code{Hour1}, \code{Hour2}, \code{Hour3}, \code{Hour4}, \code{Hour5}, \code{Hour6}, \code{Hour7}, \code{Hour8}, \code{Hour9}, \code{Hour10}, \code{Hour11}, \code{Hour12}, \code{Hour13}, \code{Hour14}, \code{Hour15}, \code{Hour16}, \code{Hour17}, \code{Hour18}, \code{Hour19}, \code{Hour20}, \code{Hour21}, \code{Hour22}, \code{Hour23}}{Binary variables indicating the hour of the day, where each variable represents a specific hour (e.g., \code{Hour0} for 00:00 to 00:59, \code{Hour1} for 01:00 to 01:59, and so on up to \code{Hour23} for 23:00 to 23:59).}
 \item{\code{short_term_lm_model_predictions}}{Model predictions for the short-term seasonality (the intraday pattern).}
 \item{\code{test_set_steps}}{Number of hours used in the test set for model evaluation.}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

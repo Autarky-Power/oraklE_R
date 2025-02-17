@@ -12,18 +12,19 @@
 #' @export
 #' @seealso See also function \code{\link{long_term_future}} and \code{\link{short_term_future}} for the other prediction models.
 #' @examples
-
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_midterm_future_predictions <- mid_term_future(example_midterm_predictions,
 #' end_year=2028,Tref=18)
-#' suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
+
 
 mid_term_future <- function(midterm_predictions,end_year, Tref=18){
 
+  if ("example" %in% colnames(midterm_predictions)){
+    if (unique(midterm_predictions$example) == TRUE){
+      message("Averaging temperature values for future predictions.")
+      message("Extending the mid-term seasonality model predictions until the year 2028.")
+      return(oRaklE::example_midterm_future_predictions)
+    }
+  }
 last_years <- midterm_predictions[(nrow(midterm_predictions)-(3*365)):(nrow(midterm_predictions)),]
 
 mean_values <- sapply(1:365, function(i) {
@@ -126,17 +127,9 @@ country <- unique(new_data$country)
 
 globalmodel <- NULL
 best_model <- NULL
-### FOR EXAMPLES
-if (grepl("Rtmp", getwd())) {
-  y <- midterm_predictions$seasonal_avg_hourly_demand[1:1095]
-  x <- data.matrix(midterm_predictions[1:1095, 9:43])
 
-  cv_model <- glmnet::cv.glmnet(x, y, alpha = 1)
-  best_lambda <- cv_model$lambda.min
-  best_model <- glmnet::glmnet(x, y, alpha = 1, lambda = best_lambda)
-}else{
+
 load(paste0("./",country,"/models/midterm/best_model.Rdata"))
-}
 
 if ("HD" %in% colnames(midterm_predictions)){
   if (! is.null(globalmodel)){

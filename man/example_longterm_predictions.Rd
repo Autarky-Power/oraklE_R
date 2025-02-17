@@ -5,7 +5,7 @@
 \alias{example_longterm_predictions}
 \title{Example Longterm Predictions Data}
 \format{
-A data frame with 16 rows and 17 columns:
+A data frame with 16 rows and 18 columns:
 \describe{
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{year}}{The year of the observation.}
@@ -24,6 +24,7 @@ A data frame with 16 rows and 17 columns:
 \item{\code{longterm_model_predictions2}}{Predictions for the long-term trend component of electricity demand based on Model 2.}
 \item{\code{longterm_model_predictions3}}{Predictions for the long-term trend component of electricity demand based on Model 3.}
 \item{\code{test_set_steps}}{The number of years used in the test or validation set for the model evaluation.}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

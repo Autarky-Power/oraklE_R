@@ -13,7 +13,7 @@ Authors@R:
                role = c("aut"), 
                comment = c(ORCID = "0000-0001-6587-0144"))
     )
-Description: The oRaklE package is designed to provide researchers and practitioners with highly accurate long-term electricity demand predictions on a country scale in hourly resolution. The package offers real-time data like power demand, weather data, and macro-economic indicators through automated API integrations from various institutions, ensuring access to up-to-date information. It incorporates advanced forecasting techniques and helps with selecting the best models. The stepwise approach maintains transparency on the various model selection processes and encompasses the ability to be adapted to individual needs. With a focus on scalability and precision, oRaklE facilitates robust decision-making in energy management and planning.
+Description: The 'oRaklE' package is designed to provide researchers and practitioners with highly accurate long-term electricity demand predictions on a country scale in hourly resolution. The package provides real-time data, including power demand, weather conditions, and macroeconomic indicators, through automated API integration with various institutions, ensuring continuous access to up-to-date information. It incorporates an advanced forecasting algorithm and helps with selecting the best models. The modular approach maintains transparency on the various model selection processes and encompasses the ability to be adapted to individual needs. 'oRaklE' tries to help facilitating robust decision-making in energy management and planning.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -42,7 +42,7 @@ Imports:
     xml2,
     zoo
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
 Suggests: 
     knitr,
     rmarkdown,

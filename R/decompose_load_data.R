@@ -21,17 +21,17 @@
 #'
 #' @examples
 #'
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #'  example_decomposed_data <- decompose_load_data(example_demand_data_filled)
-#'  suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
-#'
+
 
 decompose_load_data <- function(load_data){
 
+  if ("example" %in% colnames(load_data)){
+    if (unique(load_data$example) == TRUE){
+      message("Decomposing the load data into a long-term trend component, a mid-term seasonality component and a short-term seasonality component.")
+      return(oRaklE::example_decomposed_data)
+    }
+  }
   resolution <- as.numeric(difftime(load_data$date[2], load_data$date[1],units="hours"))
   if (resolution <= 1){
     timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))),'-01-01 00:00'),tz="UTC"),

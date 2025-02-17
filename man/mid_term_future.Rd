@@ -22,14 +22,8 @@ The unknown temperature-based covariates for future days are obtained by averagi
 The function also produces and saves visualizations of the actual and the predicted demand over the training, test, and future periods.
 }
 \examples{
-working_directory <- getwd()
-setwd(tempdir())
 example_midterm_future_predictions <- mid_term_future(example_midterm_predictions,
 end_year=2028,Tref=18)
-suppressMessages(
- unlink("./FR", recursive = TRUE, force = TRUE)
- )
-setwd(working_directory)
 }
 \seealso{
 See also function \code{\link{long_term_future}} and \code{\link{short_term_future}} for the other prediction models.

@@ -17,18 +17,19 @@
 #' @import survival
 #' @importFrom survival Surv is.Surv survfit
 #' @examples
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_longterm_predictions <- long_term_lm(example_longterm_and_macro_data,
 #' test_set_steps=2,testquant = 500)
-#' suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
+
 
 
 long_term_lm<- function(longterm_and_macro_data,test_set_steps=2,testquant = 500){
-  longterm_all_data <- longterm_and_macro_data
+
+  if ("example" %in% colnames(longterm_and_macro_data)){
+    if (unique(longterm_and_macro_data$example) == TRUE){
+      return(oRaklE::example_longterm_predictions)
+    }
+  }
+   longterm_all_data <- longterm_and_macro_data
   if(! "avg_hourly_demand" %in% colnames(longterm_all_data)){
     stop("No column named \"avg_hourly_demand\"")
   }
@@ -91,9 +92,6 @@ long_term_lm<- function(longterm_and_macro_data,test_set_steps=2,testquant = 500
   used_cores <- floor(no_cores*0.75)
   if (used_cores > 10) {used_cores=10}
 
-  if (grepl("Rtmp", getwd())) {
-    used_cores <- 2
-  }
 
   cl <- parallel::makeCluster(used_cores)
   doParallel::registerDoParallel(cl)

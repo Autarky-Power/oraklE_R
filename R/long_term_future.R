@@ -11,47 +11,18 @@
 #' @seealso See also function \code{\link{mid_term_future}} and \code{\link{short_term_future}} for the other prediction models and \code{\link{long_term_future_data}} for the covariate download.
 #'
 #' @examples
-#' working_directory <- getwd()
-#' setwd(tempdir())
 #' example_longterm_future_predictions <- long_term_future(example_longterm_future_macro_data)
-#' suppressMessages(
-#'  unlink("./FR", recursive = TRUE, force = TRUE)
-#'  )
-#' setwd(working_directory)
+
 
 long_term_future <- function(longterm_future_macro_data){
 
-  new_row_start <- min(which(is.na(longterm_future_macro_data$avg_hourly_demand)))
-
-  ### FOR EXAMPLES
-  if (grepl("Rtmp", getwd())) {
-
-    variable_list = list(c("GDP", "GNI", "industrial_value_added", "rural_population"),
-                         c("GDP_growth", "household_consumption_expenditure", "rural_population", "service_value_added"),
-                         c("GDP", "industrial_value_added", "rural_population", "service_value_added"))
-    for (i in 1:3){
-    variables=variable_list[i][[1]]
-    f <- stats:: as.formula(paste("avg_hourly_demand", paste(variables, collapse = " + "),
-                                  sep = " ~ "))
-
-    best_lm_model<- stats::lm(f,data=longterm_future_macro_data[1:14,])
-
-    country <- unique(stats::na.omit(longterm_future_macro_data$country))
-    if (! file.exists(country)){
-      dir.create(country)}
-    if (! file.exists(paste0("./",country,"/models"))){
-      dir.create(paste0("./",country,"/models"))}
-    if (! file.exists(paste0("./",country,"/data"))){
-      dir.create(paste0("./",country,"/data"))}
-    if (! file.exists(paste0("./",country,"/plots"))){
-      dir.create(paste0("./",country,"/plots"))}
-    if (! file.exists(paste0("./",country,"/models/longterm"))){
-      dir.create(paste0("./",country,"/models/longterm"))}
-    if (! file.exists(paste0("./FR/models/longterm"))){
-      dir.create(paste0("./FR/models/longterm"))}
-    save(best_lm_model,file=paste0("./FR/models/longterm/best_lm_model",i,".Rdata"))
+  if ("example" %in% colnames(longterm_future_macro_data)){
+    if (unique(longterm_future_macro_data$example) == TRUE){
+      return(oRaklE::example_longterm_future_predictions)
     }
   }
+
+  new_row_start <- min(which(is.na(longterm_future_macro_data$avg_hourly_demand)))
 
   for (i in 1:3){
     model_path= paste0("./", unique(longterm_future_macro_data$country),"/models/longterm/best_lm_model",i,".Rdata")

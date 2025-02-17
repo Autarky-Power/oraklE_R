@@ -13,6 +13,13 @@
 
 add_holidays_short_term<- function(shortterm){
 
+  if ("example" %in% colnames(shortterm)){
+    if (unique(shortterm$example) == TRUE){
+      message("Getting holiday information.")
+
+      return(oRaklE::example_shortterm_demand_data)
+    }
+  }
   years=unique(shortterm$year)
   country= (unique(shortterm$country))
 

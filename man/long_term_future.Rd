@@ -18,13 +18,7 @@ The unknown macro-economic covariates are either obtained from the WEO Outlook w
 The function also produces and saves visualizations of the actual and the predicted demand over the training, test, and future periods.
 }
 \examples{
-working_directory <- getwd()
-setwd(tempdir())
 example_longterm_future_predictions <- long_term_future(example_longterm_future_macro_data)
-suppressMessages(
- unlink("./FR", recursive = TRUE, force = TRUE)
- )
-setwd(working_directory)
 }
 \seealso{
 See also function \code{\link{mid_term_future}} and \code{\link{short_term_future}} for the other prediction models and \code{\link{long_term_future_data}} for the covariate download.

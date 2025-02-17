@@ -5,7 +5,7 @@
 \alias{example_midterm_future_predictions}
 \title{Example Midterm Future Predictions Data}
 \format{
-A data frame with 4,380 rows and 45 columns:
+A data frame with 4,380 rows and 46 columns:
 \describe{
 \item{\code{country}}{The country, represented by the ISO2C country code (e.g., \code{FR} for France).}
 \item{\code{date}}{The date (in \code{YYYY-MM-DD} format).}
@@ -36,6 +36,7 @@ A data frame with 4,380 rows and 45 columns:
 \item{\code{midterm_model_fit}}{model predictions for the seasonal mid-term component.}
 \item{\code{end_of_year}}{Binary dummy variable to account for lower demand between Christmas and New Year's Evening. Starts at 22nd December.}
 \item{\code{test_set_steps}}{Number of days used in the test set for model evaluation.}
+\item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
 }
 }
 \source{

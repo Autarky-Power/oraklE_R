@@ -12,10 +12,18 @@
 #'
 #' @examples
 #' example_longterm_and_macro_data <- get_macro_economic_data(example_longterm_data)
-#' print("Macro economic variables are added:")
+#' print("Macro economic variables are added from the World Bank Developer Indicators:")
 #' example_longterm_and_macro_data
 #'
 get_macro_economic_data <- function(longterm_data){
+
+  if ("example" %in% colnames(longterm_data)){
+    if (unique(longterm_data$example) == TRUE){
+      return(oRaklE::example_longterm_and_macro_data)
+    }
+  }
+
+
   longterm <- longterm_data
   country=unique(longterm$country)
   start_year= min(longterm$year)
