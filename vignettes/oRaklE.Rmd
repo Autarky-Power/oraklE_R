@@ -3,16 +3,16 @@ title: "oRaklE: Multi-Horizon Electricity Demand Forecasting in High Resolution"
 author: "Johannes Schwenzer, Simone Maxand, Tatiana C. G. Grandón"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{oRaklE: Multi-Horizon Electricity Demand Forecasting}
+  %\VignetteIndexEntry{oRaklE: Multi-Horizon Electricity Demand Forecasting in High Resolution}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 # Introduction
 
-The **oRaklE** R package provides tools for long-term electricity demand forecasting with hourly resolution on a country-wide scale. Designed for scalability and precision, it supports stepwise modeling of electricity demand components (long-term, mid-term, and short-term) and enables detailed analysis and forecasting. 
+The **oRaklE** R package provides tools for long-term electricity demand forecasting with hourly resolution on a country-wide or regional scale. Designed for scalability and precision, it supports stepwise modeling of electricity demand components (long-term, mid-term, and short-term) and enables detailed analysis and forecasting. 
 
-This vignette provides a comprehensive overview of the package's features and demonstrates how to use its functionalities. For better displaying quality we recommend visiting 
+This vignette provides a comprehensive overview of the package's features and demonstrates how to use its functionalities. For better displaying quality we recommend visiting the readme on the   [official github site](https://github.com/Autarky-Power/oraklE_R).
 
 ---
 
@@ -37,9 +37,6 @@ As a first step, the package gets the load data from the Transparency Platform o
 ```r
 demand_data <- get_entsoE_data(2017, 2021, "France", api_key="default")
 ```
-```{r, echo=FALSE, out.width='400px', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/24450818-c869-4142-a5b3-cb2a2ec7ff36")
-```
 
 ### Fill Missing Data:
 The next step checks for missing data and replaces NaN values with the load data one week prior at the same time. So a missing value on a Thursday at 8 pm will be filled with the load value at 8 pm the week before. It also adjusts the dataset to account for changes in time resolution, ensuring that the data is standardized to an hourly resolution. For example, French load data is reported at an hourly resolution from 2017 to 2021 and at a half-hourly resolution from 2022 onwards. Therefore, it is recommended to run this function, even if there are no missing values.
@@ -58,9 +55,6 @@ After the data is downloaded and standardized, the load time series is decompose
 
 ```r
 decomposed_data <- decompose_load_data(demand_data_filled)
-```
-```{r, echo=FALSE, out.width='400px', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/e5db1014-6e2b-4632-ab00-5923e8414553")
 ```
 
 The function returns a list of three dataframes —one for each time series component:
@@ -105,9 +99,6 @@ longterm_predictions <- long_term_lm(longterm_all_data, test_set_steps = 2, test
 ```
 The three best models as well as plots for each model are generated and saved.
 
-```{r, echo=FALSE, out.width='400px', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/3facab6e-5e7c-4f6a-8e13-c53d6d9591a0")
-```
 
 ### Generate Future Predictions:
 
@@ -146,9 +137,7 @@ After the dataset for the future predictions is prepared, long-term forecasts un
 ```r
 longterm_future_predictions <- long_term_future(longterm_future_macro_data)
 ```
-```{r, echo=FALSE, out.width='400px', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/6ea76ae8-5aea-4d3b-9c48-132da3ebc269")
-```
+
 ---
 
 ## Step 3: Mid-Term Seasonality Modeling
@@ -223,10 +212,6 @@ midterm_predictions <- mid_term_lm(midterm_demand_and_weather_data$demand,
                                     method = "temperature transformation")
 ```
 
-```{r, echo=FALSE, out.width='400px', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/9bed2a15-5e3b-40f8-a1a9-a20ee57b0d8e")
-```
-
 ### Generate Future Predictions:
 
 After identifying the best mid-term model, future seasonality predictions can be generated. While the future calendar and holiday covariates are deterministic, the future daily average temperatures are impossible to know with certainty. To estimate these, the library calculates the average of the past three observations for the same day. For example, the average temperature for July 22, 2025, would be estimated by averaging the temperatures observed on July 22 in 2022, 2023, and 2024. The variable *end_year* specifies the final year up to which future predictions will be made and should be consistent over all three model components (long-, medium-, and short-term).
@@ -234,9 +219,7 @@ After identifying the best mid-term model, future seasonality predictions can be
 ```r
 midterm_future_predictions <- mid_term_future(midterm_predictions, end_year = 2028)
 ```
-```{r, echo=FALSE, out.width='400px', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/018d1623-7cfe-4579-8373-246fdc87b078")
-```
+
 ---
 
 ## Step 4: Short-Term Seasonality Modeling
@@ -263,15 +246,6 @@ The variable for *test_set_steps* defines how many hours are used for the test s
 shortterm_predictions <- short_term_lm(shortterm_demand_data, test_set_steps = 17520)
 ```
 
-```{r, echo=FALSE, out.width='45%', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/b77ed5c0-0021-4189-ae07-c142a17221bd")
-
-```
-
-```{r, echo=FALSE, out.width='45%', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/3bc98573-4c5b-4057-8b21-3db3dfe37c5f")
-```
-
 
 ### Generate Future Predictions:
 
@@ -279,10 +253,6 @@ Because all used covariates are deterministic the future short-term seasonality 
 
 ```r
 shortterm_future_predictions <- short_term_future(shortterm_predictions, end_year = 2028)
-```
-
-```{r, echo=FALSE, out.width='45%', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/2d1bc6b9-70e3-47ea-9d68-9259cb02c849")
 ```
 
 ---
@@ -320,14 +290,6 @@ full_model_predictions <- combine_models(longterm_predictions,
 Note that the algorithm reaches a MAPE below 4% over the validation set of 17520 hours (2 years) for French demand data.
 
 
-```{r, echo=FALSE, out.width='45%', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/af339a58-beeb-4a84-ae0c-9169e7c2708b")
-```
-
-```{r, echo=FALSE, out.width='45%', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/9d99c117-9dc0-475d-a6b8-a8c027b8f758")
-```
-
 ### Generate Future Forecasts:
 Similarly, full future predictions up to the specified end year can be generated.
 
@@ -336,9 +298,6 @@ full_model_future_predictions <- combine_models_future(longterm_future_predictio
                                                        midterm_future_predictions, 
                                                        shortterm_future_predictions, 
                                                        longterm_model_number = 1)
-```
-```{r, echo=FALSE, out.width='45%', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/ca5c1ba8-15e3-4016-9c16-ee112f204128")
 ```
 
 ---

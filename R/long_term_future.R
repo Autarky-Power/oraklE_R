@@ -12,129 +12,142 @@
 #'
 #' @examples
 #' example_longterm_future_predictions <- long_term_future(example_longterm_future_macro_data)
-
-
-long_term_future <- function(longterm_future_macro_data){
-
-  if ("example" %in% colnames(longterm_future_macro_data)){
-    if (unique(longterm_future_macro_data$example) == TRUE){
+long_term_future <- function(longterm_future_macro_data) {
+  if ("example" %in% colnames(longterm_future_macro_data)) {
+    if (unique(longterm_future_macro_data$example) == TRUE) {
       return(oRaklE::example_longterm_future_predictions)
     }
   }
 
   new_row_start <- min(which(is.na(longterm_future_macro_data$avg_hourly_demand)))
 
-  for (i in 1:3){
-    model_path= paste0("./", unique(longterm_future_macro_data$country),"/models/longterm/best_lm_model",i,".Rdata")
+  for (i in 1:3) {
+    model_path <- paste0("./", unique(longterm_future_macro_data$country), "/models/longterm/best_lm_model", i, ".Rdata")
 
     loaded_model <- load(model_path)
     best_lm_model <- get(loaded_model)
-    prediction_column <- which(colnames(longterm_future_macro_data)==paste0("longterm_model_predictions",i))
-    longterm_future_macro_data[new_row_start:nrow(longterm_future_macro_data),prediction_column] <- stats::predict(best_lm_model,newdata = longterm_future_macro_data)[new_row_start:nrow(longterm_future_macro_data)]
+    prediction_column <- which(colnames(longterm_future_macro_data) == paste0("longterm_model_predictions", i))
+    longterm_future_macro_data[new_row_start:nrow(longterm_future_macro_data), prediction_column] <- stats::predict(best_lm_model, newdata = longterm_future_macro_data)[new_row_start:nrow(longterm_future_macro_data)]
   }
 
-  utils::write.csv(longterm_future_macro_data,paste0("./",unique(longterm_future_macro_data$country),"/data/longterm_future_predictions.csv"),row.names = F)
+  utils::write.csv(longterm_future_macro_data, paste0("./", unique(longterm_future_macro_data$country), "/data/longterm_future_predictions.csv"), row.names = F)
 
-  intercept <- longterm_future_macro_data$year[(new_row_start-1)]-unique(longterm_future_macro_data$test_set_steps)
-  training_text_index <- min(longterm_future_macro_data$year, na.rm = T)+ ((intercept-min(longterm_future_macro_data$year, na.rm = T))/2)
-  test_set_end <- longterm_future_macro_data$year[(new_row_start-1)]
-  max_value <- max(c(max(longterm_future_macro_data$avg_hourly_demand,na.rm = T),max(longterm_future_macro_data$longterm_model_predictions1,na.rm = T),
-                     max(longterm_future_macro_data$longterm_model_predictions2,na.rm = T),
-                     max(longterm_future_macro_data$longterm_model_predictions3,na.rm = T)))
+  intercept <- longterm_future_macro_data$year[(new_row_start - 1)] - unique(longterm_future_macro_data$test_set_steps)
+  training_text_index <- min(longterm_future_macro_data$year, na.rm = T) + ((intercept - min(longterm_future_macro_data$year, na.rm = T)) / 2)
+  test_set_end <- longterm_future_macro_data$year[(new_row_start - 1)]
+  max_value <- max(c(
+    max(longterm_future_macro_data$avg_hourly_demand, na.rm = T), max(longterm_future_macro_data$longterm_model_predictions1, na.rm = T),
+    max(longterm_future_macro_data$longterm_model_predictions2, na.rm = T),
+    max(longterm_future_macro_data$longterm_model_predictions3, na.rm = T)
+  ))
   future_set <- length(longterm_future_macro_data$year[new_row_start:nrow(longterm_future_macro_data)])
 
   suppressWarnings(
-  lt_plot <- ggplot(longterm_future_macro_data)+geom_line(aes(longterm_future_macro_data$year,longterm_future_macro_data$avg_hourly_demand,color="actual"),lwd=1)+
-    geom_line(aes(longterm_future_macro_data$year,longterm_future_macro_data$longterm_model_predictions1,color="Model1"))+
-    geom_line(aes(longterm_future_macro_data$year,longterm_future_macro_data$longterm_model_predictions2,color="Model2"))+
-    geom_line(aes(longterm_future_macro_data$year,longterm_future_macro_data$longterm_model_predictions3,color="Model3"))+
-    geom_vline(xintercept=intercept,linetype=2)+
-    geom_vline(xintercept=test_set_end,linetype=3)+
-    ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nYear")+ylab("Avg Hourly Demand p. Year\n [MW]\n")+
-    ggtitle(paste("Long Term Model Results -",unique(longterm_future_macro_data$country),"\n"))+
-    theme(plot.title = element_text(face = "bold",
-                                    size = rel(1.2), hjust = 0.5),
-          plot.subtitle = element_text(size = rel(1), hjust = 0.5),
-          text = element_text(),
-          panel.background = element_rect(colour = NA),
-          plot.background = element_rect(colour = NA),
-          panel.border = element_rect(colour = NA),
-          axis.title = element_text(face = "bold",size = rel(1)),
-          axis.title.y = element_text(angle=90,vjust =2),
-          axis.title.x = element_text(vjust = -0.2),
-          axis.text = element_text(),
-          axis.line.x = element_line(colour="black"),
-          axis.line.y = element_line(colour="black"),
-          axis.ticks = element_line(),
-          panel.grid.major = element_line(colour="#f0f0f0"),
-          panel.grid.minor = element_blank(),
-          legend.key = element_rect(colour = NA),
-          legend.position = "bottom",
-          legend.direction = "horizontal",
-          legend.key.size= unit(0.2, "cm"),
-          plot.margin=unit(c(10,5,5,5),"mm"),
-          strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
-          strip.text = element_text(face="bold"))+
-    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))+
-    annotate("text", x = training_text_index, y = (max_value+max_value*0.02), label = "Training", size = 4, hjust = 0.5, vjust = 0)+
-    annotate("text", x = (intercept+unique(longterm_future_macro_data$test_set_steps)/2), y = (max_value+max_value*0.02), label = "Test", size = 4, hjust = 0.5, vjust = 0)+
-    annotate("text", x = (longterm_future_macro_data$year[new_row_start]+future_set/2), y =  (max_value+max_value*0.02), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
-)
+    lt_plot <- ggplot(longterm_future_macro_data) +
+      geom_line(aes(longterm_future_macro_data$year, longterm_future_macro_data$avg_hourly_demand, color = "actual"), lwd = 1) +
+      geom_line(aes(longterm_future_macro_data$year, longterm_future_macro_data$longterm_model_predictions1, color = "Model1")) +
+      geom_line(aes(longterm_future_macro_data$year, longterm_future_macro_data$longterm_model_predictions2, color = "Model2")) +
+      geom_line(aes(longterm_future_macro_data$year, longterm_future_macro_data$longterm_model_predictions3, color = "Model3")) +
+      geom_vline(xintercept = intercept, linetype = 2) +
+      geom_vline(xintercept = test_set_end, linetype = 3) +
+      ggthemes::theme_foundation(base_size = 14, base_family = "sans") +
+      xlab("\nYear") +
+      ylab("Avg Hourly Demand p. Year\n [MW]\n") +
+      ggtitle(paste("Long Term Model Results -", unique(longterm_future_macro_data$country), "\n")) +
+      theme(
+        plot.title = element_text(
+          face = "bold",
+          size = rel(1.2), hjust = 0.5
+        ),
+        plot.subtitle = element_text(size = rel(1), hjust = 0.5),
+        text = element_text(),
+        panel.background = element_rect(colour = NA),
+        plot.background = element_rect(colour = NA),
+        panel.border = element_rect(colour = NA),
+        axis.title = element_text(face = "bold", size = rel(1)),
+        axis.title.y = element_text(angle = 90, vjust = 2),
+        axis.title.x = element_text(vjust = -0.2),
+        axis.text = element_text(),
+        axis.line.x = element_line(colour = "black"),
+        axis.line.y = element_line(colour = "black"),
+        axis.ticks = element_line(),
+        panel.grid.major = element_line(colour = "#f0f0f0"),
+        panel.grid.minor = element_blank(),
+        legend.key = element_rect(colour = NA),
+        legend.position = "bottom",
+        legend.direction = "horizontal",
+        legend.key.size = unit(0.2, "cm"),
+        plot.margin = unit(c(10, 5, 5, 5), "mm"),
+        strip.background = element_rect(colour = "#f0f0f0", fill = "#f0f0f0"),
+        strip.text = element_text(face = "bold")
+      ) +
+      theme(legend.title = element_blank()) +
+      guides(color = guide_legend(override.aes = list(linewidth = 2))) +
+      annotate("text", x = training_text_index, y = (max_value + max_value * 0.02), label = "Training", size = 4, hjust = 0.5, vjust = 0) +
+      annotate("text", x = (intercept + unique(longterm_future_macro_data$test_set_steps) / 2), y = (max_value + max_value * 0.02), label = "Test", size = 4, hjust = 0.5, vjust = 0) +
+      annotate("text", x = (longterm_future_macro_data$year[new_row_start] + future_set / 2), y = (max_value + max_value * 0.02), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
+  )
   suppressWarnings(
     print(lt_plot)
-    )
+  )
 
 
-suppressWarnings(
-  lt_plot2 <- ggplot(longterm_future_macro_data)+geom_line(aes(longterm_future_macro_data$year,longterm_future_macro_data$avg_hourly_demand,color="actual"),lwd=1)+
-    geom_line(aes(longterm_future_macro_data$year,longterm_future_macro_data$longterm_model_predictions1,color="Model1"))+
-    geom_line(aes(longterm_future_macro_data$year,longterm_future_macro_data$longterm_model_predictions2,color="Model2"))+
-    geom_line(aes(longterm_future_macro_data$year,longterm_future_macro_data$longterm_model_predictions3,color="Model3"))+
-    xlab("\nYear")+ylab("Avg Hourly Demand p. Year\n [MW]\n")+
-    geom_vline(xintercept=intercept,linetype=2)+
-    geom_vline(xintercept=test_set_end,linetype=3)+
-    ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    ggtitle(paste("Long Term Model Results -",unique(longterm_future_macro_data$country),"\n"))+
-    theme(plot.title = element_text(face = "bold",
-                                    size = rel(1.2), hjust = 0.5),
-          plot.subtitle = element_text(size = rel(1), hjust = 0.5),
-          text = element_text(),
-          panel.background = element_rect(colour = NA),
-          plot.background = element_rect(colour = NA),
-          panel.border = element_rect(colour = NA),
-          axis.title = element_text(face = "bold",size = rel(1)),
-          axis.title.y = element_text(angle=90,vjust =2),
-          axis.title.x = element_text(vjust = -0.2),
-          axis.text = element_text(),
-          axis.line.x = element_line(colour="black"),
-          axis.line.y = element_line(colour="black"),
-          axis.ticks = element_line(),
-          panel.grid.major = element_line(colour="#f0f0f0"),
-          panel.grid.minor = element_blank(),
-          legend.key = element_rect(colour = NA),
-          legend.position = "bottom",
-          legend.direction = "horizontal",
-          legend.key.size= unit(0.2, "cm"),
-          plot.margin=unit(c(10,5,5,5),"mm"),
-          strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
-          strip.text = element_text(face="bold"))+
-    theme(legend.title = element_blank())+
-    theme(axis.title=element_text(size=23))+
-    theme(legend.text=element_text(size=23))+
-    theme(axis.text=element_text(size=20))+
-    theme(plot.title = element_text(size=26))+guides(color = guide_legend(override.aes = list(linewidth = 2)))+
-    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))+
-    annotate("text", x = training_text_index, y = (max_value+max_value*0.02), label = "Training", size = 4, hjust = 0.5, vjust = 0)+
-    annotate("text", x = (intercept+unique(longterm_future_macro_data$test_set_steps)/2), y = (max_value+max_value*0.02), label = "Test", size = 4, hjust = 0.5, vjust = 0)+
-    annotate("text", x = (longterm_future_macro_data$year[new_row_start]+future_set/2), y =  (max_value+max_value*0.02), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
-)
   suppressWarnings(
-    ggsave(filename=paste0("./",unique(longterm_future_macro_data$country),"/plots/Long_term_results_future.png"), plot=lt_plot2, width=12, height=8)
+    lt_plot2 <- ggplot(longterm_future_macro_data) +
+      geom_line(aes(longterm_future_macro_data$year, longterm_future_macro_data$avg_hourly_demand, color = "actual"), lwd = 1) +
+      geom_line(aes(longterm_future_macro_data$year, longterm_future_macro_data$longterm_model_predictions1, color = "Model1")) +
+      geom_line(aes(longterm_future_macro_data$year, longterm_future_macro_data$longterm_model_predictions2, color = "Model2")) +
+      geom_line(aes(longterm_future_macro_data$year, longterm_future_macro_data$longterm_model_predictions3, color = "Model3")) +
+      xlab("\nYear") +
+      ylab("Avg Hourly Demand p. Year\n [MW]\n") +
+      geom_vline(xintercept = intercept, linetype = 2) +
+      geom_vline(xintercept = test_set_end, linetype = 3) +
+      ggthemes::theme_foundation(base_size = 14, base_family = "sans") +
+      ggtitle(paste("Long Term Model Results -", unique(longterm_future_macro_data$country), "\n")) +
+      theme(
+        plot.title = element_text(
+          face = "bold",
+          size = rel(1.2), hjust = 0.5
+        ),
+        plot.subtitle = element_text(size = rel(1), hjust = 0.5),
+        text = element_text(),
+        panel.background = element_rect(colour = NA),
+        plot.background = element_rect(colour = NA),
+        panel.border = element_rect(colour = NA),
+        axis.title = element_text(face = "bold", size = rel(1)),
+        axis.title.y = element_text(angle = 90, vjust = 2),
+        axis.title.x = element_text(vjust = -0.2),
+        axis.text = element_text(),
+        axis.line.x = element_line(colour = "black"),
+        axis.line.y = element_line(colour = "black"),
+        axis.ticks = element_line(),
+        panel.grid.major = element_line(colour = "#f0f0f0"),
+        panel.grid.minor = element_blank(),
+        legend.key = element_rect(colour = NA),
+        legend.position = "bottom",
+        legend.direction = "horizontal",
+        legend.key.size = unit(0.2, "cm"),
+        plot.margin = unit(c(10, 5, 5, 5), "mm"),
+        strip.background = element_rect(colour = "#f0f0f0", fill = "#f0f0f0"),
+        strip.text = element_text(face = "bold")
+      ) +
+      theme(legend.title = element_blank()) +
+      theme(axis.title = element_text(size = 23)) +
+      theme(legend.text = element_text(size = 23)) +
+      theme(axis.text = element_text(size = 20)) +
+      theme(plot.title = element_text(size = 26)) +
+      guides(color = guide_legend(override.aes = list(linewidth = 2))) +
+      theme(legend.title = element_blank()) +
+      guides(color = guide_legend(override.aes = list(linewidth = 2))) +
+      annotate("text", x = training_text_index, y = (max_value + max_value * 0.02), label = "Training", size = 4, hjust = 0.5, vjust = 0) +
+      annotate("text", x = (intercept + unique(longterm_future_macro_data$test_set_steps) / 2), y = (max_value + max_value * 0.02), label = "Test", size = 4, hjust = 0.5, vjust = 0) +
+      annotate("text", x = (longterm_future_macro_data$year[new_row_start] + future_set / 2), y = (max_value + max_value * 0.02), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
+  )
+  suppressWarnings(
+    ggsave(filename = paste0("./", unique(longterm_future_macro_data$country), "/plots/Long_term_results_future.png"), plot = lt_plot2, width = 12, height = 8)
   )
 
   longterm_predictions_future <- longterm_future_macro_data
 
   return(longterm_predictions_future)
-
 }

@@ -12,35 +12,36 @@
 #' @examples
 #' example_midterm_demand_data <- add_holidays_mid_term(example_decomposed_data$midterm)
 #' head(example_midterm_demand_data)
-
-add_holidays_mid_term<- function(midterm_data){
-
-  if ("example" %in% colnames(midterm_data)){
-    if (unique(midterm_data$example) == TRUE){
+add_holidays_mid_term <- function(midterm_data) {
+  if ("example" %in% colnames(midterm_data)) {
+    if (unique(midterm_data$example) == TRUE) {
       return(oRaklE::example_midterm_demand_data)
     }
   }
   midterm <- midterm_data
 
-  years=unique(midterm$year)
-  country= (unique(midterm$country))
+  years <- unique(midterm$year)
+  country <- (unique(midterm$country))
 
   holiday_list <- list()
-  for (i in 1:length(years)){
-    year= years[i]
+  for (i in 1:length(years)) {
+    year <- years[i]
     tryCatch(
       {
-    response = jsonlite::fromJSON(paste0("https://date.nager.at/api/v3/publicholidays/"
-                                         ,year,"/",country) )
-    holiday_list[[i]] <- response$date
+        response <- jsonlite::fromJSON(paste0(
+          "https://date.nager.at/api/v3/publicholidays/",
+          year, "/", country
+        ))
+        holiday_list[[i]] <- response$date
       },
       error = function(e) {
         stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
-      })
+      }
+    )
   }
 
-  holidays = unlist(holiday_list)
-  holidays = as.Date(holidays)
+  holidays <- unlist(holiday_list)
+  holidays <- as.Date(holidays)
 
   midterm$holiday <- 0
   midterm$holiday[midterm$date %in% holidays] <- 1

@@ -9,36 +9,38 @@
 #'
 #' @examples
 #' example_shortterm_demand_data <- add_holidays_short_term(example_decomposed_data$shortterm)
-#' example_shortterm_demand_data[1:5,c(1,2,11)]
-
-add_holidays_short_term<- function(shortterm){
-
-  if ("example" %in% colnames(shortterm)){
-    if (unique(shortterm$example) == TRUE){
+#' example_shortterm_demand_data[1:5, c(1, 2, 11)]
+add_holidays_short_term <- function(shortterm) {
+  if ("example" %in% colnames(shortterm)) {
+    if (unique(shortterm$example) == TRUE) {
       message("Getting holiday information.")
 
       return(oRaklE::example_shortterm_demand_data)
     }
   }
-  years=unique(shortterm$year)
-  country= (unique(shortterm$country))
+  years <- unique(shortterm$year)
+  country <- (unique(shortterm$country))
 
   holiday_list <- list()
-  for (i in 1:length(years)){
-    year= years[i]
+  for (i in 1:length(years)) {
+    year <- years[i]
     tryCatch(
       {
-    response = jsonlite::fromJSON(paste0("https://date.nager.at/api/v3/publicholidays/"
-                                         ,year,"/",country) )
-    holiday_list[[i]] <- response$date
-    }, error = function(e) {
-      stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
-    })
+        response <- jsonlite::fromJSON(paste0(
+          "https://date.nager.at/api/v3/publicholidays/",
+          year, "/", country
+        ))
+        holiday_list[[i]] <- response$date
+      },
+      error = function(e) {
+        stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+      }
+    )
   }
 
 
-  holidays = unlist(holiday_list)
-  holidays = as.Date(holidays)
+  holidays <- unlist(holiday_list)
+  holidays <- as.Date(holidays)
 
   shortterm$holiday <- ifelse(as.Date(shortterm$date, tz = "CET") %in% holidays, 1, 0)
 

@@ -13,159 +13,183 @@
 #'
 #' @examples
 #' example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data,
-#'                                                             api_key="default")
+#'   api_key = "default"
+#' )
 #' head(example_midterm_demand_and_weather_data$demand)
 #' head(example_midterm_demand_and_weather_data$temperature_data)
-
-
-get_weather_data <- function(midterm_demand_data, api_key="default"){
-
-  if ("example" %in% colnames(midterm_demand_data)){
-    if (unique(midterm_demand_data$example) == TRUE){
+get_weather_data <- function(midterm_demand_data, api_key = "default") {
+  if ("example" %in% colnames(midterm_demand_data)) {
+    if (unique(midterm_demand_data$example) == TRUE) {
       return(oRaklE::example_midterm_demand_and_weather_data)
     }
   }
   midterm <- midterm_demand_data
-  country=unique(midterm$country)
-  start_year=min(unique(midterm$year))
-  end_year=max(unique(midterm$year))
+  country <- unique(midterm$country)
+  start_year <- min(unique(midterm$year))
+  end_year <- max(unique(midterm$year))
 
-  rAPI_keys <-  c('78373349ffmsh25400c35b068c97p141de2jsnc9c3cb289eeb',
-                  "1a5b8f0e09mshf53aea987d0438ap15877ajsnb38876b3416f",
-                  '7bcc8e6611msh036ad704bd92ab7p1c117bjsn85b388ab36c2',
-                  'ff83e65c19mshe1a5a3cade9b307p12c6abjsnc5ca238dd93f',
-                  'a1ca87a51fmsh084a0420e192fb3p1e80dejsn751dfe70bbd9',
-                  '3a789ffa80msha4a27ded5ad6bf6p17156ajsn65dde6edcd82',
-                  '3f1e8156e8msh77ecdc22a46a6dcp16f7afjsn0f8652f0a598',
-                  'a2fa81f7c0msh99fc6bfcd50c2c1p11f186jsn6acb9eb0881b',
-                  '9e5732f249mshf4d3ca6064fd56ep1c0303jsnad9722dc52f8',
-                  '994e4b90abmshafbba71e8e92722p14f3d1jsn06ff01f2b6ca',
-                  '200439098fmsh508a44ddd5102eap196ed0jsn92487da6e4d6',
-                  "85bc618d2cmsh2df7162687e459cp11af9cjsncd9308af6007",
-                  "78a5abe631msh672c79b2280107ep1060d7jsn7dd1dda63e55",
-                  "73835b8d7emsha0dd3db1fbc8c45p1435e7jsn402be5ac38f9"
-                  )
+  rAPI_keys <- c(
+    "78373349ffmsh25400c35b068c97p141de2jsnc9c3cb289eeb",
+    "1a5b8f0e09mshf53aea987d0438ap15877ajsnb38876b3416f",
+    "7bcc8e6611msh036ad704bd92ab7p1c117bjsn85b388ab36c2",
+    "ff83e65c19mshe1a5a3cade9b307p12c6abjsnc5ca238dd93f",
+    "a1ca87a51fmsh084a0420e192fb3p1e80dejsn751dfe70bbd9",
+    "3a789ffa80msha4a27ded5ad6bf6p17156ajsn65dde6edcd82",
+    "3f1e8156e8msh77ecdc22a46a6dcp16f7afjsn0f8652f0a598",
+    "a2fa81f7c0msh99fc6bfcd50c2c1p11f186jsn6acb9eb0881b",
+    "9e5732f249mshf4d3ca6064fd56ep1c0303jsnad9722dc52f8",
+    "994e4b90abmshafbba71e8e92722p14f3d1jsn06ff01f2b6ca",
+    "200439098fmsh508a44ddd5102eap196ed0jsn92487da6e4d6",
+    "85bc618d2cmsh2df7162687e459cp11af9cjsncd9308af6007",
+    "78a5abe631msh672c79b2280107ep1060d7jsn7dd1dda63e55",
+    "73835b8d7emsha0dd3db1fbc8c45p1435e7jsn402be5ac38f9"
+  )
 
-  key_integer <- sample(1:14, 1 )
-  if (api_key=="default"){
-  rAPI_key <- rAPI_keys[key_integer]
-  } else{rAPI_key <- api_key}
+  key_integer <- sample(1:14, 1)
+  if (api_key == "default") {
+    rAPI_key <- rAPI_keys[key_integer]
+  } else {
+    rAPI_key <- api_key
+  }
 
   tryCatch(
     {
-  cities1<- httr::GET(paste0("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=",country,"&sort=-population&offset=0&limit=10&types=CITY"),
-                      httr::accept_json(),
-                      httr::add_headers("x-rapidapi-host" = "wft-geo-db.p.rapidapi.com",
-                                        "x-rapidapi-key" = rAPI_key))
+      cities1 <- httr::GET(
+        paste0("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=", country, "&sort=-population&offset=0&limit=10&types=CITY"),
+        httr::accept_json(),
+        httr::add_headers(
+          "x-rapidapi-host" = "wft-geo-db.p.rapidapi.com",
+          "x-rapidapi-key" = rAPI_key
+        )
+      )
 
-  Sys.sleep(2)
-  cities2<- httr::GET(paste0("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=",country,"&sort=-population&offset=10&limit=10&types=CITY"),
-                      httr::accept_json(),
-                      httr::add_headers("x-rapidapi-host" = "wft-geo-db.p.rapidapi.com",
-                                        "x-rapidapi-key" = rAPI_key))
-  },error = function(e) {
-    stop("Error during GET request from wft-geo-db.p.rapidapi.com: ", e$message,
-         "\nAre you connected to the internet?",call. = FALSE)
-  }
+      Sys.sleep(2)
+      cities2 <- httr::GET(
+        paste0("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=", country, "&sort=-population&offset=10&limit=10&types=CITY"),
+        httr::accept_json(),
+        httr::add_headers(
+          "x-rapidapi-host" = "wft-geo-db.p.rapidapi.com",
+          "x-rapidapi-key" = rAPI_key
+        )
+      )
+    },
+    error = function(e) {
+      stop("Error during GET request from wft-geo-db.p.rapidapi.com: ", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
   )
 
-  if ( cities1$status_code== 403 || cities2$status_code== 403){
-   stop("The used API key for wft-geo-db.p.rapidapi.com is either invalid or has reached it's monthly limit.\nYou can try again and a different API key will be used or you can provide your own." ,call. = FALSE)
+  if (cities1$status_code == 403 || cities2$status_code == 403) {
+    stop("The used API key for wft-geo-db.p.rapidapi.com is either invalid or has reached it's monthly limit.\nYou can try again and a different API key will be used or you can provide your own.", call. = FALSE)
   }
   if (httr::http_error(cities1)) {
     status <- httr::status_code(cities1)
     error_info <- httr::http_status(cities1)$message
-    stop("HTTP request failed from wft-geo-db.p.rapidapi.com (status ", status, "): ", error_info ,call. = FALSE)
+    stop("HTTP request failed from wft-geo-db.p.rapidapi.com (status ", status, "): ", error_info, call. = FALSE)
   }
 
   if (httr::http_error(cities2)) {
     status <- httr::status_code(cities2)
     error_info <- httr::http_status(cities2)$message
-    stop("HTTP request failed from wft-geo-db.p.rapidapi.com (status ", status, "): ", error_info ,call. = FALSE)
+    stop("HTTP request failed from wft-geo-db.p.rapidapi.com (status ", status, "): ", error_info, call. = FALSE)
   }
 
 
-  big_cities <- rbind(jsonlite::fromJSON(rawToChar(cities1$content))$data,jsonlite::fromJSON(rawToChar(cities2$content))$data)
+  big_cities <- rbind(jsonlite::fromJSON(rawToChar(cities1$content))$data, jsonlite::fromJSON(rawToChar(cities2$content))$data)
   big_cities$weather_station <- 0
 
 
 
 
-  for (i in 1:nrow(big_cities)){
-    lon=round(big_cities$longitude[i],digits=4 )
-    lat=round(big_cities$latitude[i],digits=4)
+  for (i in 1:nrow(big_cities)) {
+    lon <- round(big_cities$longitude[i], digits = 4)
+    lat <- round(big_cities$latitude[i], digits = 4)
 
     tryCatch(
       {
-    stations <- httr::GET(paste0("https://meteostat.p.rapidapi.com/stations/nearby?lat=",lat,"&lon=",lon),
-                          httr::accept_json(),
-                          httr::add_headers("x-rapidapi-host" = "meteostat.p.rapidapi.com",
-                                            "x-rapidapi-key" = rAPI_key))
-      },error = function(e) {
+        stations <- httr::GET(
+          paste0("https://meteostat.p.rapidapi.com/stations/nearby?lat=", lat, "&lon=", lon),
+          httr::accept_json(),
+          httr::add_headers(
+            "x-rapidapi-host" = "meteostat.p.rapidapi.com",
+            "x-rapidapi-key" = rAPI_key
+          )
+        )
+      },
+      error = function(e) {
         stop("Error during GET request from meteostat.p.rapidapi: ", e$message,
-             "\nAre you connected to the internet?",call. = FALSE)
+          "\nAre you connected to the internet?",
+          call. = FALSE
+        )
       }
     )
 
-    if ( stations$status_code== 403) {
-      stop("The used API key for meteostat.p.rapidapi.com is either invalid or has reached it's monthly limit.\nYou can try again and a different API key will be used or you can provide your own." ,call. = FALSE)
+    if (stations$status_code == 403) {
+      stop("The used API key for meteostat.p.rapidapi.com is either invalid or has reached it's monthly limit.\nYou can try again and a different API key will be used or you can provide your own.", call. = FALSE)
     }
 
     if (httr::http_error(stations)) {
       status <- httr::status_code(stations)
       error_info <- httr::http_status(stations)$message
-      stop("HTTP request failed from meteostat.p.rapidapi.com (status ", status, "): ", error_info ,call. = FALSE)
+      stop("HTTP request failed from meteostat.p.rapidapi.com (status ", status, "): ", error_info, call. = FALSE)
     }
     stations_list <- jsonlite::fromJSON(rawToChar(stations$content))$data
     big_cities$weather_station[i] <- stations_list$id[1]
     Sys.sleep(0.5)
   }
 
-  ts_date <- seq(as.Date(paste0(start_year,"-01-01")),as.Date(paste0(end_year,"-12-31")),by="d")
-  temp_df <- data.frame(matrix(nrow=length(ts_date),ncol=(1+nrow(big_cities))))
+  ts_date <- seq(as.Date(paste0(start_year, "-01-01")), as.Date(paste0(end_year, "-12-31")), by = "d")
+  temp_df <- data.frame(matrix(nrow = length(ts_date), ncol = (1 + nrow(big_cities))))
   colnames(temp_df)[1] <- "date"
   temp_df$date <- ts_date
   temp_df$weighted_mean_temperature <- 0
-  for (i in 1:nrow(big_cities)){
-    tryCatch({
-      station_id <- big_cities$weather_station[i]
-      suppressWarnings(
-      utils::download.file(paste0("https://bulk.meteostat.net/v2/daily/",station_id,".csv.gz"),
-                    destfile = "temp.csv.gz")
-      )
-      R.utils::gunzip("temp.csv.gz")
-      temp_data <- utils::read.csv("temp.csv")
-      colnames(temp_data)[c(1,2)] <- c("date","daily_avg_temp")
-      temp_data$date <- as.Date(temp_data$date, format="%Y-%m-%d")
-      temp_data <- temp_data[(lubridate::year(temp_data$date)>=start_year)&
-                               (lubridate::year(temp_data$date)<=end_year),1:2]
-      temp_df[,(i+1)][temp_df$date %in% temp_data$date]<- temp_data[,2]
-      file.remove("temp.csv")
-    },error=function(e){
-      # Fail silently
-      })
+  for (i in 1:nrow(big_cities)) {
+    tryCatch(
+      {
+        station_id <- big_cities$weather_station[i]
+        suppressWarnings(
+          utils::download.file(paste0("https://bulk.meteostat.net/v2/daily/", station_id, ".csv.gz"),
+            destfile = "temp.csv.gz"
+          )
+        )
+        R.utils::gunzip("temp.csv.gz")
+        temp_data <- utils::read.csv("temp.csv")
+        colnames(temp_data)[c(1, 2)] <- c("date", "daily_avg_temp")
+        temp_data$date <- as.Date(temp_data$date, format = "%Y-%m-%d")
+        temp_data <- temp_data[(lubridate::year(temp_data$date) >= start_year) &
+          (lubridate::year(temp_data$date) <= end_year), 1:2]
+        temp_df[, (i + 1)][temp_df$date %in% temp_data$date] <- temp_data[, 2]
+        file.remove("temp.csv")
+      },
+      error = function(e) {
+        # Fail silently
+      }
+    )
   }
 
   population <- big_cities$population
 
-  for (i in 1:nrow(temp_df)){
-    weighted_vector <- population[!is.na(temp_df[i,2:(ncol(temp_df)-1)])]/sum(population[!is.na(temp_df[i,2:(ncol(temp_df)-1)])])
-    temp_df$weighted_mean_temperature[i]<- sum(temp_df[i,2:(ncol(temp_df)-1)][!is.na(temp_df[i,2:(ncol(temp_df)-1)])]*weighted_vector)
+  for (i in 1:nrow(temp_df)) {
+    weighted_vector <- population[!is.na(temp_df[i, 2:(ncol(temp_df) - 1)])] / sum(population[!is.na(temp_df[i, 2:(ncol(temp_df) - 1)])])
+    temp_df$weighted_mean_temperature[i] <- sum(temp_df[i, 2:(ncol(temp_df) - 1)][!is.na(temp_df[i, 2:(ncol(temp_df) - 1)])] * weighted_vector)
   }
 
-  colnames(temp_df)[2:(ncol(temp_df)-1)] <- big_cities$name
+  colnames(temp_df)[2:(ncol(temp_df) - 1)] <- big_cities$name
   midterm$weighted_temperature <- 0
 
-  midterm$weighted_temperature<- temp_df$weighted_mean_temperature[temp_df$date %in% midterm$date]
+  midterm$weighted_temperature <- temp_df$weighted_mean_temperature[temp_df$date %in% midterm$date]
 
-  if (! file.exists(country)){
-    dir.create(country)}
-  if (! file.exists(paste0("./",country,"/data"))){
-    dir.create(paste0("./",country,"/data"))}
-  utils::write.csv(temp_df,paste0("./",country,"/data/temperatures.csv"),row.names = F)
-  utils::write.csv(midterm,paste0("./",country,"/data/midterm_data.csv"),row.names = F)
+  if (!file.exists(country)) {
+    dir.create(country)
+  }
+  if (!file.exists(paste0("./", country, "/data"))) {
+    dir.create(paste0("./", country, "/data"))
+  }
+  utils::write.csv(temp_df, paste0("./", country, "/data/temperatures.csv"), row.names = F)
+  utils::write.csv(midterm, paste0("./", country, "/data/midterm_data.csv"), row.names = F)
 
 
-  return(list("demand"=midterm, "temperature_data"=temp_df))
-
+  return(list("demand" = midterm, "temperature_data" = temp_df))
 }

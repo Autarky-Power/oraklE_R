@@ -15,29 +15,32 @@
 #' print("Macro economic variables are added from the World Bank Developer Indicators:")
 #' example_longterm_and_macro_data
 #'
-get_macro_economic_data <- function(longterm_data){
-
-  if ("example" %in% colnames(longterm_data)){
-    if (unique(longterm_data$example) == TRUE){
+get_macro_economic_data <- function(longterm_data) {
+  if ("example" %in% colnames(longterm_data)) {
+    if (unique(longterm_data$example) == TRUE) {
       return(oRaklE::example_longterm_and_macro_data)
     }
   }
 
 
   longterm <- longterm_data
-  country=unique(longterm$country)
-  start_year= min(longterm$year)
-  end_year= max(longterm$year)
+  country <- unique(longterm$country)
+  start_year <- min(longterm$year)
+  end_year <- max(longterm$year)
 
-  tryCatch({
-  res_pop = httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/SP.POP.TOTL?date=",start_year,":",end_year,"&format=json"))
-  },error = function(e) {
-    stop("Error during GET request to api.worldbank.org", e$message,
-         "\nAre you connected to the internet?",call. = FALSE)
-  }
+  tryCatch(
+    {
+      res_pop <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/SP.POP.TOTL?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
   )
 
-  if (res_pop$status_code==502){
+  if (res_pop$status_code == 502) {
     message("The World Development Indicator database of the World Bank is currently unreachable. Please try again in a minute.")
     return()
   }
@@ -47,161 +50,197 @@ get_macro_economic_data <- function(longterm_data){
     stop("HTTP request to api.worldbank.org failed (status ", status, "): ", error_info)
   }
 
-  data_pop=jsonlite::fromJSON(rawToChar(res_pop$content))
-  df_pop<- as.data.frame(data_pop[2])
-  df_pop<- df_pop[order(df_pop$date),]
+  data_pop <- jsonlite::fromJSON(rawToChar(res_pop$content))
+  df_pop <- as.data.frame(data_pop[2])
+  df_pop <- df_pop[order(df_pop$date), ]
   longterm$population <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_pop)){
-  longterm$population[i]<-df_pop$value[i]
+  for (i in 1:nrow(df_pop)) {
+    longterm$population[i] <- df_pop$value[i]
   }
-  tryCatch({
-  res_gdp= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.MKTP.KD?date=",start_year,":",end_year,"&format=json"))
-},error = function(e) {
-  stop("Error during GET request to api.worldbank.org", e$message,
-       "\nAre you connected to the internet?",call. = FALSE)
-}
-)
-  data_gdp=jsonlite::fromJSON(rawToChar(res_gdp$content))
-  df_gdp<- as.data.frame(data_gdp[2])
-  df_gdp<- df_gdp[order(df_gdp$date),]
+  tryCatch(
+    {
+      res_gdp <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/NY.GDP.MKTP.KD?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
+  )
+  data_gdp <- jsonlite::fromJSON(rawToChar(res_gdp$content))
+  df_gdp <- as.data.frame(data_gdp[2])
+  df_gdp <- df_gdp[order(df_gdp$date), ]
   longterm$GDP <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_gdp)){
-    longterm$GDP[i]<-df_gdp$value[i]
+  for (i in 1:nrow(df_gdp)) {
+    longterm$GDP[i] <- df_gdp$value[i]
   }
 
-tryCatch({
-  res_ind= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NV.IND.TOTL.ZS?date=",start_year,":",end_year,"&format=json"))
-},error = function(e) {
-  stop("Error during GET request to api.worldbank.org", e$message,
-       "\nAre you connected to the internet?",call. = FALSE)
-}
-)
-  data_ind=jsonlite::fromJSON(rawToChar(res_ind$content))
-  df_ind<- as.data.frame(data_ind[2])
-  df_ind<- df_ind[order(df_ind$date),]
+  tryCatch(
+    {
+      res_ind <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/NV.IND.TOTL.ZS?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
+  )
+  data_ind <- jsonlite::fromJSON(rawToChar(res_ind$content))
+  df_ind <- as.data.frame(data_ind[2])
+  df_ind <- df_ind[order(df_ind$date), ]
 
   longterm$industrial_value_added <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_ind)){
-    longterm$industrial_value_added[i]<-df_ind$value[i]
+  for (i in 1:nrow(df_ind)) {
+    longterm$industrial_value_added[i] <- df_ind$value[i]
   }
 
-  tryCatch({
-  res_man= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NV.IND.MANF.ZS?date=",start_year,":",end_year,"&format=json"))
-  },error = function(e) {
-    stop("Error during GET request to api.worldbank.org", e$message,
-         "\nAre you connected to the internet?",call. = FALSE)
-  }
+  tryCatch(
+    {
+      res_man <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/NV.IND.MANF.ZS?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
   )
-  data_man=jsonlite::fromJSON(rawToChar(res_man$content))
-  df_man<- as.data.frame(data_man[2])
-  df_man<- df_man[order(df_man$date),]
+  data_man <- jsonlite::fromJSON(rawToChar(res_man$content))
+  df_man <- as.data.frame(data_man[2])
+  df_man <- df_man[order(df_man$date), ]
 
   longterm$manufacturing_value_added <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_man)){
-    longterm$manufacturing_value_added[i]<-df_man$value[i]
+  for (i in 1:nrow(df_man)) {
+    longterm$manufacturing_value_added[i] <- df_man$value[i]
   }
 
-tryCatch({
-  res_gro= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.MKTP.KD.ZG?date=",start_year,":",end_year,"&format=json"))
-},error = function(e) {
-  stop("Error during GET request to api.worldbank.org", e$message,
-       "\nAre you connected to the internet?",call. = FALSE)
-}
-)
-  data_gro=jsonlite::fromJSON(rawToChar(res_gro$content))
-  df_gro<- as.data.frame(data_gro[2])
-  df_gro<- df_gro[order(df_gro$date),]
+  tryCatch(
+    {
+      res_gro <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/NY.GDP.MKTP.KD.ZG?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
+  )
+  data_gro <- jsonlite::fromJSON(rawToChar(res_gro$content))
+  df_gro <- as.data.frame(data_gro[2])
+  df_gro <- df_gro[order(df_gro$date), ]
 
   longterm$GDP_growth <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_gro)){
-    longterm$GDP_growth[i]<-df_gro$value[i]
+  for (i in 1:nrow(df_gro)) {
+    longterm$GDP_growth[i] <- df_gro$value[i]
   }
 
 
-tryCatch({
-  res_gdp_defl= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NY.GDP.DEFL.KD.ZG?date=",start_year,":",end_year,"&format=json"))
-},error = function(e) {
-  stop("Error during GET request to api.worldbank.org", e$message,
-       "\nAre you connected to the internet?",call. = FALSE)
-}
-)
-  data_gdp_defl=jsonlite::fromJSON(rawToChar(res_gdp_defl$content))
-  df_gdp_defl<- as.data.frame(data_gdp_defl[2])
-  df_gdp_defl<- df_gdp_defl[order(df_gdp_defl$date),]
+  tryCatch(
+    {
+      res_gdp_defl <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/NY.GDP.DEFL.KD.ZG?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
+  )
+  data_gdp_defl <- jsonlite::fromJSON(rawToChar(res_gdp_defl$content))
+  df_gdp_defl <- as.data.frame(data_gdp_defl[2])
+  df_gdp_defl <- df_gdp_defl[order(df_gdp_defl$date), ]
 
   longterm$GDP_deflator <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_gdp_defl)){
-    longterm$GDP_deflator[i]<- df_gdp_defl$value[i]
+  for (i in 1:nrow(df_gdp_defl)) {
+    longterm$GDP_deflator[i] <- df_gdp_defl$value[i]
   }
 
 
-tryCatch({
-  res_serv= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NV.SRV.TOTL.ZS?date=",start_year,":",end_year,"&format=json"))
-},error = function(e) {
-  stop("Error during GET request to api.worldbank.org", e$message,
-       "\nAre you connected to the internet?",call. = FALSE)
-}
-)
-  data_serv=jsonlite::fromJSON(rawToChar(res_serv$content))
-  df_serv<- as.data.frame(data_serv[2])
-  df_serv<- df_serv[order(df_serv$date),]
+  tryCatch(
+    {
+      res_serv <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/NV.SRV.TOTL.ZS?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
+  )
+  data_serv <- jsonlite::fromJSON(rawToChar(res_serv$content))
+  df_serv <- as.data.frame(data_serv[2])
+  df_serv <- df_serv[order(df_serv$date), ]
 
 
-  longterm$service_value_added <-rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_serv)){
-    longterm$service_value_added[i]<-df_serv$value[i]
+  longterm$service_value_added <- rep(NA, nrow(longterm))
+  for (i in 1:nrow(df_serv)) {
+    longterm$service_value_added[i] <- df_serv$value[i]
   }
 
 
-tryCatch({
-  res_gni= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NY.GNP.MKTP.KD?date=",start_year,":",end_year,"&format=json"))
-},error = function(e) {
-  stop("Error during GET request to api.worldbank.org", e$message,
-       "\nAre you connected to the internet?",call. = FALSE)
-}
-)
-  data_gni=jsonlite::fromJSON(rawToChar(res_gni$content))
-  df_gni<- as.data.frame(data_gni[2])
-  df_gni<- df_gni[order(df_gni$date),]
+  tryCatch(
+    {
+      res_gni <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/NY.GNP.MKTP.KD?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
+  )
+  data_gni <- jsonlite::fromJSON(rawToChar(res_gni$content))
+  df_gni <- as.data.frame(data_gni[2])
+  df_gni <- df_gni[order(df_gni$date), ]
 
   longterm$GNI <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_gni)){
-    longterm$GNI[i]<-df_gni$value[i]
+  for (i in 1:nrow(df_gni)) {
+    longterm$GNI[i] <- df_gni$value[i]
   }
 
 
-tryCatch({
-  res_hou= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/NE.CON.PRVT.ZS?date=",start_year,":",end_year,"&format=json"))
+  tryCatch(
+    {
+      res_hou <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/NE.CON.PRVT.ZS?date=", start_year, ":", end_year, "&format=json"))
 
-  data_hou=jsonlite::fromJSON(rawToChar(res_hou$content))
-  df_hou<- as.data.frame(data_hou[2])
-  df_hou<- df_hou[order(df_hou$date),]
-},error = function(e) {
-  stop("Error during GET request to api.worldbank.org", e$message,
-       "\nAre you connected to the internet?",call. = FALSE)
-}
-)
+      data_hou <- jsonlite::fromJSON(rawToChar(res_hou$content))
+      df_hou <- as.data.frame(data_hou[2])
+      df_hou <- df_hou[order(df_hou$date), ]
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
+  )
 
   longterm$household_consumption_expenditure <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_hou)){
-    longterm$household_consumption_expenditure[i]<-df_hou$value[i]
+  for (i in 1:nrow(df_hou)) {
+    longterm$household_consumption_expenditure[i] <- df_hou$value[i]
   }
 
-tryCatch({
-  res_rural= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/SP.RUR.TOTL?date=",start_year,":",end_year,"&format=json"))
-},error = function(e) {
-  stop("Error during GET request to api.worldbank.org", e$message,
-       "\nAre you connected to the internet?",call. = FALSE)
-}
-)
-  data_rural=jsonlite::fromJSON(rawToChar(res_rural$content))
-  df_rural<- as.data.frame(data_rural[2])
-  df_rural<- df_rural[order(df_rural$date),]
+  tryCatch(
+    {
+      res_rural <- httr::GET(paste0("https://api.worldbank.org/v2/country/", country, "/indicator/SP.RUR.TOTL?date=", start_year, ":", end_year, "&format=json"))
+    },
+    error = function(e) {
+      stop("Error during GET request to api.worldbank.org", e$message,
+        "\nAre you connected to the internet?",
+        call. = FALSE
+      )
+    }
+  )
+  data_rural <- jsonlite::fromJSON(rawToChar(res_rural$content))
+  df_rural <- as.data.frame(data_rural[2])
+  df_rural <- df_rural[order(df_rural$date), ]
 
 
   longterm$rural_population <- rep(NA, nrow(longterm))
-  for (i in 1:nrow(df_serv)){
-    longterm$rural_population[i]<-df_rural$value[i]
+  for (i in 1:nrow(df_serv)) {
+    longterm$rural_population[i] <- df_rural$value[i]
   }
 
   # consumer_price_inflation_pct= httr::GET(paste0("https://api.worldbank.org/v2/country/",country,"/indicator/FP.CPI.TOTL.ZG?date=",start_year,":",end_year,"&format=json"))

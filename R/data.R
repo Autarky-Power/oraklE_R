@@ -1,18 +1,3 @@
-# #' Example Dataset
-# #'
-# #' A brief description of your dataset. Explain what it represents, how it was collected,
-# #' and any important variables it contains.
-# #'
-# #' @format A data frame with \code{n} rows and \code{m} columns:
-# #' \describe{
-# #'   \item{\code{column1}}{Description of column1.}
-# #'   \item{\code{column2}}{Description of column2.}
-# #'   \item{\code{...}}{And so on for all your columns.}
-# #' }
-# #' @source Describe the source of your data, if applicable.
-# #' @keywords datasets
-# "example_demand_data"
-
 #' Example Demand Data
 #'
 #' This dataset contains the hourly electricity demand data of France from 2017 until 2021.
@@ -335,7 +320,7 @@
 #'   \item{\code{end_of_year}}{Binary dummy variable to account for lower demand between Christmas and New Year's Evening. Starts at 22nd December.}
 #'   \item{\code{test_set_steps}}{Number of days used in the test set for model evaluation.}
 #'   \item{\code{example}}{A boolean indicator to mark this dataset as an example dataset.}
-#'}
+#' }
 #' @source demand data: Transparency Platform of the European Network of
 #' Transmission System Operators for Electricity (ENTSO-E, https://transparency.entsoe.eu/);
 #' holidays: https://date.nager.at/api/v3/publicholidays/ ; area population: https://wft-geo-db.p.rapidapi.com ; daily average temperatures: https://meteostat.p.rapidapi.com;
@@ -523,41 +508,6 @@
 #' @keywords dataset final-predictions
 "example_full_model_predictions"
 
-#' Historical load data from the ENTSO-E Powerstats Archive
-#'
-#' This dataset contains historic hourly load data from 2006 until 2015 for various European countries.
-#' @format A data frame with 116,805 rows and 29 columns:
-#' \describe{
-#'     \item{\code{Hourly load values 2006-2015}}{This column contains the respective country name, represented by the ISO2C country code (e.g., `FR` for France). }
-#'    \item{\code{...2}}{The respective year.}
-#'    \item{\code{...3}}{The respective month.}
-#'    \item{\code{...4}}{The respective day.}
-#'    \item{\code{...5}}{The coverage ratio. To get the real value, you need to scale them to 100% for coverage ratio less than 100.}
-#'    \item{\code{...6},\code{...7},\code{...8},\code{...9},\code{...10}, \code{...11}, \code{...12}, \code{...13}, \code{...14}, \code{...15}, \code{...16}, \code{...17}, \code{...18}, \code{...19}, \code{...20}, \code{...21}, \code{...22}, \code{...23}, \code{...24}, \code{...25}, \code{...26}, \code{...27}, \code{...28}, \code{...29}}{The hourly load value at the respective time of day, starting from 0:00-0:59 until 23:00-23:59.}
-#' }
-#' @source ENTSO-E Power Stats Archive (https://www.entsoe.eu/data/power-stats/)
-#' @keywords historic power data
-'historic_entsodata1'
-
-#' Historical load data from the ENTSO-E Powerstats Archive
-#'
-#' This dataset contains historic hourly load data from 2015 until 2017 for various European countries.
-#' @format A data frame with 631600 rows and 9 columns:
-#' \describe{
-#'     \item{\code{MeasureItem}}{Describes what is measured (Monthly Hourly Load Values)}
-#'    \item{\code{DateUTC}}{The datetime in UTC format (`YYYY-MM-DD hh:mm:ss`)}
-#'    \item{\code{DateShort}}{The date in UTC format (`YYYY-MM-DD`)}
-#'    \item{\code{TimeFrom}}{The starting time of the observation period.}
-#'    \item{\code{TimeTo}}{The ending time of the observation period.}
-#' \item{\code{CountryCode}}{The ISO2C country code (e.g., `FR` for France).}
-#' \item{\code{Cov_ratio}}{The coverage ratio. For coverage ratios less than 100%, scale to 100% to obtain the real value.}
-#' \item{\code{Value}}{The measured value. Scale it to 100% for coverage ratios less than 100%.}
-#' \item{\code{Value_ScaleTo100}}{The scaled value adjusted to a 100% coverage ratio.}
-#' }
-#' @source ENTSO-E Power Stats Archive (https://www.entsoe.eu/data/power-stats/)
-#' @keywords historic power data
-'historic_entsodata2'
-
 
 #' World Economic Outlook (WEO) Data
 #'
@@ -590,4 +540,3 @@
 #' @source World Economic Outlook Database (April 2023 edition) of the International Monetary Fund (IMF) (https://www.imf.org/en/Publications/WEO/weo-database/2023/October)
 #' @keywords dataset macroeconomics IMF WEO projections
 "weo_data"
-

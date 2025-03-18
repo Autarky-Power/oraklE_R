@@ -15,79 +15,77 @@
 #' example_longterm_future_macro_data <- long_term_future_data(example_longterm_predictions,
 #'  end_year=2028, dataset="WEO")
 #'
-long_term_future_data <- function(longterm_predictions,end_year, dataset="WEO"){
-
-  new_data_length <- end_year-max(longterm_predictions$year)
-  new_rows <- as.data.frame(matrix(nrow=new_data_length,ncol = ncol(longterm_predictions) ))
+long_term_future_data <- function(longterm_predictions, end_year, dataset = "WEO") {
+  new_data_length <- end_year - max(longterm_predictions$year)
+  new_rows <- as.data.frame(matrix(nrow = new_data_length, ncol = ncol(longterm_predictions)))
   colnames(new_rows) <- colnames(longterm_predictions)
-  longterm_predictions = rbind(longterm_predictions, new_rows)
+  longterm_predictions <- rbind(longterm_predictions, new_rows)
 
-  if (dataset =="WEO"){
-  weo_data_set <- oRaklE::weo_data
-  message("Macro-economic predictions until ",end_year," are taken from the World Economic Outlook Database April 2023 edition.")
+  if (dataset == "WEO") {
+    weo_data_set <- oRaklE::weo_data
+    message("Macro-economic predictions until ", end_year, " are taken from the World Economic Outlook Database April 2023 edition.")
 
-  country<- countrycode::countrycode(unique(longterm_predictions$country),origin = "iso2c",destination = "country.name")[1]
-  country_subset <-  weo_data_set[weo_data_set$Country==country, ]
-  colnames(country_subset)[10:58] <- 1980:2028
+    country <- countrycode::countrycode(unique(longterm_predictions$country), origin = "iso2c", destination = "country.name")[1]
+    country_subset <- weo_data_set[weo_data_set$Country == country, ]
+    colnames(country_subset)[10:58] <- 1980:2028
 
-  first_year <- min(longterm_predictions$year,na.rm = T)
-  start_year <- max(longterm_predictions$year,na.rm = T)+1
-  col_year_first <- which(colnames(country_subset)==as.character(first_year))
-  col_year_start <- which(colnames(country_subset)==as.character(start_year))
-  col_year_end   <- which(colnames(country_subset)==as.character(end_year))
+    first_year <- min(longterm_predictions$year, na.rm = T)
+    start_year <- max(longterm_predictions$year, na.rm = T) + 1
+    col_year_first <- which(colnames(country_subset) == as.character(first_year))
+    col_year_start <- which(colnames(country_subset) == as.character(start_year))
+    col_year_end <- which(colnames(country_subset) == as.character(end_year))
 
-  longterm_predictions$GDP_growth_weo <- 0
-  longterm_predictions$GDP_deflator_weo <- 0
-  longterm_predictions$population_growth_weo <-0
+    longterm_predictions$GDP_growth_weo <- 0
+    longterm_predictions$GDP_deflator_weo <- 0
+    longterm_predictions$population_growth_weo <- 0
 
-  ngdp_r <- as.numeric(country_subset[1,col_year_first:col_year_end])
-  ngdp_d <- as.numeric(country_subset[2,col_year_first:col_year_end])
-  pl     <- as.numeric(country_subset[3,col_year_first:col_year_end])
-  #pcpipch <- as.numeric(country_subset[4,col_year_first:col_year_end])
-  #longterm_predictions$consumer_price_pct_change_weo <-pcpipch
+    ngdp_r <- as.numeric(country_subset[1, col_year_first:col_year_end])
+    ngdp_d <- as.numeric(country_subset[2, col_year_first:col_year_end])
+    pl <- as.numeric(country_subset[3, col_year_first:col_year_end])
+    # pcpipch <- as.numeric(country_subset[4,col_year_first:col_year_end])
+    # longterm_predictions$consumer_price_pct_change_weo <-pcpipch
 
 
-  for (i in 2:nrow(longterm_predictions)){
-    longterm_predictions$GDP_growth_weo[i] <- (ngdp_r[i]/ngdp_r[(i-1)]-1)*100
-    longterm_predictions$GDP_deflator_weo[i] <- (ngdp_d[i]/ngdp_d[(i-1)]-1)*100
-    longterm_predictions$population_growth_weo[i] <- (pl[i]/pl[(i-1)]-1)*100
-  }
+    for (i in 2:nrow(longterm_predictions)) {
+      longterm_predictions$GDP_growth_weo[i] <- (ngdp_r[i] / ngdp_r[(i - 1)] - 1) * 100
+      longterm_predictions$GDP_deflator_weo[i] <- (ngdp_d[i] / ngdp_d[(i - 1)] - 1) * 100
+      longterm_predictions$population_growth_weo[i] <- (pl[i] / pl[(i - 1)] - 1) * 100
+    }
 
-  new_row_start <- (which(longterm_predictions$year==max(longterm_predictions$year,na.rm = T))+1)
-  longterm_predictions$year[new_row_start:nrow(longterm_predictions)] <- (max(longterm_predictions$year,na.rm = T)+1):end_year
-  longterm_predictions$country <- unique(longterm_predictions$country)[1]
-  longterm_predictions$test_set_steps <- unique(longterm_predictions$test_set_steps)[1]
-  #longterm_predictions$consumer_price_inflation_pct[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$consumer_price_pct_change_weo[new_row_start:nrow(longterm_predictions)]
+    new_row_start <- (which(longterm_predictions$year == max(longterm_predictions$year, na.rm = T)) + 1)
+    longterm_predictions$year[new_row_start:nrow(longterm_predictions)] <- (max(longterm_predictions$year, na.rm = T) + 1):end_year
+    longterm_predictions$country <- unique(longterm_predictions$country)[1]
+    longterm_predictions$test_set_steps <- unique(longterm_predictions$test_set_steps)[1]
+    # longterm_predictions$consumer_price_inflation_pct[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$consumer_price_pct_change_weo[new_row_start:nrow(longterm_predictions)]
 
-  longterm_predictions$GDP_deflator[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$GDP_deflator_weo[new_row_start:nrow(longterm_predictions)]
-  longterm_predictions$GDP_growth[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$GDP_growth_weo[new_row_start:nrow(longterm_predictions)]
+    longterm_predictions$GDP_deflator[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$GDP_deflator_weo[new_row_start:nrow(longterm_predictions)]
+    longterm_predictions$GDP_growth[new_row_start:nrow(longterm_predictions)] <- longterm_predictions$GDP_growth_weo[new_row_start:nrow(longterm_predictions)]
 
-  for (i in new_row_start:nrow(longterm_predictions)){
-    longterm_predictions$GDP[i] <- longterm_predictions$GDP[(i-1)]*(1+longterm_predictions$GDP_growth_weo[i]/100)
-    longterm_predictions$population[i] <- longterm_predictions$population[(i-1)]*(1+longterm_predictions$population_growth_weo[i]/100)
-  }
+    for (i in new_row_start:nrow(longterm_predictions)) {
+      longterm_predictions$GDP[i] <- longterm_predictions$GDP[(i - 1)] * (1 + longterm_predictions$GDP_growth_weo[i] / 100)
+      longterm_predictions$population[i] <- longterm_predictions$population[(i - 1)] * (1 + longterm_predictions$population_growth_weo[i] / 100)
+    }
 
-  for (i in new_row_start:nrow(longterm_predictions)){
-    longterm_predictions$industrial_value_added[i] <-  mean(longterm_predictions$industrial_value_added[(i-3):(i-1)]/longterm_predictions$GDP[(i-3):(i-1)]) * longterm_predictions$GDP[i]
-    longterm_predictions$manufacturing_value_added[i] <-       mean(longterm_predictions$manufacturing_value_added[(i-3):(i-1)]/longterm_predictions$GDP[(i-3):(i-1)]) * longterm_predictions$GDP[i]
-    longterm_predictions$service_value_added[i] <-  mean(longterm_predictions$service_value_added[(i-3):(i-1)]/longterm_predictions$GDP[(i-3):(i-1)]) * longterm_predictions$GDP[i]
-    longterm_predictions$household_consumption_expenditure[i] <-  mean(longterm_predictions$household_consumption_expenditure[(i-3):(i-1)]/longterm_predictions$GDP[(i-3):(i-1)]) * longterm_predictions$GDP[i]
-    longterm_predictions$GNI[i] <-  mean(longterm_predictions$GNI[(i-3):(i-1)]/longterm_predictions$GDP[(i-3):(i-1)]) * longterm_predictions$GDP[i]
-  }
+    for (i in new_row_start:nrow(longterm_predictions)) {
+      longterm_predictions$industrial_value_added[i] <- mean(longterm_predictions$industrial_value_added[(i - 3):(i - 1)] / longterm_predictions$GDP[(i - 3):(i - 1)]) * longterm_predictions$GDP[i]
+      longterm_predictions$manufacturing_value_added[i] <- mean(longterm_predictions$manufacturing_value_added[(i - 3):(i - 1)] / longterm_predictions$GDP[(i - 3):(i - 1)]) * longterm_predictions$GDP[i]
+      longterm_predictions$service_value_added[i] <- mean(longterm_predictions$service_value_added[(i - 3):(i - 1)] / longterm_predictions$GDP[(i - 3):(i - 1)]) * longterm_predictions$GDP[i]
+      longterm_predictions$household_consumption_expenditure[i] <- mean(longterm_predictions$household_consumption_expenditure[(i - 3):(i - 1)] / longterm_predictions$GDP[(i - 3):(i - 1)]) * longterm_predictions$GDP[i]
+      longterm_predictions$GNI[i] <- mean(longterm_predictions$GNI[(i - 3):(i - 1)] / longterm_predictions$GDP[(i - 3):(i - 1)]) * longterm_predictions$GDP[i]
+    }
 
-  rural_model <- stats::lm(rural_population~ year, data = longterm_predictions[1:(new_row_start-1),])
-  longterm_predictions$rural_population[new_row_start:nrow(longterm_predictions)]<-stats::predict(rural_model,newdata = longterm_predictions[new_row_start:nrow(longterm_predictions),] )
-  longterm_predictions <- longterm_predictions[, !names(longterm_predictions) %in% c("GDP_growth_weo","GDP_deflator_weo","population_growth_weo")]
-  }else{
+    rural_model <- stats::lm(rural_population ~ year, data = longterm_predictions[1:(new_row_start - 1), ])
+    longterm_predictions$rural_population[new_row_start:nrow(longterm_predictions)] <- stats::predict(rural_model, newdata = longterm_predictions[new_row_start:nrow(longterm_predictions), ])
+    longterm_predictions <- longterm_predictions[, !names(longterm_predictions) %in% c("GDP_growth_weo", "GDP_deflator_weo", "population_growth_weo")]
+  } else {
     message("If you want to use your own dataset you will need predictions for the following macro-economic variables:")
     best_lm_model <- NULL
-    for (i in 1:3){
-      model_path= paste0("./", unique(stats::na.omit(longterm_predictions$country)),"/models/longterm/best_lm_model",i,".Rdata")
+    for (i in 1:3) {
+      model_path <- paste0("./", unique(stats::na.omit(longterm_predictions$country)), "/models/longterm/best_lm_model", i, ".Rdata")
       load(model_path)
-      print_vars <- paste(attr(best_lm_model$terms , "term.labels"),collapse = ", ")
-      cat("\n",print_vars, "for model", i, "\n")
+      print_vars <- paste(attr(best_lm_model$terms, "term.labels"), collapse = ", ")
+      cat("\n", print_vars, "for model", i, "\n")
     }
   }
   return(longterm_predictions)
-
 }

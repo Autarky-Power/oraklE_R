@@ -13,216 +13,224 @@
 #' @seealso See also function \code{\link{long_term_future}} and \code{\link{short_term_future}} for the other prediction models.
 #' @examples
 #' example_midterm_future_predictions <- mid_term_future(example_midterm_predictions,
-#' end_year=2028,Tref=18)
-
-
-mid_term_future <- function(midterm_predictions,end_year, Tref=18){
-
-  if ("example" %in% colnames(midterm_predictions)){
-    if (unique(midterm_predictions$example) == TRUE){
+#'   end_year = 2028, Tref = 18
+#' )
+mid_term_future <- function(midterm_predictions, end_year, Tref = 18) {
+  if ("example" %in% colnames(midterm_predictions)) {
+    if (unique(midterm_predictions$example) == TRUE) {
       message("Averaging temperature values for future predictions.")
       message("Extending the mid-term seasonality model predictions until the year 2028.")
       return(oRaklE::example_midterm_future_predictions)
     }
   }
-last_years <- midterm_predictions[(nrow(midterm_predictions)-(3*365)):(nrow(midterm_predictions)),]
+  last_years <- midterm_predictions[(nrow(midterm_predictions) - (3 * 365)):(nrow(midterm_predictions)), ]
 
-mean_values <- sapply(1:365, function(i) {
-  day_values <- last_years$weighted_temperature[seq(i, nrow(last_years), by = 365)]
-  mean(day_values, na.rm = TRUE)
-})
+  mean_values <- sapply(1:365, function(i) {
+    day_values <- last_years$weighted_temperature[seq(i, nrow(last_years), by = 365)]
+    mean(day_values, na.rm = TRUE)
+  })
 
-last_date <- max(midterm_predictions$date)
-new_dates <- seq(from = last_date + 1, to = as.Date(paste0(end_year, "-12-31")), by = "day")
+  last_date <- max(midterm_predictions$date)
+  new_dates <- seq(from = last_date + 1, to = as.Date(paste0(end_year, "-12-31")), by = "day")
 
-new_data <- data.frame(country=unique(midterm_predictions$country),date = new_dates)
-new_data$year <- lubridate::year(new_data$date)
-new_data$month <- lubridate::month(new_data$date)
-new_data$day <- lubridate::day(new_data$date)
-new_data$wday<- lubridate::wday(new_data$date,label = T,locale = "en_US.UTF-8")
-new_data$avg_hourly_demand <- 0
-new_data$seasonal_avg_hourly_demand <- NA
+  new_data <- data.frame(country = unique(midterm_predictions$country), date = new_dates)
+  new_data$year <- lubridate::year(new_data$date)
+  new_data$month <- lubridate::month(new_data$date)
+  new_data$day <- lubridate::day(new_data$date)
+  new_data$wday <- lubridate::wday(new_data$date, label = T, locale = "en_US.UTF-8")
+  new_data$avg_hourly_demand <- 0
+  new_data$seasonal_avg_hourly_demand <- NA
 
-holiday_list <- list()
-years=unique(new_data$year)
-country= (unique(new_data$country))
-for (i in 1:length(years)){
-  year= years[i]
-  tryCatch(
-    {
-  response = jsonlite::fromJSON(paste0("https://date.nager.at/api/v3/publicholidays/"
-                                       ,year,"/",country) )
-  holiday_list[[i]] <- response$date},
-error = function(e) {
-  stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
-})
-}
-
-
-holidays = unlist(holiday_list)
-holidays = as.Date(holidays)
-new_data$holiday <- 0
-new_data$holiday[new_data$date %in% holidays] <- 1
-
-new_data <- new_data[!(new_data$month == 2 & new_data$day == 29), ]
-
-new_data$weighted_temperature <- mean_values
-
-
-month_list=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Nov","Dec")
-
-for (i in 1:length(month_list)){
-  new_data[month_list[i]]=0
-  new_data[new_data$month==i,month_list[i]]<- 1
-}
-
-weekday_list=as.character(unique(midterm_predictions$wday))
-for (i in 1:length(weekday_list)){
-  new_data[weekday_list[i]]=0
-  new_data[new_data$wday==weekday_list[i],weekday_list[i]]<- 1
-}
-
-### Temperature transformations
-if ("HD" %in% colnames(midterm_predictions)){
-
-new_data$HD <-0
-new_data$CD <-0
-
-for (i in 1:nrow(new_data)){
-  if (new_data$weighted_temperature[i] < Tref){
-    new_data$HD[i]<- Tref-new_data$weighted_temperature[i]
-  }else{  new_data$CD[i]<- new_data$weighted_temperature[i] -Tref
+  holiday_list <- list()
+  years <- unique(new_data$year)
+  country <- (unique(new_data$country))
+  for (i in 1:length(years)) {
+    year <- years[i]
+    tryCatch(
+      {
+        response <- jsonlite::fromJSON(paste0(
+          "https://date.nager.at/api/v3/publicholidays/",
+          year, "/", country
+        ))
+        holiday_list[[i]] <- response$date
+      },
+      error = function(e) {
+        stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+      }
+    )
   }
-}
-
-new_data$HD2 <- new_data$HD^2
-new_data$HD3 <- new_data$HD^3
-new_data$CD2 <- new_data$CD^2
-new_data$CD3 <- new_data$CD^3
-new_data$weighted_temperature2 <- new_data$weighted_temperature^2
-new_data$weighted_temperature3 <- new_data$weighted_temperature^3
-
-new_data$HDlag1 <- dplyr::lag(new_data$HD, n = 1)
-new_data$HDlag1[1]<- new_data$HD[1]
-new_data$HDlag2 <- dplyr::lag(new_data$HD, n = 2)
-new_data$HDlag2[1:2]<- new_data$HDlag1[1:2]
-
-new_data$CDlag1 <- dplyr::lag(new_data$CD, n = 1)
-new_data$CDlag1[1]<- new_data$CD[1]
-new_data$CDlag2 <- dplyr::lag(new_data$CD, n = 2)
-new_data$CDlag2[1:2]<- new_data$CDlag1[1:2]
-}
-
-new_data$weighted_temperaturelag1 <- dplyr::lag(new_data$weighted_temperature, n = 1)
-new_data$weighted_temperaturelag1[1]<- new_data$weighted_temperature[1]
-new_data$weighted_temperaturelag2 <- dplyr::lag(new_data$weighted_temperature, n = 2)
-new_data$weighted_temperaturelag2[1:2]<- new_data$weighted_temperaturelag1[1:2]
-
-new_data$end_of_year <- 0
-new_data$end_of_year[new_data$month==12 & new_data$day>22] <-1
 
 
-## LOAD MODEL
-country <- unique(new_data$country)
+  holidays <- unlist(holiday_list)
+  holidays <- as.Date(holidays)
+  new_data$holiday <- 0
+  new_data$holiday[new_data$date %in% holidays] <- 1
 
-globalmodel <- NULL
-best_model <- NULL
+  new_data <- new_data[!(new_data$month == 2 & new_data$day == 29), ]
+
+  new_data$weighted_temperature <- mean_values
 
 
-load(paste0("./",country,"/models/midterm/best_model.Rdata"))
+  month_list <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Nov", "Dec")
 
-if ("HD" %in% colnames(midterm_predictions)){
-  if (! is.null(globalmodel)){
-    suppressWarnings(
-    future_predictions <- stats::predict(globalmodel, newdata = new_data)
-    )
+  for (i in 1:length(month_list)) {
+    new_data[month_list[i]] <- 0
+    new_data[new_data$month == i, month_list[i]] <- 1
+  }
+
+  weekday_list <- as.character(unique(midterm_predictions$wday))
+  for (i in 1:length(weekday_list)) {
+    new_data[weekday_list[i]] <- 0
+    new_data[new_data$wday == weekday_list[i], weekday_list[i]] <- 1
+  }
+
+  ### Temperature transformations
+  if ("HD" %in% colnames(midterm_predictions)) {
+    new_data$HD <- 0
+    new_data$CD <- 0
+
+    for (i in 1:nrow(new_data)) {
+      if (new_data$weighted_temperature[i] < Tref) {
+        new_data$HD[i] <- Tref - new_data$weighted_temperature[i]
+      } else {
+        new_data$CD[i] <- new_data$weighted_temperature[i] - Tref
+      }
     }
-  else{
-    suppressWarnings(
-future_predictions <- stats::predict(best_model, newx = as.matrix(new_data[,9:43]))
-    )
+
+    new_data$HD2 <- new_data$HD^2
+    new_data$HD3 <- new_data$HD^3
+    new_data$CD2 <- new_data$CD^2
+    new_data$CD3 <- new_data$CD^3
+    new_data$weighted_temperature2 <- new_data$weighted_temperature^2
+    new_data$weighted_temperature3 <- new_data$weighted_temperature^3
+
+    new_data$HDlag1 <- dplyr::lag(new_data$HD, n = 1)
+    new_data$HDlag1[1] <- new_data$HD[1]
+    new_data$HDlag2 <- dplyr::lag(new_data$HD, n = 2)
+    new_data$HDlag2[1:2] <- new_data$HDlag1[1:2]
+
+    new_data$CDlag1 <- dplyr::lag(new_data$CD, n = 1)
+    new_data$CDlag1[1] <- new_data$CD[1]
+    new_data$CDlag2 <- dplyr::lag(new_data$CD, n = 2)
+    new_data$CDlag2[1:2] <- new_data$CDlag1[1:2]
+  }
+
+  new_data$weighted_temperaturelag1 <- dplyr::lag(new_data$weighted_temperature, n = 1)
+  new_data$weighted_temperaturelag1[1] <- new_data$weighted_temperature[1]
+  new_data$weighted_temperaturelag2 <- dplyr::lag(new_data$weighted_temperature, n = 2)
+  new_data$weighted_temperaturelag2[1:2] <- new_data$weighted_temperaturelag1[1:2]
+
+  new_data$end_of_year <- 0
+  new_data$end_of_year[new_data$month == 12 & new_data$day > 22] <- 1
+
+
+  ## LOAD MODEL
+  country <- unique(new_data$country)
+
+  globalmodel <- NULL
+  best_model <- NULL
+
+
+  load(paste0("./", country, "/models/midterm/best_model.Rdata"))
+
+  if ("HD" %in% colnames(midterm_predictions)) {
+    if (!is.null(globalmodel)) {
+      suppressWarnings(
+        future_predictions <- stats::predict(globalmodel, newdata = new_data)
+      )
+    } else {
+      suppressWarnings(
+        future_predictions <- stats::predict(best_model, newx = as.matrix(new_data[, 9:43]))
+      )
     }
-}else{
+  } else {
+    suppressWarnings(
+      future_predictions <- stats::predict(globalmodel, newdata = new_data)
+    )
+  }
+
+  new_data$midterm_model_fit <- future_predictions
+  new_data$test_set_steps <- unique(midterm_predictions$test_set_steps)
+
+  for (col_name in setdiff(names(midterm_predictions), names(new_data))) {
+    new_data[[col_name]] <- NA
+  }
+
+
+  all_data <- dplyr::bind_rows(midterm_predictions, new_data)
+
+
+  years <- unique(all_data$year)
+  index <- 1:length(years)
+  for (i in 1:length(years)) {
+    index[i] <- min(as.numeric(rownames(all_data[all_data$year == years[i], ])))
+  }
+
+  training_set_end <- nrow(midterm_predictions) - unique(midterm_predictions$test_set_steps)
+  test_set_end <- training_set_end + unique(midterm_predictions$test_set_steps)
+  future_set <- nrow(all_data) - test_set_end
+  max_value <- max(c(max(all_data$midterm_model_fit), max(all_data$seasonal_avg_hourly_demand, na.rm = T)))
+
   suppressWarnings(
-future_predictions <- stats::predict(globalmodel, newdata=new_data)
-)
-}
-
-new_data$midterm_model_fit<-future_predictions
-new_data$test_set_steps <- unique(midterm_predictions$test_set_steps)
-
-for(col_name in setdiff(names(midterm_predictions), names(new_data))) {
-  new_data[[col_name]] <- NA
-}
-
-
-all_data <- dplyr::bind_rows(midterm_predictions, new_data)
-
-
-years <- unique(all_data$year)
-index <- 1:length(years)
-for (i in 1:length(years)){
-  index[i] <- min(as.numeric(rownames(all_data[all_data$year==years[i],])))
-}
-
-training_set_end <- nrow(midterm_predictions)-unique(midterm_predictions$test_set_steps)
-test_set_end <- training_set_end + unique(midterm_predictions$test_set_steps)
-future_set <- nrow(all_data)-test_set_end
-max_value <- max(c(max(all_data$midterm_model_fit),max(all_data$seasonal_avg_hourly_demand,na.rm = T)))
-
-suppressWarnings(
-mt_plot <- ggplot(all_data)+geom_line(aes(1:nrow(all_data),all_data$seasonal_avg_hourly_demand,color="actual"))+
-  geom_line(aes(1:nrow(all_data),all_data$midterm_model_fit,color="fitted"))+
-  geom_vline(xintercept=training_set_end,linetype=2)+
-  geom_vline(xintercept=test_set_end,linetype=3)+
-  ggthemes::theme_foundation(base_size=14, base_family="sans")+
-  xlab("\nDay")+ylab("Change in avg. Hourly Demand\np. Day [MW]\n")+
-  ggtitle(paste("Mid Term Model Results -",country,"\n"))+
-  theme(plot.title = element_text(face = "bold",
-                                  size = rel(1.2), hjust = 0.5),
+    mt_plot <- ggplot(all_data) +
+      geom_line(aes(1:nrow(all_data), all_data$seasonal_avg_hourly_demand, color = "actual")) +
+      geom_line(aes(1:nrow(all_data), all_data$midterm_model_fit, color = "fitted")) +
+      geom_vline(xintercept = training_set_end, linetype = 2) +
+      geom_vline(xintercept = test_set_end, linetype = 3) +
+      ggthemes::theme_foundation(base_size = 14, base_family = "sans") +
+      xlab("\nDay") +
+      ylab("Change in avg. Hourly Demand\np. Day [MW]\n") +
+      ggtitle(paste("Mid Term Model Results -", country, "\n")) +
+      theme(
+        plot.title = element_text(
+          face = "bold",
+          size = rel(1.2), hjust = 0.5
+        ),
         text = element_text(),
         panel.background = element_rect(colour = NA),
         plot.background = element_rect(colour = NA),
         panel.border = element_rect(colour = NA),
-        axis.title = element_text(face = "bold",size = rel(1)),
-        axis.title.y = element_text(angle=90,vjust =2),
+        axis.title = element_text(face = "bold", size = rel(1)),
+        axis.title.y = element_text(angle = 90, vjust = 2),
         axis.title.x = element_text(vjust = -0.2),
         axis.text = element_text(),
-        axis.line.x = element_line(colour="black"),
-        axis.line.y = element_line(colour="black"),
+        axis.line.x = element_line(colour = "black"),
+        axis.line.y = element_line(colour = "black"),
         axis.ticks = element_line(),
-        panel.grid.major = element_line(colour="#f0f0f0"),
+        panel.grid.major = element_line(colour = "#f0f0f0"),
         panel.grid.minor = element_blank(),
         legend.key = element_rect(colour = NA),
         legend.position = "bottom",
         legend.direction = "horizontal",
-        legend.key.size= unit(0.2, "cm"),
-        plot.margin=unit(c(10,5,5,5),"mm"),
-        strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
-        strip.text = element_text(face="bold"))+
-  theme(legend.title = element_blank())+
-  scale_x_continuous(breaks = index,labels = years)+guides(color = guide_legend(override.aes = list(linewidth = 2)))+
-  annotate("text", x = (training_set_end/2), y =   (max_value+max_value*0.1), label = "Training", size = 4, hjust = 0.5, vjust = 0)+
-  annotate("text", x = (training_set_end+unique(midterm_predictions$test_set_steps)/2), y =    (max_value+max_value*0.1), label = "Test", size = 4, hjust = 0.5, vjust = 0)+
-  annotate("text", x = (nrow(midterm_predictions)+future_set/2), y =      (max_value+max_value*0.1), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
-)
-country <- unique(all_data$country)
-if (! file.exists(country)){
-  dir.create(country)}
-if (! file.exists(paste0("./",country,"/data"))){
-  dir.create(paste0("./",country,"/data"))}
-if (! file.exists(paste0("./",country,"/plots"))){
-  dir.create(paste0("./",country,"/plots"))}
-suppressWarnings(
-ggsave(filename=paste0("./",unique(all_data$country),"/plots/mid_term_results_future.png"), plot=mt_plot, width=12, height=8)
-)
-suppressWarnings(
-print(mt_plot)
-)
-utils::write.csv(all_data,file=paste0("./",unique(all_data$country),"/data/mid_term_results_future.csv"),row.names = F )
+        legend.key.size = unit(0.2, "cm"),
+        plot.margin = unit(c(10, 5, 5, 5), "mm"),
+        strip.background = element_rect(colour = "#f0f0f0", fill = "#f0f0f0"),
+        strip.text = element_text(face = "bold")
+      ) +
+      theme(legend.title = element_blank()) +
+      scale_x_continuous(breaks = index, labels = years) +
+      guides(color = guide_legend(override.aes = list(linewidth = 2))) +
+      annotate("text", x = (training_set_end / 2), y = (max_value + max_value * 0.1), label = "Training", size = 4, hjust = 0.5, vjust = 0) +
+      annotate("text", x = (training_set_end + unique(midterm_predictions$test_set_steps) / 2), y = (max_value + max_value * 0.1), label = "Test", size = 4, hjust = 0.5, vjust = 0) +
+      annotate("text", x = (nrow(midterm_predictions) + future_set / 2), y = (max_value + max_value * 0.1), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
+  )
+  country <- unique(all_data$country)
+  if (!file.exists(country)) {
+    dir.create(country)
+  }
+  if (!file.exists(paste0("./", country, "/data"))) {
+    dir.create(paste0("./", country, "/data"))
+  }
+  if (!file.exists(paste0("./", country, "/plots"))) {
+    dir.create(paste0("./", country, "/plots"))
+  }
+  suppressWarnings(
+    ggsave(filename = paste0("./", unique(all_data$country), "/plots/mid_term_results_future.png"), plot = mt_plot, width = 12, height = 8)
+  )
+  suppressWarnings(
+    print(mt_plot)
+  )
+  utils::write.csv(all_data, file = paste0("./", unique(all_data$country), "/data/mid_term_results_future.csv"), row.names = F)
 
-return(all_data)
+  return(all_data)
 }
-
-
-

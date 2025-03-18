@@ -13,7 +13,10 @@ Authors@R:
                role = c("aut"), 
                comment = c(ORCID = "0000-0001-6587-0144"))
     )
-Description: The 'oRaklE' package is designed to provide researchers and practitioners with highly accurate long-term electricity demand predictions on a country scale in hourly resolution. The package provides real-time data, including power demand, weather conditions, and macroeconomic indicators, through automated API integration with various institutions, ensuring continuous access to up-to-date information. It incorporates an advanced forecasting algorithm and helps with selecting the best models. The modular approach maintains transparency on the various model selection processes and encompasses the ability to be adapted to individual needs. 'oRaklE' tries to help facilitating robust decision-making in energy management and planning.
+Description: Advanced forecasting algorithms for long-term energy demand at the 
+  national or regional level. The methodology is based on Grandón et al. (2024) 
+  <doi:10.1016/j.apenergy.2023.122249>; Zimmermann & Ziel (2024) 
+  <doi:10.2139/ssrn.4823013>. Real-time data, including power demand, weather conditions, and macroeconomic indicators, are provided through automated API integration with various institutions. The modular approach maintains transparency on the various model selection processes and encompasses the ability to be adapted to individual needs. 'oRaklE' tries to help facilitating robust decision-making in energy management and planning.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -46,5 +49,7 @@ Depends:
 Suggests: 
     knitr,
     rmarkdown,
-    roxygen2 (>= 7.2.3)
+    roxygen2 (>= 7.2.3),
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

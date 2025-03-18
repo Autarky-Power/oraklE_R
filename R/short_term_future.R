@@ -11,65 +11,71 @@
 #' @export
 #'
 #' @examples
-#' example_shortterm_future_predictions <- short_term_future(example_shortterm_predictions
-#' ,end_year=2028)
-
-
-short_term_future <- function(shortterm_predictions,end_year){
-  if ("example" %in% colnames(shortterm_predictions)){
-    if (unique(shortterm_predictions$example) == TRUE){
+#' example_shortterm_future_predictions <- short_term_future(example_shortterm_predictions,
+#'   end_year = 2028
+#' )
+short_term_future <- function(shortterm_predictions, end_year) {
+  if ("example" %in% colnames(shortterm_predictions)) {
+    if (unique(shortterm_predictions$example) == TRUE) {
       message("Extending the short-term seasonality model predictions until the year 2028.")
       return(oRaklE::example_shortterm_future_predictions)
     }
   }
   short_df <- shortterm_predictions
 
-  start_year = max(short_df$year)+1
+  start_year <- max(short_df$year) + 1
 
-  timepoint <- seq(as.POSIXct(paste0(as.character(start_year),'-01-01 00:00')),
-                   as.POSIXct(paste0(as.character(end_year),'-12-31 23:00')),by="hour")
+  timepoint <- seq(as.POSIXct(paste0(as.character(start_year), "-01-01 00:00")),
+    as.POSIXct(paste0(as.character(end_year), "-12-31 23:00")),
+    by = "hour"
+  )
 
 
-  new_rows <- as.data.frame(matrix(nrow=length(timepoint),ncol = ncol(short_df) ))
+  new_rows <- as.data.frame(matrix(nrow = length(timepoint), ncol = ncol(short_df)))
   colnames(new_rows) <- colnames(short_df)
 
   new_rows$date <- timepoint
   new_rows <- new_rows[!(format(new_rows$date, "%m-%d") == "02-29"), ]
 
-  #new_rows$date <- as.character(timepoint)
-  first_row = nrow(short_df)+1
+  # new_rows$date <- as.character(timepoint)
+  first_row <- nrow(short_df) + 1
 
   new_rows$year <- lubridate::year(new_rows$date)
   new_rows$month <- lubridate::month(new_rows$date)
   new_rows$day <- lubridate::day(new_rows$date)
-  new_rows$wday <- lubridate::wday(new_rows$date,label = T,locale = "en_US.UTF-8")
-  new_rows$hour <- lubridate::hour(new_rows$date)#0:23
+  new_rows$wday <- lubridate::wday(new_rows$date, label = T, locale = "en_US.UTF-8")
+  new_rows$hour <- lubridate::hour(new_rows$date) # 0:23
 
-  for (i in (0:23)){
-    col_name <- paste0("Hour",i)
-    new_rows[,col_name] <- 0
-    new_rows[new_rows$hour==i,col_name] <- 1
+  for (i in (0:23)) {
+    col_name <- paste0("Hour", i)
+    new_rows[, col_name] <- 0
+    new_rows[new_rows$hour == i, col_name] <- 1
   }
 
   new_rows$country <- unique(short_df$country)
 
-  years=unique(new_rows$year)
-  country= (unique(new_rows$country))
+  years <- unique(new_rows$year)
+  country <- (unique(new_rows$country))
 
   holiday_list <- list()
-  for (i in 1:length(years)){
-    year= years[i]
-    tryCatch({
-    response = jsonlite::fromJSON(paste0("https://date.nager.at/api/v3/publicholidays/"
-                                         ,year,"/",country) )
-    },error = function(e) {
-      stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
-    })
+  for (i in 1:length(years)) {
+    year <- years[i]
+    tryCatch(
+      {
+        response <- jsonlite::fromJSON(paste0(
+          "https://date.nager.at/api/v3/publicholidays/",
+          year, "/", country
+        ))
+      },
+      error = function(e) {
+        stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+      }
+    )
     holiday_list[[i]] <- response$date
   }
 
-  holidays = unlist(holiday_list)
-  holidays = as.Date(holidays)
+  holidays <- unlist(holiday_list)
+  holidays <- as.Date(holidays)
 
 
   new_rows$holiday <- ifelse(as.Date(new_rows$date, tz = "CET") %in% holidays, 1, 0)
@@ -80,75 +86,78 @@ short_term_future <- function(shortterm_predictions,end_year){
   fit1 <- NULL
 
   suppressWarnings(
-    for (i in 1:12){
-      for (j in 1:7){
+    for (i in 1:12) {
+      for (j in 1:7) {
+        x <- new_rows[which(new_rows$month == i & new_rows$wday == wday[j]), ]
 
 
-        x <- new_rows[which(new_rows$month == i & new_rows$wday == wday[j]),]
-
-
-        name=paste0("month",i,wday[j])
-        load(paste0("./",country,"/models/shortterm_lm/",name,".Rdata"))
+        name <- paste0("month", i, wday[j])
+        load(paste0("./", country, "/models/shortterm_lm/", name, ".Rdata"))
 
         new_rows$short_term_lm_model_predictions[which(new_rows$month == i & new_rows$wday == wday[j])] <-
-          stats::predict(fit1,newdata = x)
-
-
+          stats::predict(fit1, newdata = x)
       }
-    })
+    }
+  )
 
 
 
-  new_rows$test_set_steps = unique(short_df$test_set_steps)
-  future_short_term = rbind(short_df, new_rows)
+  new_rows$test_set_steps <- unique(short_df$test_set_steps)
+  future_short_term <- rbind(short_df, new_rows)
 
-  training_set_end <- nrow(short_df)-unique(short_df$test_set_steps)
+  training_set_end <- nrow(short_df) - unique(short_df$test_set_steps)
   test_set_end <- training_set_end + unique(short_df$test_set_steps)
-  future_set <- nrow(future_short_term)-test_set_end
-  max_value <- max(c(max(future_short_term$short_term_lm_model_predictions),max(future_short_term$hourly_demand_trend_and_season_corrected,na.rm = T)))
+  future_set <- nrow(future_short_term) - test_set_end
+  max_value <- max(c(max(future_short_term$short_term_lm_model_predictions), max(future_short_term$hourly_demand_trend_and_season_corrected, na.rm = T)))
 
   suppressWarnings(
-  st_plot <- ggplot(future_short_term)+geom_line(aes(date,future_short_term$hourly_demand_trend_and_season_corrected,color="actual"))+
-    geom_line(aes(date,future_short_term$short_term_lm_model_predictions,color="fitted"))+
-    geom_vline(xintercept=short_df$date[(nrow(short_df)-unique(short_df$test_set_steps))],linetype=2)+
-    geom_vline(xintercept=short_df$date[test_set_end],linetype=3)+
-    ggthemes::theme_foundation(base_size=14, base_family="sans")+
-    xlab("\nHour")+ylab("Change in avg. Hourly Demand\n[MW]\n")+
-    ggtitle(paste("Short Term Model Results -",country,"\n"))+
-    theme(plot.title = element_text(face = "bold",
-                                    size = rel(1.2), hjust = 0.5),
-          text = element_text(),
-          panel.background = element_rect(colour = NA),
-          plot.background = element_rect(colour = NA),
-          panel.border = element_rect(colour = NA),
-          axis.title = element_text(face = "bold",size = rel(1)),
-          axis.title.y = element_text(angle=90,vjust =2),
-          axis.title.x = element_text(vjust = -0.2),
-          axis.text = element_text(),
-          axis.line.x = element_line(colour="black"),
-          axis.line.y = element_line(colour="black"),
-          axis.ticks = element_line(),
-          panel.grid.major = element_line(colour="#f0f0f0"),
-          panel.grid.minor = element_blank(),
-          legend.key = element_rect(colour = NA),
-          legend.position = "bottom",
-          legend.direction = "horizontal",
-          legend.key.size= unit(0.2, "cm"),
-          plot.margin=unit(c(10,5,5,5),"mm"),
-          strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
-          strip.text = element_text(face="bold"))+
-    theme(legend.title = element_blank())+guides(color = guide_legend(override.aes = list(linewidth = 2)))+
-    annotate("text", x = future_short_term$date[(training_set_end/2)], y =   (max_value+max_value*0.1), label = "Training", size = 4, hjust = 0.5, vjust = 0)+
-   annotate("text", x = future_short_term$date[(training_set_end+unique(short_df$test_set_steps)/2)], y =    (max_value+max_value*0.1), label = "Test", size = 4, hjust = 0.5, vjust = 0)+
-    annotate("text", x = future_short_term$date[(nrow(short_df)+future_set/2)], y =      (max_value+max_value*0.1), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
+    st_plot <- ggplot(future_short_term) +
+      geom_line(aes(date, future_short_term$hourly_demand_trend_and_season_corrected, color = "actual")) +
+      geom_line(aes(date, future_short_term$short_term_lm_model_predictions, color = "fitted")) +
+      geom_vline(xintercept = short_df$date[(nrow(short_df) - unique(short_df$test_set_steps))], linetype = 2) +
+      geom_vline(xintercept = short_df$date[test_set_end], linetype = 3) +
+      ggthemes::theme_foundation(base_size = 14, base_family = "sans") +
+      xlab("\nHour") +
+      ylab("Change in avg. Hourly Demand\n[MW]\n") +
+      ggtitle(paste("Short Term Model Results -", country, "\n")) +
+      theme(
+        plot.title = element_text(
+          face = "bold",
+          size = rel(1.2), hjust = 0.5
+        ),
+        text = element_text(),
+        panel.background = element_rect(colour = NA),
+        plot.background = element_rect(colour = NA),
+        panel.border = element_rect(colour = NA),
+        axis.title = element_text(face = "bold", size = rel(1)),
+        axis.title.y = element_text(angle = 90, vjust = 2),
+        axis.title.x = element_text(vjust = -0.2),
+        axis.text = element_text(),
+        axis.line.x = element_line(colour = "black"),
+        axis.line.y = element_line(colour = "black"),
+        axis.ticks = element_line(),
+        panel.grid.major = element_line(colour = "#f0f0f0"),
+        panel.grid.minor = element_blank(),
+        legend.key = element_rect(colour = NA),
+        legend.position = "bottom",
+        legend.direction = "horizontal",
+        legend.key.size = unit(0.2, "cm"),
+        plot.margin = unit(c(10, 5, 5, 5), "mm"),
+        strip.background = element_rect(colour = "#f0f0f0", fill = "#f0f0f0"),
+        strip.text = element_text(face = "bold")
+      ) +
+      theme(legend.title = element_blank()) +
+      guides(color = guide_legend(override.aes = list(linewidth = 2))) +
+      annotate("text", x = future_short_term$date[(training_set_end / 2)], y = (max_value + max_value * 0.1), label = "Training", size = 4, hjust = 0.5, vjust = 0) +
+      annotate("text", x = future_short_term$date[(training_set_end + unique(short_df$test_set_steps) / 2)], y = (max_value + max_value * 0.1), label = "Test", size = 4, hjust = 0.5, vjust = 0) +
+      annotate("text", x = future_short_term$date[(nrow(short_df) + future_set / 2)], y = (max_value + max_value * 0.1), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
   )
   suppressWarnings(
     print(st_plot)
   )
 
   suppressWarnings(
-  ggsave(filename=paste0("./",country,"/plots/short_term_results_future.png"), plot=st_plot, width=12, height=8)
-)
+    ggsave(filename = paste0("./", country, "/plots/short_term_results_future.png"), plot = st_plot, width = 12, height = 8)
+  )
   return(future_short_term)
-
 }
