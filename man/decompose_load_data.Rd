@@ -28,5 +28,5 @@ This function decomposes the load data into three components: a yearly long-term
 }
 \examples{
 
- example_decomposed_data <- decompose_load_data(example_demand_data_filled)
+example_decomposed_data <- decompose_load_data(example_demand_data_filled)
 }

@@ -23,7 +23,8 @@ The function also produces and saves visualizations of the actual and the predic
 }
 \examples{
 example_midterm_future_predictions <- mid_term_future(example_midterm_predictions,
-end_year=2028,Tref=18)
+  end_year = 2028, Tref = 18
+)
 }
 \seealso{
 See also function \code{\link{long_term_future}} and \code{\link{short_term_future}} for the other prediction models.

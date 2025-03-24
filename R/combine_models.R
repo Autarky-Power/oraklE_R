@@ -17,7 +17,7 @@
 combine_models <- function(longterm_predictions, midterm_predictions, shortterm_predictions, longterm_model_number = 1,
                            verbose = FALSE) {
 
-  if (verbose = FALSE){
+  if (verbose == FALSE){
     message("Verbose is set false. If you want to see ")
   }
   if ("example" %in% colnames(shortterm_predictions) &&

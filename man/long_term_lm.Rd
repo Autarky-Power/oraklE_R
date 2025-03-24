@@ -27,7 +27,8 @@ where the covariates correspond to the loaded macroeconomic variables from \code
 }
 \examples{
 example_longterm_predictions <- long_term_lm(example_longterm_and_macro_data,
-test_set_steps=2,testquant = 500)
+  test_set_steps = 2, testquant = 500
+)
 }
 \seealso{
 See also function \code{\link{mid_term_lm}} and \code{\link{short_term_lm}} for the other prediction models and \code{\link{get_macro_economic_data}} for the covariate download.

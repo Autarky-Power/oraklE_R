@@ -21,7 +21,8 @@ From this data a weighted daily average temperature based on population is calcu
 }
 \examples{
 example_midterm_demand_and_weather_data <- get_weather_data(example_midterm_demand_data,
-                                                            api_key="default")
+  api_key = "default"
+)
 head(example_midterm_demand_and_weather_data$demand)
 head(example_midterm_demand_and_weather_data$temperature_data)
 }

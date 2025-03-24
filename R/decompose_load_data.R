@@ -22,13 +22,53 @@
 #' @examples
 #'
 #' example_decomposed_data <- decompose_load_data(example_demand_data_filled)
-decompose_load_data <- function(load_data) {
+decompose_load_data <- function(load_data, data_directory=tempdir(),verbose=FALSE) {
   if ("example" %in% colnames(load_data)) {
     if (unique(load_data$example) == TRUE) {
       message("Decomposing the load data into a long-term trend component, a mid-term seasonality component and a short-term seasonality component.")
       return(oRaklE::example_decomposed_data)
     }
   }
+
+  if (grepl("Rtmp", data_directory)) {
+    message(paste("\nThis function will try to save the load series to a folder called", unique(load_data$country),
+                  "\nin the current data directory:",data_directory))
+    message("\nIt is recommended to save the data in a directory other than a tempdir, so that it is available after you finish the R Session.")
+
+    message("\nPlease choose an option:")
+    message("\n1: Keep it as a tempdir")
+    message(paste("2: Save data in the current working directory (", getwd(), ")", sep = ""))
+    message("3: Set the directory manually\n")
+
+    choice <- readline(prompt = "Enter the option number (1, 2, or 3): ")
+
+
+    if (choice == "1") {
+      message("\nData will be saved in a temporary directory and cleaned up when R is shut down.")
+      # data_directory remains unchanged.
+
+    } else if (choice == "2") {
+      data_directory <- getwd()
+      message(paste0("\nData will be saved in the current working directory in ", data_directory,"/",unique(load_data$country),"/data"))
+
+    } else if (choice == "3") {
+      new_dir <- readline(prompt = "Enter the full path of the directory where you want to save the data: ")
+      data_directory <- new_dir
+      if (!dir.exists(data_directory)) {
+        stop("The specified data_directory does not exist: ", data_directory, "\nPlease run the function again.")
+      }
+      message("\nData will be saved in the specified directory: ", data_directory,"/",unique(load_data$country),"/data")
+
+    } else {
+      message("Invalid input. Keeping the temporary directory.\nData will be cleaned up when R is shut down.")
+    }
+  } else {
+    if (!dir.exists(data_directory)) {
+      stop("The specified data_directory does not exist: ", data_directory, "\nPlease run the function again.")
+    }
+    message("\nData will be saved in the specified working directory in ", data_directory,"/",unique(load_data$country),"/data")
+  }
+
   resolution <- as.numeric(difftime(load_data$date[2], load_data$date[1], units = "hours"))
   if (resolution <= 1) {
     timepoint <- seq(as.POSIXct(paste0(as.character(min(unique(load_data$year))), "-01-01 00:00"), tz = "UTC"),

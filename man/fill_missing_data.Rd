@@ -4,7 +4,7 @@
 \alias{fill_missing_data}
 \title{Replace missing values in the load data set}
 \usage{
-fill_missing_data(load_data)
+fill_missing_data(load_data, data_directory = tempdir())
 }
 \arguments{
 \item{load_data}{Data Frame with load data. Data Frame must contain the following columns:
@@ -14,6 +14,8 @@ fill_missing_data(load_data)
 \item{unit}{Indicating the measured unit (e.g., MW), character.}
 \item{country}{Indicating the country's ISO2C code, character.}
 }}
+
+\item{data_directory}{The path to the directory where the data will be saved. The default is set to a temporary directory.}
 }
 \value{
 Data Frame with completed load values, date, unit, year, time resolution, ISO2C Country Code
@@ -25,19 +27,26 @@ This function is primarily designed to handle minor gaps in the dataset acquired
 \examples{
 
 suppressWarnings(
-library(ggplot2)
+  library(ggplot2)
 )
 example_demand_data_filled <- fill_missing_data(example_demand_data)
-example_df<- as.data.frame(seq.POSIXt(example_demand_data$date[841],
-example_demand_data$date[870],"hour"))
+example_df <- as.data.frame(seq.POSIXt(
+  example_demand_data$date[841],
+  example_demand_data$date[870], "hour"
+))
 example_df$before <- NA
-example_df$before[example_df[,1] \%in\% example_demand_data$date] <-
-example_demand_data$load[example_demand_data$date \%in\% example_df[,1]]
-example_df$after <-   example_demand_data_filled$load[example_demand_data_filled$date
-\%in\% example_df[,1]]
-ggplot(example_df,aes(x=example_df[,1]))+ geom_line(aes(y=after,colour="after data filling"))+
-geom_line(aes(y=before,colour="before data filling"))+
- xlab("\nHour")+ylab("Load [MW]\n")+theme(legend.title = element_blank())+
- scale_x_continuous(breaks = c(example_df[1,1],example_df[25,1]),
- labels = c(as.Date(example_df[1,1]),as.Date(example_df[25,1])))
+example_df$before[example_df[, 1] \%in\% example_demand_data$date] <-
+  example_demand_data$load[example_demand_data$date \%in\% example_df[, 1]]
+example_df$after <- example_demand_data_filled$load[example_demand_data_filled$date
+  \%in\% example_df[, 1]]
+ggplot(example_df, aes(x = example_df[, 1])) +
+  geom_line(aes(y = after, colour = "after data filling")) +
+  geom_line(aes(y = before, colour = "before data filling")) +
+  xlab("\nHour") +
+  ylab("Load [MW]\n") +
+  theme(legend.title = element_blank()) +
+  scale_x_continuous(
+    breaks = c(example_df[1, 1], example_df[25, 1]),
+    labels = c(as.Date(example_df[1, 1]), as.Date(example_df[25, 1]))
+  )
 }

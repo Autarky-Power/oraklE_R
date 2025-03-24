@@ -8,7 +8,8 @@ combine_models(
   longterm_predictions,
   midterm_predictions,
   shortterm_predictions,
-  longterm_model_number = 1
+  longterm_model_number = 1,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -28,5 +29,7 @@ This function combines the three separate forecasts for the low, mid and high fr
 }
 \examples{
 example_full_model_predictions <- combine_models(example_longterm_predictions,
-example_midterm_predictions,example_shortterm_predictions,longterm_model_number =1)
+  example_midterm_predictions, example_shortterm_predictions,
+  longterm_model_number = 1
+)
 }

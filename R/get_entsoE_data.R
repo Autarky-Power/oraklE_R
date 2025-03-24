@@ -110,7 +110,7 @@ get_entsoE_data <- function(start_year, end_year, country, api_key = "default", 
   data_list <- list()
   for (i in start:end) {
     starting_year <- i
-    print(paste("Getting data for", i))
+    message(paste("Getting data for", i))
     tryCatch(
       {
         entso_response <- httr::GET(paste0("https://web-api.tp.entsoe.eu/api?securityToken=", api_key, "&documentType=A65&processType=A16&outBiddingZone_Domain=", domain, "&periodStart=", starting_year, "01010000&periodEnd=", (starting_year + 1), "01010000"))
@@ -179,7 +179,7 @@ get_entsoE_data <- function(start_year, end_year, country, api_key = "default", 
 
   # check number of observations per year
   for (i in start:end) {
-    print(paste("year:", i, "number of datapoints:", nrow(all_data[all_data$year == i, ])))
+    message(paste("year:", i, "number of datapoints:", nrow(all_data[all_data$year == i, ])))
   }
   if (country == "UK") {
     all_data$country <- "GB"
