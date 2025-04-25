@@ -9,6 +9,7 @@ combine_models(
   midterm_predictions,
   shortterm_predictions,
   longterm_model_number = 1,
+  data_directory = tempdir(),
   verbose = FALSE
 )
 }
@@ -20,9 +21,19 @@ combine_models(
 \item{shortterm_predictions}{Dataframe. The object resulting from function \code{\link{short_term_lm}}.}
 
 \item{longterm_model_number}{Integer. Specifies which of the 3 best long-term models should be used.}
+
+\item{data_directory}{The path to the directory where the results, metrics and plots will be saved. The default is set to a temporary directory.}
+
+\item{verbose}{A boolean value indicating if you want the generated plots and final result metrics to be shown (set to TRUE if yes).}
 }
 \value{
-Dataframe. The combined model results.
+A list with the dataframe with the combined model results. A dataframe with selected model metrics. And a list with the plotted results.
+The combined model predictions, plots, and metrics are saved in the respective folder for the country.
+\describe{
+\item{combined_model_predictions}{A dataframe with the combined model results.}
+\item{combined_model_metrics}{A dataframe with model metrics.}
+\item{combined_model_plots}{A list with the plot for the full timeseries, a plot with two sample weeks, and a stacked plot with both.}
+}
 }
 \description{
 This function combines the three separate forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first.

@@ -13,9 +13,28 @@
 add_holidays_short_term <- function(shortterm) {
   if ("example" %in% colnames(shortterm)) {
     if (unique(shortterm$example) == TRUE) {
-      message("Getting holiday information.")
+      year <- 2017
+      country <- "FR"
+      holiday_list <- list()
+      tryCatch(
+        {
+          Sys.sleep(1.5)
+          response <- jsonlite::fromJSON(paste0(
+            "https://date.nager.at/api/v3/publicholidays/",
+            year, "/", country
+          ))
+          holiday_list[[1]] <- response$date
+        },
+        error = function(e) {
+          stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+        }
+      )
 
-      return(oRaklE::example_shortterm_demand_data)
+      if (holiday_list[[1]][1] == "2017-01-01") {
+        return(oRaklE::example_shortterm_demand_data)
+      }
+    } else {
+      stop()
     }
   }
   years <- unique(shortterm$year)

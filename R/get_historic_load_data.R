@@ -59,7 +59,7 @@ get_historic_load_data <- function(longterm) {
   coverage_list <- vector(mode = "list", length = 0)
 
 
-  for (i in 1:nrow(data)) {
+  for (i in seq_len(nrow(data))) {
     x <- t(data[i, 6:29])
     y <- c(y, x)
     x_year[1:24] <- data[i, 2]
@@ -105,7 +105,7 @@ get_historic_load_data <- function(longterm) {
   }
   year_list2 <- unique(data2$year)
 
-  if (2015 %in% year_list & 2015 %in% year_list2) {
+  if (2015 %in% year_list && 2015 %in% year_list2) {
     year_list <- year_list[year_list != 2015]
   }
 

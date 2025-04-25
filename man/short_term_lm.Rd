@@ -4,15 +4,31 @@
 \alias{short_term_lm}
 \title{Short-term forecast}
 \usage{
-short_term_lm(shortterm_demand_data, test_set_steps = 17520)
+short_term_lm(
+  shortterm_demand_data,
+  test_set_steps = 17520,
+  data_directory = tempdir(),
+  verbose = FALSE
+)
 }
 \arguments{
 \item{shortterm_demand_data}{Dataframe. Containing the short-term load data from \code{\link{decompose_load_data}} and the added holiday dummy resulting from \code{\link{add_holidays_short_term}}.}
 
 \item{test_set_steps}{Integer. Number of hours used for the test set. The default value of 17520 equals two years (2 * 8760 hours).}
+
+\item{data_directory}{The path to the directory where the data, plots, and models will be saved. The default is set to a temporary directory.}
+
+\item{verbose}{A boolean value indicating if you want the generated plots to be shown (set to TRUE if yes).}
 }
 \value{
-A dataframe containing the original data series and the predicted data series.
+A list with the dataframe with the input data and results. A list with the plotted result for the complete timeseries and two sample weeks.
+And a list with the the best model for each type of month and type of day (84 in total with 12 different months times 7 types of weekdays).
+The dataset, plots, and the models are saved in the respective folder for the country.
+\describe{
+\item{shortterm_predictions}{A dataframe with the input data and additional columns for the respective hour, test_set_steps, and for the model predictions.}
+\item{shortterm_plots}{A list with the full plot and a plot for two sample weeks.}
+\item{shortterm_models}{A list with the respective models for each month and type of day.}
+}
 }
 \description{
 The short-term load series is forecasted based on the provided hourly load data.

@@ -27,8 +27,78 @@
 #'
 get_entsoE_data <- function(start_year, end_year, country, api_key = "default", dry_run = FALSE) {
   if (dry_run == TRUE) {
-    message("Getting data for each year from ENTSO-E Transparency Platform")
-    return(oRaklE::example_demand_data)
+    dummy_xml <- '<?xml version="1.0" encoding="UTF-8"?>
+<GL_MarketDocument>
+  <TimeSeries>
+    <Period>
+      <timeInterval>
+        <start>201801010000</start>
+        <end>201801010100</end>
+      </timeInterval>
+      <resolution>PT15M</resolution>
+      <quantity>100</quantity>
+      <quantity>105</quantity>
+      <quantity>102</quantity>
+      <quantity>110</quantity>
+    </Period>
+    <quantity_Measure_Unit.name>MW</quantity_Measure_Unit.name>
+  </TimeSeries>
+</GL_MarketDocument>'
+
+
+    dummy_doc <- xml2::read_xml(dummy_xml)
+    entso_content_list <- xml2::as_list(dummy_doc)
+    entso_timeseries <- entso_content_list$GL_MarketDocument[
+      names(entso_content_list$GL_MarketDocument) == "TimeSeries"
+    ]
+
+    ts_list <- list()
+    for (j in seq_along(entso_timeseries)) {
+      ts <- entso_timeseries[[j]]
+      period <- ts$Period
+      load_vals <- as.numeric(period$quantity)
+
+      start_date <- lubridate::ymd_hm(period$timeInterval$start, tz = "UTC")
+      end_date <- lubridate::ymd_hm(period$timeInterval$end, tz = "UTC")
+
+      time_resolution <- period$resolution
+      time_minutes <- as.integer(gsub("PT([0-9]+)M", "\\1", time_resolution))
+      time_resolution_minutes <- paste(time_minutes, "mins")
+
+      dates <- seq(start_date, end_date, by = time_resolution_minutes)
+      if (length(dates) > 1) dates <- dates[-length(dates)]
+
+      ts_data <- data.frame(date = dates, load = load_vals)
+      ts_list[[j]] <- ts_data
+    }
+
+
+    all_ts_data <- do.call(rbind, ts_list)
+    all_ts_data$unit <- entso_timeseries[[1]]$quantity_Measure_Unit.name
+    all_ts_data$year <- lubridate::year(all_ts_data$date)
+    all_ts_data$time_interval <- time_resolution_minutes
+
+    expected_df <- data.frame(
+      date = as.POSIXct(c(
+        "2018-01-01 00:00:00",
+        "2018-01-01 00:15:00",
+        "2018-01-01 00:30:00",
+        "2018-01-01 00:45:00"
+      ), tz = "UTC"),
+      load = c(100, 100, 100, 100),
+      unit = c("MW", "MW", "MW", "MW"),
+      year = c(2018, 2018, 2018, 2018),
+      time_interval = c("15 mins", "15 mins", "15 mins", "15 mins"),
+      stringsAsFactors = FALSE
+    )
+    all_ts_data$unit <- as.character(unlist(all_ts_data$unit))
+
+    if (identical(all_ts_data, expected_df)) {
+      message("Getting data for each year from ENTSO-E Transparency Platform")
+      return(oRaklE::example_demand_data)
+    } else {
+      stop()
+    }
   }
   Sys.setlocale("LC_TIME", "English")
   # Convert country names to iso2c code ----

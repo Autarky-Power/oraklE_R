@@ -5,7 +5,7 @@
 \alias{weo_data}
 \title{World Economic Outlook (WEO) Data}
 \format{
-A data frame with 980 rows and 59 columns:
+A data frame with 588 rows and 61 columns:
 \describe{
 \item{\code{WEO.Country.Code}}{Unique code assigned to each country by the WEO database.}
 \item{\code{ISO}}{The ISO3 country code (e.g., \code{FRA} for France).}
@@ -25,18 +25,19 @@ A data frame with 980 rows and 59 columns:
 \code{X2010}, \code{X2011}, \code{X2012}, \code{X2013}, \code{X2014},
 \code{X2015}, \code{X2016}, \code{X2017}, \code{X2018}, \code{X2019},
 \code{X2020}, \code{X2021}, \code{X2022}, \code{X2023}, \code{X2024},
-\code{X2025}, \code{X2026}, \code{X2027}, \code{X2028}}{The annual value of the economic indicator for the respective year, starting from 1980 (\code{X1980}) to 2028 (\code{X2028}).}
+\code{X2025}, \code{X2026}, \code{X2027}, \code{X2028},
+\code{X2029}, \code{X2030}}{The annual value of the economic indicator for the respective year, starting from 1980 (\code{X1980}) to 2028 (\code{X2028}).}
 \item{\code{Estimates.Start.After}}{The year after which data values are based on projections instead of past values.}
 }
 }
 \source{
-World Economic Outlook Database (April 2023 edition) of the International Monetary Fund (IMF) (https://www.imf.org/en/Publications/WEO/weo-database/2023/October)
+World Economic Outlook Database (April 2025 edition) of the International Monetary Fund (IMF) (https://www.imf.org/en/Publications/WEO/weo-database/2023/October)
 }
 \usage{
 weo_data
 }
 \description{
-This dataset contains macroeconomic data and projections from the International Monetary Fund (IMF) World Economic Outlook (WEO). It includes annual data for multiple countries and economic indicators, spanning from 1980 to 2028.
+This dataset contains macroeconomic data and projections from the International Monetary Fund (IMF) World Economic Outlook (WEO). It includes annual data for multiple countries and economic indicators, spanning from 1980 to 2030.
 }
 \keyword{IMF}
 \keyword{WEO}

@@ -8,20 +8,31 @@ combine_models_future(
   longterm_future_predictions,
   midterm_future_predictions,
   shortterm_future_predictions,
-  longterm_model_number = 1
+  longterm_model_number = 1,
+  data_directory = tempdir(),
+  verbose = FALSE
 )
 }
 \arguments{
-\item{longterm_future_predictions}{Dataframe. The object resulting from function \code{\link{long_term_future}}.}
+\item{longterm_future_predictions}{Dataframe. The dataframe object resulting from function \code{\link{long_term_future}}.}
 
-\item{midterm_future_predictions}{Dataframe. The object resulting from function \code{\link{mid_term_future}}.}
+\item{midterm_future_predictions}{Dataframe. The dataframe object resulting from function \code{\link{mid_term_future}}.}
 
-\item{shortterm_future_predictions}{Dataframe. The object resulting from function \code{\link{short_term_future}}.}
+\item{shortterm_future_predictions}{Dataframe. The dataframe object resulting from function \code{\link{short_term_future}}.}
 
 \item{longterm_model_number}{Integer. Specifies which of the 3 best long-term models should be used.}
+
+\item{data_directory}{The path to the directory where the results and plots will be saved. The default is set to a temporary directory.}
+
+\item{verbose}{A boolean value indicating if you want the generated plots to be shown (set to TRUE if yes).}
 }
 \value{
-Dataframe. The combined model results.
+A list with the dataframe with the combined model results. And a list with the plotted results.
+The combined model predictions and plots are saved in the respective folder for the country.
+\describe{
+\item{combined_model_future_predictions}{A dataframe with the combined model results.}
+\item{combined_model_future_plots}{A list with the plot for the full timeseries, a plot with two sample weeks, and a stacked plot with both.}
+}
 }
 \description{
 This function combines the three separate future forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first and should have the same end_year.
@@ -31,6 +42,7 @@ example_full_model_future_predictions <- combine_models_future(example_longterm_
   example_midterm_future_predictions, example_shortterm_future_predictions,
   longterm_model_number = 1
 )
+
 }
 \seealso{
 See also functions \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the prediction models.

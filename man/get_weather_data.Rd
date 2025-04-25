@@ -4,12 +4,18 @@
 \alias{get_weather_data}
 \title{Load weather data via API}
 \usage{
-get_weather_data(midterm_demand_data, api_key = "default")
+get_weather_data(
+  midterm_demand_data,
+  api_key = "default",
+  data_directory = tempdir()
+)
 }
 \arguments{
 \item{midterm_demand_data}{Dataframe. The mid-term data series from \code{\link{decompose_load_data}} with added holidays resulting from the function \code{\link{add_holidays_mid_term}}.}
 
 \item{api_key}{Character. A valid API key from rapidapi that is subscribed to wft-geo-db and meteostat. If set to "default", one of the deposited keys will be used.}
+
+\item{data_directory}{The path to the directory where the data will be saved.}
 }
 \value{
 A list containing the mid-term data and temperature data.

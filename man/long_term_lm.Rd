@@ -4,7 +4,14 @@
 \alias{long_term_lm}
 \title{Long-term forecast}
 \usage{
-long_term_lm(longterm_and_macro_data, test_set_steps = 2, testquant = 500)
+long_term_lm(
+  longterm_and_macro_data,
+  test_set_steps = 2,
+  testquant = 500,
+  rdm_seed = sample(1:10000, 1),
+  data_directory = tempdir(),
+  verbose = FALSE
+)
 }
 \arguments{
 \item{longterm_and_macro_data}{Dataframe. Containing the load data and macroeconomic indicators derived from \code{\link{get_macro_economic_data}}.}
@@ -12,22 +19,33 @@ long_term_lm(longterm_and_macro_data, test_set_steps = 2, testquant = 500)
 \item{test_set_steps}{Integer. Number of time periods in the test set.}
 
 \item{testquant}{Integer. Determines how many of the best ranked models are evaluated with cross validation.}
+
+\item{rdm_seed}{A random seed to keep results consistent}
+
+\item{data_directory}{The path to the directory where the data, plots, and models will be saved. The default is set to a temporary directory.}
+
+\item{verbose}{A boolean value indicating if you want the generated plots to be shown (set to TRUE if yes).}
 }
 \value{
-A dataframe with the input data and additional columns for test_set_steps and the for best three models longterm_model_predictions1, longterm_model_predictions2 and longterm_model_predictions3.
-The dataset and the models are saved in the respective folder for the country.
+A list with the dataframe with the input data and results. A list with the plotted results of the three best models. And a list with the three best models.
+The dataset, plots, and the models are saved in the respective folder for the country.
+\describe{
+\item{longterm_predictions}{A dataframe with the input data and additional columns for test_set_steps and for best three models longterm_model_predictions1, longterm_model_predictions2 and longterm_model_predictions3.}
+\item{longterm_plots}{A list with the respective plots for each model.}
+\item{longterm_models}{A list with the three best models.}
+}
 }
 \description{
-This function predicts the long-term load data based on the provided time series and a set of macroeconomic variables. The model corresponds to
+This function predicts the long-term load data based on the provided time series and a set of macroeconomic variables.
 }
 \details{
+The model corresponds to
 \deqn{\bar{D}_L(t_L)=\beta_{L,1}+\beta_{L,2}x_1(t_L)+...+ \beta_{L,10}x_{10}(t_L) \epsilon_L(t_L).}
-
-where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data}}. For all possible covariate combinations, the three best models are chosen and stored. The included regressors are stored and the predicted and actual time series plotted.
+where the covariates correspond to the loaded macroeconomic variables from \code{\link{get_macro_economic_data}}. The three best models out of all possible covariate combinations are chosen and saved. The predicted and actual time series of the three best models are plotted and saved as well.
 }
 \examples{
 example_longterm_predictions <- long_term_lm(example_longterm_and_macro_data,
-  test_set_steps = 2, testquant = 500
+  test_set_steps = 2, testquant = 500, rdm_seed = 421
 )
 }
 \seealso{

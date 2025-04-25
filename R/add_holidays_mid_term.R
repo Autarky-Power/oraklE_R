@@ -15,7 +15,27 @@
 add_holidays_mid_term <- function(midterm_data) {
   if ("example" %in% colnames(midterm_data)) {
     if (unique(midterm_data$example) == TRUE) {
-      return(oRaklE::example_midterm_demand_data)
+      year <- 2017
+      country <- "FR"
+      holiday_list <- list()
+      tryCatch(
+        {
+          response <- jsonlite::fromJSON(paste0(
+            "https://date.nager.at/api/v3/publicholidays/",
+            year, "/", country
+          ))
+          holiday_list[[1]] <- response$date
+        },
+        error = function(e) {
+          stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+        }
+      )
+
+      if (holiday_list[[1]][1] == "2017-01-01") {
+        return(oRaklE::example_midterm_demand_data)
+      }
+    } else {
+      stop()
     }
   }
   midterm <- midterm_data
@@ -28,6 +48,7 @@ add_holidays_mid_term <- function(midterm_data) {
     year <- years[i]
     tryCatch(
       {
+        Sys.sleep(1.5)
         response <- jsonlite::fromJSON(paste0(
           "https://date.nager.at/api/v3/publicholidays/",
           year, "/", country

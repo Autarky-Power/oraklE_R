@@ -2,11 +2,18 @@
 #'
 #' This function combines the three separate future forecasts for the low, mid and high frequency model. The three separate forecasts need to be run first and should have the same end_year.
 #'
-#' @param longterm_future_predictions Dataframe. The object resulting from function \code{\link{long_term_future}}.
-#' @param midterm_future_predictions Dataframe. The object resulting from function \code{\link{mid_term_future}}.
-#' @param shortterm_future_predictions Dataframe. The object resulting from function \code{\link{short_term_future}}.
+#' @param longterm_future_predictions Dataframe. The dataframe object resulting from function \code{\link{long_term_future}}.
+#' @param midterm_future_predictions Dataframe. The dataframe object resulting from function \code{\link{mid_term_future}}.
+#' @param shortterm_future_predictions Dataframe. The dataframe object resulting from function \code{\link{short_term_future}}.
 #' @param longterm_model_number Integer. Specifies which of the 3 best long-term models should be used.
-#' @return Dataframe. The combined model results.
+#' @param data_directory The path to the directory where the results and plots will be saved. The default is set to a temporary directory.
+#' @param verbose A boolean value indicating if you want the generated plots to be shown (set to TRUE if yes).
+#' @return A list with the dataframe with the combined model results. And a list with the plotted results.
+#' The combined model predictions and plots are saved in the respective folder for the country.
+#' \describe{
+#'   \item{combined_model_future_predictions}{A dataframe with the combined model results.}
+#'   \item{combined_model_future_plots}{A list with the plot for the full timeseries, a plot with two sample weeks, and a stacked plot with both.}
+#' }
 #' @export
 #' @seealso See also functions \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the prediction models.
 #' @examples
@@ -14,9 +21,11 @@
 #'   example_midterm_future_predictions, example_shortterm_future_predictions,
 #'   longterm_model_number = 1
 #' )
+#'
 combine_models_future <- function(
     longterm_future_predictions, midterm_future_predictions,
-    shortterm_future_predictions, longterm_model_number = 1) {
+    shortterm_future_predictions, longterm_model_number = 1,
+    data_directory = tempdir(), verbose = FALSE) {
   if ("example" %in% colnames(shortterm_future_predictions) &&
     "example" %in% colnames(midterm_future_predictions) &&
     "example" %in% colnames(longterm_future_predictions)) {
@@ -24,8 +33,70 @@ combine_models_future <- function(
       unique(midterm_future_predictions$example) == TRUE &&
       unique(longterm_future_predictions$example) == TRUE) {
       message("Combining the long-term, mid-term and short-term seasonality into the final forecast until 2028.")
-      return(oRaklE::example_full_model_future_predictions)
+
+      combined_model_results <- shortterm_future_predictions[96361:105120, 1:8]
+      combined_model_results$long_term_model <- 0
+      year <- 2028
+      combined_model_results$long_term_model[combined_model_results$year == year] <-
+        longterm_future_predictions$longterm_model_predictions1[longterm_future_predictions$year == year]
+
+      combined_model_results$mid_term_model <- 0
+      for (i in 1:365) {
+        combined_model_results$mid_term_model[((i - 1) * 24 + 1):(i * 24)] <-
+          midterm_future_predictions$midterm_model_fit[(i + 4015)]
+      }
+
+      combined_model_results$short_term_model <- shortterm_future_predictions$short_term_lm_model_predictions[96361:105120]
+
+      combined_model_results$complete_model <- combined_model_results$long_term_model +
+        combined_model_results$mid_term_model + combined_model_results$short_term_model
+
+      eval_data <- oRaklE::example_full_model_future_predictions
+      eval_sum <- sum(combined_model_results$complete_model - eval_data$complete_model[96361:105120])
+      if (eval_sum < 1) {
+        return(oRaklE::example_full_model_future_predictions)
+      } else {
+        stop()
+      }
     }
+  }
+
+  if (grepl("Rtmp", data_directory)) {
+    message(paste(
+      "\nThis function will try to save the results and plots to a folder called", unique(longterm_future_predictions$country),
+      "\nin the current data directory:", data_directory
+    ))
+    message("\nIt is recommended to save the data in a directory other than a tempdir, so that it is available after you finish the R Session.")
+
+    message("\nPlease choose an option:")
+    message("\n1: Keep it as a tempdir")
+    message(paste("2: Save data in the current working directory (", getwd(), ")", sep = ""))
+    message("3: Set the directory manually\n")
+
+    choice <- readline(prompt = "Enter the option number (1, 2, or 3): ")
+
+
+    if (choice == "1") {
+      message("\nData will be saved in a temporary directory and cleaned up when R is shut down.")
+      # data_directory remains unchanged.
+    } else if (choice == "2") {
+      data_directory <- getwd()
+      message(paste0("\nResults and plots will be saved in the current working directory in ", data_directory, "/", unique(longterm_future_predictions$country)))
+    } else if (choice == "3") {
+      new_dir <- readline(prompt = "Enter the full path of the directory where you want to save the data: ")
+      data_directory <- new_dir
+      if (!dir.exists(data_directory)) {
+        stop("The specified data_directory does not exist: ", data_directory, "\nPlease run the function again.")
+      }
+      message("\nResults and plots will be saved in the specified directory: ", data_directory, "/", unique(longterm_future_predictions$country))
+    } else {
+      message("Invalid input. Keeping the temporary directory.\nData will be cleaned up when R is shut down.")
+    }
+  } else {
+    if (!dir.exists(data_directory)) {
+      stop("The specified data_directory does not exist: ", data_directory, "\nPlease run the function again.")
+    }
+    message("\nResults and plots will be saved in the specified working directory in ", data_directory, "/", unique(longterm_future_predictions$country))
   }
 
   combined_model_results <- shortterm_future_predictions[, 1:8]
@@ -168,19 +239,19 @@ combine_models_future <- function(
     annotate("text", x = (end_of_test_set + (nrow(combined_model_results) - end_of_test_set) / 2), y = (max_value + max_value * 0.05), label = "Unknown", size = 4, hjust = 0.5, vjust = 0)
 
 
-  if (!file.exists(country)) {
-    dir.create(country)
+  if (!file.exists(paste0(data_directory, "/", country))) {
+    dir.create(paste0(data_directory, "/", country))
   }
-  if (!file.exists(paste0("./", country, "/data"))) {
-    dir.create(paste0("./", country, "/data"))
+  if (!file.exists(paste0(data_directory, "/", country, "/data"))) {
+    dir.create(paste0(data_directory, "/", country, "/data"))
   }
-  utils::write.csv(combined_model_results, paste0("./", country, "/data/complete_model_future.csv"))
+  utils::write.csv(combined_model_results, paste0(data_directory, "/", country, "/data/complete_model_future.csv"))
 
-  if (!file.exists(paste0("./", country, "/plots"))) {
-    dir.create(paste0("./", country, "/plots"))
+  if (!file.exists(paste0(data_directory, "/", country, "/plots"))) {
+    dir.create(paste0(data_directory, "/", country, "/plots"))
   }
   suppressWarnings(
-    ggsave(filename = paste0("./", country, "/plots/complete_model_results.png"), plot = full_plot2, width = 12, height = 8)
+    ggsave(filename = paste0(data_directory, "/", country, "/plots/complete_model_results.png"), plot = full_plot2, width = 12, height = 8)
   )
   ###
   sample_week_index <- nrow(combined_model_results) - (nrow(combined_model_results) - end_of_test_set) * 0.8
@@ -268,19 +339,26 @@ combine_models_future <- function(
     theme(plot.title = element_text(size = 26)) +
     theme(plot.subtitle = element_text(size = 20, hjust = 0.5))
   suppressWarnings(
-    ggsave(filename = paste0("./", country, "/plots/complete_model_sample_weeks.png"), plot = full_plot_sample_week2, width = 12, height = 8)
+    ggsave(filename = paste0(data_directory, "/", country, "/plots/complete_model_sample_weeks.png"), plot = full_plot_sample_week2, width = 12, height = 8)
   )
   suppressWarnings(
     stacked_plots <- patchwork::wrap_plots(full_plot, full_plot_sample_week, ncol = 1)
   )
-  suppressWarnings(
-    print(stacked_plots)
+  if (verbose) {
+    suppressWarnings(
+      print(stacked_plots)
+    )
+    suppressWarnings(
+      print(full_plot_sample_week)
+    )
+    suppressWarnings(
+      print(full_plot)
+    )
+  }
+  all_plots <- list(
+    full_model_plot = full_plot,
+    sample_weeks = full_plot_sample_week,
+    stacked = stacked_plots
   )
-  suppressWarnings(
-    print(full_plot_sample_week)
-  )
-  suppressWarnings(
-    print(full_plot)
-  )
-  return(combined_model_results)
+  return(list("combined_model_future_predictions" = combined_model_results, "combined_model_future_plots" = all_plots))
 }

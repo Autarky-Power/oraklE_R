@@ -9,8 +9,10 @@ full_forecast(
   end_year_data,
   country,
   test_set_steps = 2,
-  future = "Yes",
-  end_year = 2028
+  future = "yes",
+  end_year = 2028,
+  data_directory = tempdir(),
+  verbose = FALSE
 )
 }
 \arguments{
@@ -23,17 +25,28 @@ Transmission System Operators for Electricity (ENTSO-E, https://transparency.ent
 
 \item{test_set_steps}{Integer. Specifies how many years are used for generating the test/validation set for the model selection.}
 
-\item{future}{String. Option to enable or disable the future forecasts. If set to "Yes" forecasts will be made until the specified end_year. If set to
-anything else, forecasts will only be generated until the specified end_year_data value.
-
-#' @seealso See also functions \code{\link{long_term_lm}}, \code{\link{mid_term_lm}}, and \code{\link{short_term_lm}} for the prediction models
-and \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the future prediction models.}
+\item{future}{String. Option to enable or disable the future forecasts. If set to "yes" forecasts will be made until the specified end_year. If set to
+anything else, forecasts will only be generated until the specified end_year_data value.}
 
 \item{end_year}{Specifies the final year for which future predictions will be generated.}
+
+\item{data_directory}{The path to the directory where the results and plots will be saved. The default is set to a temporary directory.
+It is highly recommended to set it to something that is not a temporary directory if you want to use this function.}
+
+\item{verbose}{A boolean value indicating if you want the generated plots and detailed status updates to be shown (set to TRUE if yes).
+#' @seealso See also functions \code{\link{long_term_lm}}, \code{\link{mid_term_lm}}, and \code{\link{short_term_lm}} for the prediction models
+and \code{\link{long_term_future}}, \code{\link{mid_term_future}}, and \code{\link{short_term_future}} for the future prediction models.}
 }
 \value{
-Returns a dataframe with the full prediction results. All models, plots and data is saved to a folder with the corresponding
-iso2c country code.
+Returns a list with the combined model results and plots. And a list with the results, models and plots for the long-term trend, mid-term seasonality, and
+short-term seasonality respectively.
+The combined model predictions and plots are saved in the respective folder for the country.
+\describe{
+\item{full_model_predictions}{The combined model results and plots.}
+\item{longterm}{The long-term trend models, results, and plots.}
+\item{midterm}{The mid-term seasonality models, results, and plots.}
+\item{shortterm}{The short-term seasonality models, results, and plots.}
+}
 }
 \description{
 Title
@@ -41,7 +54,7 @@ Title
 \examples{
 library(ggplot2)
 ## Without future predictions
-\dontrun{
+\donttest{
 forecast_data <- full_forecast(
   start_year = 2017, end_year = 2021, country = "France", test_set_steps = 2,
   future = "no"
@@ -86,7 +99,7 @@ ggplot(example_full_model_predictions) +
   theme(legend.title = element_blank())
 
 ## With future predictions
-\dontrun{
+\donttest{
 forecast_data <- full_forecast(
   start_year = 2017, end_year = 2021, country = "France", test_set_steps = 2,
   future = "yes", end_year = 2028
@@ -98,7 +111,9 @@ suppressWarnings(
       hourly_demand,
       color = "actual"
     )) +
-    geom_line(aes(1:nrow(example_full_model_future_predictions), complete_model, color = "fitted")) +
+    geom_line(aes(1:nrow(example_full_model_future_predictions), complete_model,
+      color = "fitted"
+    )) +
     xlab("\nYear") +
     ylab("Hourly Demand\n [MW]\n") +
     geom_vline(xintercept = 26280, linetype = 2) +

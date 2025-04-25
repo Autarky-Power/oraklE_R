@@ -8,7 +8,15 @@
 #' @param method String. Indicates which model selection process is used. If method="temperature transformation", the temperature values are transformed to heating and cooling
 #' degree days to capture the non-linear relationship of temperature and electricity demand. If the method is set to "spline" a spline regression is instead used without
 #' the transformation of the temperature data.
-#' @return The forecast of the best model fit is stored and the results are displayed in a plot.
+#' @param data_directory The path to the directory where the data, plots, and models will be saved. The default is set to a temporary directory.
+#' @param verbose A boolean value indicating if you want the generated plots to be shown (set to TRUE if yes).
+#' @return A list with the dataframe with the input data and results. The plot with the midterm seasonality forecast. And the midterm model.
+#' The dataset, the plot, and the model are saved in the respective folder for the country.
+#' \describe{
+#'   \item{midterm_predictions}{A dataframe with the input and prediction data for the mid-term seasonality.}
+#'   \item{midterm_plot}{A plot with the prediction results.}
+#'   \item{midterm_model}{The mid-term seasonality model.}
+#' }
 #' @export
 #'
 #' @examples
@@ -17,15 +25,148 @@
 #'   Tref = 18, test_set_steps = 730, method = "temperature transformation"
 #' )
 #'
-mid_term_lm <- function(demand_and_weather_data, Tref = 18, test_set_steps = 730, method = "temperature transformation") {
+mid_term_lm <- function(demand_and_weather_data, Tref = 18, test_set_steps = 730, method = "temperature transformation",
+                        data_directory = tempdir(), verbose = FALSE) {
   if ("example" %in% colnames(demand_and_weather_data)) {
     if (unique(demand_and_weather_data$example) == TRUE) {
       message("Transforming temperature values to heating- and cooling-degree day temperatures")
+      midterm_all_data <- demand_and_weather_data
+      month_list <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Nov", "Dec")
+
+      for (i in 1:length(month_list)) {
+        midterm_all_data[month_list[i]] <- 0
+        midterm_all_data[midterm_all_data$month == i, month_list[i]] <- 1
+      }
+
+      midterm_all_data$wday <- lubridate::wday(midterm_all_data$date, label = T)
+      weekday_list <- as.character(unique(midterm_all_data$wday))
+
+      for (i in 1:length(weekday_list)) {
+        midterm_all_data[weekday_list[i]] <- 0
+        midterm_all_data[midterm_all_data$wday == weekday_list[i], weekday_list[i]] <- 1
+      }
+
+      midterm_all_data$HD <- 0
+      midterm_all_data$CD <- 0
+
+      for (i in 1:nrow(midterm_all_data)) {
+        if (midterm_all_data$weighted_temperature[i] < Tref) {
+          midterm_all_data$HD[i] <- Tref - midterm_all_data$weighted_temperature[i]
+        } else {
+          midterm_all_data$CD[i] <- midterm_all_data$weighted_temperature[i] - Tref
+        }
+      }
+
+      midterm_all_data$HD2 <- midterm_all_data$HD^2
+      midterm_all_data$HD3 <- midterm_all_data$HD^3
+      midterm_all_data$CD2 <- midterm_all_data$CD^2
+      midterm_all_data$CD3 <- midterm_all_data$CD^3
+      midterm_all_data$weighted_temperature2 <- midterm_all_data$weighted_temperature^2
+      midterm_all_data$weighted_temperature3 <- midterm_all_data$weighted_temperature^3
+
+      midterm_all_data$HDlag1 <- dplyr::lag(midterm_all_data$HD, n = 1)
+      midterm_all_data$HDlag1[1] <- midterm_all_data$HD[1]
+      midterm_all_data$HDlag2 <- dplyr::lag(midterm_all_data$HD, n = 2)
+      midterm_all_data$HDlag2[1:2] <- midterm_all_data$HDlag1[1:2]
+
+      midterm_all_data$CDlag1 <- dplyr::lag(midterm_all_data$CD, n = 1)
+      midterm_all_data$CDlag1[1] <- midterm_all_data$CD[1]
+      midterm_all_data$CDlag2 <- dplyr::lag(midterm_all_data$CD, n = 2)
+      midterm_all_data$CDlag2[1:2] <- midterm_all_data$CDlag1[1:2]
+
+      midterm_all_data$weighted_temperaturelag1 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 1)
+      midterm_all_data$weighted_temperaturelag1[1] <- midterm_all_data$weighted_temperature[1]
+      midterm_all_data$weighted_temperaturelag2 <- dplyr::lag(midterm_all_data$weighted_temperature, n = 2)
+      midterm_all_data$weighted_temperaturelag2[1:2] <- midterm_all_data$weighted_temperaturelag1[1:2]
+
+      midterm_all_data$end_of_year <- 0
+      midterm_all_data$end_of_year[midterm_all_data$month == 12 & midterm_all_data$day > 22] <- 1
+
       message("Calculating the best mid-term model.")
-      return(oRaklE::example_midterm_predictions)
+
+      training_set <- nrow(midterm_all_data) - test_set_steps
+      training_data <- midterm_all_data[1:training_set, ]
+      test_data <- midterm_all_data[(training_set + 1):nrow(midterm_all_data), ]
+
+
+      variables <- colnames(midterm_all_data)[c(9:(ncol(midterm_all_data)))]
+
+
+      f <- stats::as.formula(paste("seasonal_avg_hourly_demand", paste(variables, collapse = " + "),
+        sep = " ~ "
+      ))
+
+      globalmodel <- stats::lm(f, data = training_data, na.action = "na.omit")
+
+
+      y <- training_data$seasonal_avg_hourly_demand
+      y_all <- midterm_all_data$seasonal_avg_hourly_demand
+      y_test <- test_data$seasonal_avg_hourly_demand
+      x <- data.matrix(training_data[, 9:ncol(midterm_all_data)])
+      x_all <- data.matrix(midterm_all_data[, 9:ncol(midterm_all_data)])
+      x_test <- data.matrix(test_data[, 9:ncol(training_data)])
+
+      cv_model <- glmnet::cv.glmnet(x, y, alpha = 1)
+
+      best_lambda <- cv_model$lambda.min
+      best_model <- glmnet::glmnet(x, y, alpha = 1, lambda = best_lambda)
+
+      testlasso <- stats::predict(best_model, s = best_lambda, newx = x_test)
+      suppressWarnings(
+        testlm <- stats::predict(globalmodel, newdata = test_data)
+      )
+
+      suppressWarnings(
+        if (MLmetrics::RMSE(testlasso, y_test) < MLmetrics::RMSE(testlm, y_test)) {
+          return(oRaklE::example_midterm_predictions)
+        } else {
+          stop()
+        }
+      )
     }
   }
   midterm_all_data <- demand_and_weather_data
+  if (grepl("Rtmp", data_directory)) {
+    message(paste(
+      "\nThis function will try to save the results, models and plots to a folder called", unique(midterm_all_data$country),
+      "\nin the current data directory:", data_directory
+    ))
+    message("\nIt is recommended to save the data in a directory other than a tempdir, so that it is available after you finish the R Session.")
+
+    message("\nPlease choose an option:")
+    message("\n1: Keep it as a tempdir")
+    message(paste("2: Save data in the current working directory (", getwd(), ")", sep = ""))
+    message("3: Set the directory manually\n")
+
+    choice <- readline(prompt = "Enter the option number (1, 2, or 3): ")
+
+
+    if (choice == "1") {
+      message("\nData will be saved in a temporary directory and cleaned up when R is shut down.")
+      # data_directory remains unchanged.
+    } else if (choice == "2") {
+      data_directory <- getwd()
+      message(paste0("\nResults, models, and plots will be saved in the current working directory in ", data_directory, "/", unique(midterm_all_data$country)))
+      message("\nYou can specify the *data_directory* parameter in the following functions as '", data_directory, "'")
+    } else if (choice == "3") {
+      new_dir <- readline(prompt = "Enter the full path of the directory where you want to save the data: ")
+      data_directory <- new_dir
+      if (!dir.exists(data_directory)) {
+        stop("The specified data_directory does not exist: ", data_directory, "\nPlease run the function again.")
+      }
+      message("\nResults, models, and plots will be saved in the specified directory: ", data_directory, "/", unique(midterm_all_data$country))
+    } else {
+      message("Invalid input. Keeping the temporary directory.\nData will be cleaned up when R is shut down.")
+    }
+  } else {
+    if (!dir.exists(data_directory)) {
+      stop("The specified data_directory does not exist: ", data_directory, "\nPlease run the function again.")
+    }
+    message("\nData, models, and plots will be saved in the specified working directory in ", data_directory, "/", unique(midterm_all_data$country))
+  }
+
+
+
   month_list <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Nov", "Dec")
 
   for (i in 1:length(month_list)) {
@@ -113,28 +254,30 @@ mid_term_lm <- function(demand_and_weather_data, Tref = 18, test_set_steps = 730
     )
 
     country <- unique(midterm_all_data$country)
-    if (!file.exists(country)) {
-      dir.create(country)
+    if (!file.exists(paste0(data_directory, "/", country))) {
+      dir.create(paste0(data_directory, "/", country))
     }
-    if (!file.exists(paste0("./", country, "/models"))) {
-      dir.create(paste0("./", country, "/models"))
+    if (!file.exists(paste0(data_directory, "/", country, "/models"))) {
+      dir.create(paste0(data_directory, "/", country, "/models"))
     }
-    if (!file.exists(paste0("./", country, "/data"))) {
-      dir.create(paste0("./", country, "/data"))
+    if (!file.exists(paste0(data_directory, "/", country, "/data"))) {
+      dir.create(paste0(data_directory, "/", country, "/data"))
     }
-    if (!file.exists(paste0("./", country, "/plots"))) {
-      dir.create(paste0("./", country, "/plots"))
+    if (!file.exists(paste0(data_directory, "/", country, "/plots"))) {
+      dir.create(paste0(data_directory, "/", country, "/plots"))
     }
-    if (!file.exists(paste0("./", country, "/models/midterm"))) {
-      dir.create(paste0("./", country, "/models/midterm"))
+    if (!file.exists(paste0(data_directory, "/", country, "/models/midterm"))) {
+      dir.create(paste0(data_directory, "/", country, "/models/midterm"))
     }
     suppressWarnings(
       if (MLmetrics::RMSE(testlasso, y_test) < MLmetrics::RMSE(testlm, y_test)) {
         midterm_all_data$midterm_model_fit <- stats::predict(best_model, s = best_lambda, newx = x_all)
-        save(best_model, file = paste0("./", country, "/models/midterm/best_model.Rdata"))
+        save(best_model, file = paste0(data_directory, "/", country, "/models/midterm/best_model.Rdata"))
+        midterm_model <- best_model
       } else {
         midterm_all_data$midterm_model_fit <- stats::predict(globalmodel, newdata = midterm_all_data)
-        save(globalmodel, file = paste0("./", country, "/models/midterm/best_model.Rdata"))
+        save(globalmodel, file = paste0(data_directory, "/", country, "/models/midterm/best_model.Rdata"))
+        midterm_model <- globalmodel
       }
     )
     midterm_all_data$test_set_steps <- test_set_steps
@@ -201,28 +344,30 @@ mid_term_lm <- function(demand_and_weather_data, Tref = 18, test_set_steps = 730
       testlm <- stats::predict(globalmodel, newdata = test_data)
     )
     country <- unique(midterm_all_data$country)
-    if (!file.exists(country)) {
-      dir.create(country)
+    if (!file.exists(paste0(data_directory, "/", country))) {
+      dir.create(paste0(data_directory, "/", country))
     }
-    if (!file.exists(paste0("./", country, "/models"))) {
-      dir.create(paste0("./", country, "/models"))
+    if (!file.exists(paste0(data_directory, "/", country, "/models"))) {
+      dir.create(paste0(data_directory, "/", country, "/models"))
     }
-    if (!file.exists(paste0("./", country, "/data"))) {
-      dir.create(paste0("./", country, "/data"))
+    if (!file.exists(paste0(data_directory, "/", country, "/data"))) {
+      dir.create(paste0(data_directory, "/", country, "/data"))
     }
-    if (!file.exists(paste0("./", country, "/plots"))) {
-      dir.create(paste0("./", country, "/plots"))
+    if (!file.exists(paste0(data_directory, "/", country, "/plots"))) {
+      dir.create(paste0(data_directory, "/", country, "/plots"))
     }
-    if (!file.exists(paste0("./", country, "/models/midterm"))) {
-      dir.create(paste0("./", country, "/models/midterm"))
+    if (!file.exists(paste0(data_directory, "/", country, "/models/midterm"))) {
+      dir.create(paste0(data_directory, "/", country, "/models/midterm"))
     }
     suppressWarnings(
       if (MLmetrics::RMSE(testlasso, y_test) < MLmetrics::RMSE(testlm, y_test)) {
         midterm_all_data$midterm_model_fit <- stats::predict(best_model, s = best_lambda, newx = x_all)
-        save(best_model, file = paste0("./", country, "/models/midterm/best_model.Rdata"))
+        save(best_model, file = paste0(data_directory, "/", country, "/models/midterm/best_model.Rdata"))
+        midterm_model <- best_model
       } else {
         midterm_all_data$midterm_model_fit <- stats::predict(globalmodel, newdata = midterm_all_data)
-        save(globalmodel, file = paste0("./", country, "/models/midterm/best_model.Rdata"))
+        save(globalmodel, file = paste0(data_directory, "/", country, "/models/midterm/best_model.Rdata"))
+        midterm_model <- globalmodel
       }
     )
     midterm_all_data$test_set_steps <- test_set_steps
@@ -320,11 +465,17 @@ mid_term_lm <- function(demand_and_weather_data, Tref = 18, test_set_steps = 730
 
 
   suppressWarnings(
-    ggsave(filename = paste0("./", country, "/plots/Mid_term_results.png"), plot = mt_plot2, width = 12, height = 8)
+    ggsave(filename = paste0(data_directory, "/", country, "/plots/Mid_term_results.png"), plot = mt_plot2, width = 12, height = 8)
   )
-  suppressWarnings(
-    print(mt_plot)
-  )
+  if (verbose) {
+    suppressWarnings(
+      print(mt_plot)
+    )
+  }
 
-  return(midterm_all_data)
+  if (!verbose) {
+    message("Verbose is set to FALSE. Set to TRUE if you want to see the generated plot automatically. The plot is saved in the output under *midterm_plot* and in the plots folder in ", data_directory)
+  }
+
+  return(list("midterm_predictions" = midterm_all_data, "midterm_plot" = mt_plot, "midterm_model" = midterm_model))
 }

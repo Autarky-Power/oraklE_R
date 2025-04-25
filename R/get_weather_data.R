@@ -6,6 +6,7 @@
 #'
 #' @param midterm_demand_data Dataframe. The mid-term data series from \code{\link{decompose_load_data}} with added holidays resulting from the function \code{\link{add_holidays_mid_term}}.
 #' @param api_key Character. A valid API key from rapidapi that is subscribed to wft-geo-db and meteostat. If set to "default", one of the deposited keys will be used.
+#' @param data_directory The path to the directory where the data will be saved.
 #' @return A list containing the mid-term data and temperature data.
 #' @export
 #'
@@ -17,12 +18,73 @@
 #' )
 #' head(example_midterm_demand_and_weather_data$demand)
 #' head(example_midterm_demand_and_weather_data$temperature_data)
-get_weather_data <- function(midterm_demand_data, api_key = "default") {
+get_weather_data <- function(midterm_demand_data, api_key = "default", data_directory = tempdir()) {
   if ("example" %in% colnames(midterm_demand_data)) {
     if (unique(midterm_demand_data$example) == TRUE) {
-      return(oRaklE::example_midterm_demand_and_weather_data)
+      station_id <- "07480"
+      start_year <- 2018
+      end_year <- 2018
+      suppressWarnings(
+        utils::download.file(paste0("https://bulk.meteostat.net/v2/daily/", station_id, ".csv.gz"),
+          destfile = "temp.csv.gz"
+        )
+      )
+
+      R.utils::gunzip("temp.csv.gz")
+      temp_data <- utils::read.csv("temp.csv")
+      colnames(temp_data)[c(1, 2)] <- c("date", "daily_avg_temp")
+      temp_data$date <- as.Date(temp_data$date, format = "%Y-%m-%d")
+      temp_data <- temp_data[(lubridate::year(temp_data$date) >= start_year) &
+        (lubridate::year(temp_data$date) <= end_year), 1:2]
+      file.remove("temp.csv")
+      expected_temp_data <- c(8.2, 7.6, 10.2, 11.1, 12.4, 10.6, 8.1, 7.1, 7.5, 9.2)
+
+      if (identical(temp_data[1:10, 2], expected_temp_data)) {
+        return(oRaklE::example_midterm_demand_and_weather_data)
+      } else {
+        stop()
+      }
     }
   }
+
+  if (grepl("Rtmp", data_directory)) {
+    message(paste(
+      "\nThis function will try to save the load and weather data to a folder called", unique(midterm_demand_data$country),
+      "\nin the current data directory:", data_directory
+    ))
+    message("\nIt is recommended to save the data in a directory other than a tempdir, so that it is available after you finish the R Session.")
+
+    message("\nPlease choose an option:")
+    message("\n1: Keep it as a tempdir")
+    message(paste("2: Save data in the current working directory (", getwd(), ")", sep = ""))
+    message("3: Set the directory manually\n")
+
+    choice <- readline(prompt = "Enter the option number (1, 2, or 3): ")
+
+
+    if (choice == "1") {
+      message("\nData will be saved in a temporary directory and cleaned up when R is shut down.")
+    } else if (choice == "2") {
+      data_directory <- getwd()
+      message(paste0("\nData will be saved in the current working directory in ", data_directory, "/", unique(midterm_demand_data$country), "/data"))
+      message("\nYou can specify the *data_directory* parameter in the following functions as ", data_directory)
+    } else if (choice == "3") {
+      new_dir <- readline(prompt = "Enter the full path of the directory where you want to save the data: ")
+      data_directory <- new_dir
+      if (!dir.exists(data_directory)) {
+        stop("The specified data_directory does not exist: ", data_directory, "\nPlease run the function again.")
+      }
+      message("\nData will be saved in the specified directory: ", data_directory, "/", unique(midterm_demand_data$country), "/data")
+    } else {
+      message("Invalid input. Keeping the temporary directory.\nData will be cleaned up when R is shut down.")
+    }
+  } else {
+    if (!dir.exists(data_directory)) {
+      stop("The specified data_directory does not exist: ", data_directory, "\nPlease run the function again.")
+    }
+    message("\nData will be saved in the specified working directory in ", data_directory, "/", unique(midterm_demand_data$country), "/data")
+  }
+
   midterm <- midterm_demand_data
   country <- unique(midterm$country)
   start_year <- min(unique(midterm$year))
@@ -164,7 +226,7 @@ get_weather_data <- function(midterm_demand_data, api_key = "default") {
         file.remove("temp.csv")
       },
       error = function(e) {
-        # Fail silently
+
       }
     )
   }
@@ -181,14 +243,15 @@ get_weather_data <- function(midterm_demand_data, api_key = "default") {
 
   midterm$weighted_temperature <- temp_df$weighted_mean_temperature[temp_df$date %in% midterm$date]
 
-  if (!file.exists(country)) {
-    dir.create(country)
+  if (!file.exists(paste0(data_directory, "/", country))) {
+    dir.create(paste0(data_directory, "/", country))
   }
-  if (!file.exists(paste0("./", country, "/data"))) {
-    dir.create(paste0("./", country, "/data"))
+
+  if (!file.exists(paste0(data_directory, "/", country, "/data"))) {
+    dir.create(paste0(data_directory, "/", country, "/data"))
   }
-  utils::write.csv(temp_df, paste0("./", country, "/data/temperatures.csv"), row.names = F)
-  utils::write.csv(midterm, paste0("./", country, "/data/midterm_data.csv"), row.names = F)
+  utils::write.csv(temp_df, paste0(data_directory, "/", country, "/data/temperatures.csv"), row.names = FALSE)
+  utils::write.csv(midterm, paste0(data_directory, "/", country, "/data/midterm_data.csv"), row.names = FALSE)
 
 
   return(list("demand" = midterm, "temperature_data" = temp_df))

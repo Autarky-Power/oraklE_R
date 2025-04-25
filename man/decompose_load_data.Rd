@@ -4,7 +4,7 @@
 \alias{decompose_load_data}
 \title{Decomposing the load data into long-, mid- and short-term component}
 \usage{
-decompose_load_data(load_data)
+decompose_load_data(load_data, data_directory = tempdir(), verbose = FALSE)
 }
 \arguments{
 \item{load_data}{A data frame object with "load", "date", "unit", and "country" columns
@@ -14,6 +14,10 @@ decompose_load_data(load_data)
 \item{unit}{Indicating the unit, e.g. MW, character.}
 \item{country}{Indicating the country's ISO2C code, character.}
 }}
+
+\item{data_directory}{The path to the directory where the data will be saved. The default is set to a temporary directory.}
+
+\item{verbose}{A boolean value indicating if you want the generated plots to be shown (set to TRUE if yes)}
 }
 \value{
 A list of three data frames with
@@ -21,6 +25,7 @@ A list of three data frames with
 \item{longterm}{A data frame of the long-term trend, including columns for country, year, and yearly average hourly demand.}
 \item{midterm}{A data frame of the mid-term component, including country, date, year, month, day, weekday, average hourly demand, and seasonal average hourly demand. Where seasonal average hourly demand corresponds to the difference between the yearly average demand per hour and the daily average demand per hour of the respective day.}
 \item{shortterm}{A data frame of the short-term component, including country, date, year, month, day, weekday, hour, hourly demand, and hourly demand trend and trend and season corrected. Where hourly demand trend and season corrected corresponds to the difference between the daily average demand per hour and the actual demand in the respective hour, effectively showing the intra-day pattern.}
+\item{plots}{A list with all created plots.}
 }
 }
 \description{

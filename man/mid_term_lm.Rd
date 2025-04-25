@@ -8,7 +8,9 @@ mid_term_lm(
   demand_and_weather_data,
   Tref = 18,
   test_set_steps = 730,
-  method = "temperature transformation"
+  method = "temperature transformation",
+  data_directory = tempdir(),
+  verbose = FALSE
 )
 }
 \arguments{
@@ -21,9 +23,19 @@ mid_term_lm(
 \item{method}{String. Indicates which model selection process is used. If method="temperature transformation", the temperature values are transformed to heating and cooling
 degree days to capture the non-linear relationship of temperature and electricity demand. If the method is set to "spline" a spline regression is instead used without
 the transformation of the temperature data.}
+
+\item{data_directory}{The path to the directory where the data, plots, and models will be saved. The default is set to a temporary directory.}
+
+\item{verbose}{A boolean value indicating if you want the generated plots to be shown (set to TRUE if yes).}
 }
 \value{
-The forecast of the best model fit is stored and the results are displayed in a plot.
+A list with the dataframe with the input data and results. The plot with the midterm seasonality forecast. And the midterm model.
+The dataset, the plot, and the model are saved in the respective folder for the country.
+\describe{
+\item{midterm_predictions}{A dataframe with the input and prediction data for the mid-term seasonality.}
+\item{midterm_plot}{A plot with the prediction results.}
+\item{midterm_model}{The mid-term seasonality model.}
+}
 }
 \description{
 The mid-term load series is forecasted based on the provided load time series and weather data. The prediction is either based on the (lagged) temperature data in combination with transformed variables for heating and cooling days or on a spline regression applied on the temperature data to account for non-linear effects.
