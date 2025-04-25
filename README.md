@@ -41,6 +41,21 @@ library("oRaklE")
 ```
 
 ## Usage
+### Usage recommendation and things to consider
+The package was originally designed to save the downloaded data, the models, the plots, and the predictions in a newly created folder with the country name in your working directory. The default option is to save the data in a temporal directory which will be deleted if R is shutdown.
+However, it is recommended to save the results in a permanent folder or your working directory. To do that you could specify the *data_directory* variable as:
+
+```r
+# Specify the current working directory as data directory
+data_directory = getwd()
+
+# Specify a designated folder as data directory
+data_directory = "some/path/demand_predictions"
+```
+If you keep the *data_directory* variable as the default, each function will display a prompt, asking if you want to keep the data directory as a tempdir, use your current working directory or choose a directory.
+
+It is also recommended to set the *verbose* argument to TRUE (it is FALSE by default) if a function uses it.  This way you can see a more detailed report of what's happening and see the resulting plots automatically.
+The plots will also be in the function output but will throw a warning when you open them (*Use of x$y is discouraged. Use y instead.*). You can safely ignore this message; nothing is wrong—it's only due to a necessity such that CRAN checks will pass. 
 
 ### Get and prepare the data
 As a first step, the package gets the load data from the Transparency Platform of the European Network of
@@ -49,7 +64,7 @@ You can either supply your own ENTSO-E Transparency Platform API key or use one 
 
 ```r
 # Get initial Data
-demand_data = get_entsoE_data(2017,2021,"France",api_key="default")
+demand_data = get_entsoE_data(2017,2021, "France", api_key="default")
 ```
 
 ![Load](https://github.com/user-attachments/assets/24450818-c869-4142-a5b3-cb2a2ec7ff36)
@@ -66,16 +81,16 @@ After the data is downloaded and standardized, the load time series is decompose
 
 ```r
 # Decompose the load data
-demand_data_filled = fill_missing_data(demand_data)
+demand_data_decomposed = fill_missing_data(demand_data_filled, data_directory=getwd(), verbose=TRUE )
 ```
 
 ![Decomposed_load](https://github.com/user-attachments/assets/e5db1014-6e2b-4632-ab00-5923e8414553)
 
 The function returns a list of three dataframes —one for each time series component:
 
-- `demand_data$longterm`
-- `demand_data$midterm`
-- `demand_data$shortterm`
+- `demand_data_decomposed$longterm`
+- `demand_data_decomposed$midterm`
+- `demand_data_decomposed$shortterm`
   
 In the following steps, each time series will be modelled individually.
 
@@ -118,9 +133,9 @@ The three best models as well as plots for each model are generated and saved.
 
 ![Long_term_results1](https://github.com/user-attachments/assets/3facab6e-5e7c-4f6a-8e13-c53d6d9591a0)
 
-Once the best models are derived, future predictions can be made. Since these models rely on macroeconomic covariates, which are unknown for future years, forecasts for these indicators are needed. The library can obtain these forecasts from the [World Economic Outlook Database](https://www.imf.org/en/Publications/WEO/weo-database/2023/October) of the International Monetary Fund, or users can manually include predictions from other sources or specific scenarios.
+Once the best models are derived, future predictions can be made. Since these models rely on macroeconomic covariates, which are unknown for future years, forecasts for these indicators are needed. The library can obtain these forecasts from the [World Economic Outlook Database](https://www.imf.org/en/Publications/WEO/weo-database/2025/April) of the International Monetary Fund, or users can manually include predictions from other sources or specific scenarios.
 
-The *end_year* variable specifies until which year the predictions will be made. If the *WEO* dataset is used, predictions can only be made up to 2028. If the dataset variable is set to any option other than WEO, the function will prepare the data frame structure and list the required macroeconomic indicators. 
+The *end_year* variable specifies until which year the predictions will be made. If the *WEO* dataset is used, predictions can only be made up to 2030. If the dataset variable is set to any option other than WEO, the function will prepare the data frame structure and list the required macroeconomic indicators. 
 
 ```r
 ## Prepare dataset for future predictions
