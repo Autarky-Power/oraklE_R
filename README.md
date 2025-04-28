@@ -178,7 +178,7 @@ longterm_future_predictions <- long_term_future(longterm_future_macro_data,data_
 
 <br>
 
-### Calculate and show the best mid-term seasonality models
+### Calculate the best mid-term seasonality models
 
 The mid-term component is the difference between the yearly hourly average demand and the daily average hourly demand of the respective day:
 
@@ -225,24 +225,25 @@ The variable for *test_set_steps* defines how many days are used for the test se
 
 ```r
 # Calculate the best mid-term seasonality prediction model
-midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, test_set_steps=730, Tref = 18, method = "temperature transformation")
+midterm_predictions = mid_term_lm(midterm_demand_and_weather_data$demand, test_set_steps=730, Tref = 18, method = "temperature transformation", data_directory = getwd(), verbose = TRUE)
 ```
 
 ![Mid_term_results](https://github.com/user-attachments/assets/9bed2a15-5e3b-40f8-a1a9-a20ee57b0d8e)
 
 
 After identifying the best mid-term model, future seasonality predictions can be generated. While the future calendar and holiday covariates are deterministic, the future daily average temperatures are impossible to know with certainty. To estimate these, the library calculates the average of the past three observations for the same day. For example, the average temperature for July 22, 2025, would be estimated by averaging the temperatures observed on July 22 in 2022, 2023, and 2024. The variable *end_year* specifies the final year up to which future predictions will be made and should be consistent over all three model components (long-, medium-, and short-term).
+The *mid_term_lm()* function will output a list with the data and the used models. You can simply put this list directly into the *mid_term_future()* function. If you only supply the dataframe, either a list with the used models has to be specified for the *model_list* variable (NULL by default) or the *data_directory* needs to contain the used models as .R file.
 
 ```r
 # Generate future mid-term component forecasts
-midterm_future_predictions = mid_term_future(midterm_predictions, end_year = 2028)
+midterm_future_predictions = mid_term_future(midterm_predictions, end_year = 2028, data_directory = getwd(), verbose = TRUE)
 ```
 
 ![mid_term_results_future](https://github.com/user-attachments/assets/018d1623-7cfe-4579-8373-246fdc87b078)
 
 <br>
 
-### Calculate and show the best short-term seasonality models
+### Calculate the best short-term seasonality models
 
 The short-term  component $D_S(y,d,h)$ corresponds to the respective intra-day patterns. These are isolated by subtracting the yearly and daily averages $D_L(y)$, $D_m(y,d)$ from the hourly load data of year $y$, day $d$, and hour $h$ :
 
@@ -260,7 +261,7 @@ The variable for *test_set_steps* defines how many hours are used for the test s
 
 ```r
 # Calculate the best short-term seasonality models
-shortterm_predictions <- short_term_lm(shortterm_demand_data ,test_set_steps=17520)
+shortterm_predictions <- short_term_lm(shortterm_demand_data, test_set_steps=17520, data_directory = getwd(), verbose = TRUE)
 ```
 
 <br>
@@ -272,11 +273,11 @@ shortterm_predictions <- short_term_lm(shortterm_demand_data ,test_set_steps=175
 
 <br>
 
-Because all used covariates are deterministic the future short-term seasonality forecast can easily be generated.
+Because all used covariates are deterministic the future short-term seasonality forecast can easily be generated. The *short_term_lm()* function will output a list with the data and the used model. You can simply put this list directly into the *short_term_future()* function. If you only supply the dataframe, either a list with the used models has to be specified for the *model_list* variable (NULL by default) or the *data_directory* needs to contain the used models as .R file.
 
 ```r
 # Generate future short-term component forecasts
-shortterm_future_predictions = short_term_future(shortterm_predictions,end_year = 2028)
+shortterm_future_predictions = short_term_future(shortterm_predictions, end_year = 2028, data_directory = getwd(), verbose = TRUE)
 ```
 
 ![short_term_results_future](https://github.com/user-attachments/assets/2d1bc6b9-70e3-47ea-9d68-9259cb02c849)
@@ -285,12 +286,12 @@ shortterm_future_predictions = short_term_future(shortterm_predictions,end_year 
 
 ### Combine all models
 
-After all three components have been modelled successfully, the predictions can be combined into the full demand series.
+After all three components have been modelled successfully, the predictions can be combined into the full demand series. The variables *longterm_predictions*, *midterm_predictions*, and *shortterm_predictions* correspond to the dataframes output by the *long_term_lm()*, *mid_term_lm()*, and *short_term_lm()* functions respectively. If you put in the complete output list of each function, the necessary dataframe will be extracted automatically. 
 The *longterm_model_number* option specifies which of the three best long-term models will be used. The function also prints four statistical metrics: MAPE, RMSE, Accuracy, and the R²-value of both the training and the validation set.
 
 ```r
 # Combine all model predictions and evaluate the accuracy
-full_model_predictions <- combine_models(longterm_predictions,midterm_predictions,shortterm_predictions,longterm_model_number =1)
+full_model_predictions <- combine_models(longterm_predictions$longterm_predictions, midterm_predictions$midterm_predictions, shortterm_predictions$shortterm_predictions, longterm_model_number =1, data_directory = getwd(), verbose = TRUE)
 
 Output:
 *** Final Model Metrics ***
@@ -327,8 +328,8 @@ Similarly, full future predictions up to the specified end year can be generated
 
 ```r
 # Generate full future demand predictions in hourly resolution
-full_model_future_predictions <- combine_models_future(longterm_future_predictions,midterm_future_predictions,
-                                                       shortterm_future_predictions,longterm_model_number =1)
+full_model_future_predictions <- combine_models_future(longterm_future_predictions$longterm_future_predictions, midterm_future_predictions$midterm_future_predictions,
+                                                       shortterm_future_predictions$shortterm_future_predictions, longterm_model_number =1, data_directory = getwd(), verbose = TRUE)
 ```
 
 <br>
@@ -342,6 +343,7 @@ full_model_future_predictions <- combine_models_future(longterm_future_predictio
 
 The *full_forecast* function automatically performs all the steps described above and generates a complete forecast for a specified country. 
 The *future* option determines whether future forecasts should be made, and if so, up to which *end_year*.
+NOTE: If you want to use this function instead of the individual forecasting functions, it is strongly recommended to set the data_directory to something other than a tempdir. Otherwise user prompts will be needed and the advantage of only specifying a country and a timeframe and getting a forecast without additional steps after 15-20 minutes won't be there.
 
 ```r
 forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
