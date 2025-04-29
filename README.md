@@ -6,7 +6,8 @@ R package for Long-term Electricity Demand Forecasting in hourly resolution on a
 
 
 ![Github All Releases](https://img.shields.io/github/downloads/Autarky-Power/orakle/total.svg)
-
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/svars)](https://cran.r-project.org/package=oRaklE) 
+[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/svars)](https://cran.r-project.org/package=oRaklE)
 
 ## Flowchart for package use
 
