@@ -10,7 +10,9 @@ vignette: >
 
 # Introduction
 
-The **oRaklE** R package provides tools for long-term electricity demand forecasting with hourly resolution on a country-wide or regional scale. Designed for scalability and precision, it supports stepwise modeling of electricity demand components (long-term, mid-term, and short-term) and enables detailed analysis and forecasting. 
+The **oRaklE** R package provides tools for long-term electricity demand forecasting with hourly resolution on a country-wide or regional scale. The forecasting algorithms are based on Grandón et al. (2024) 
+  <doi:10.1016/j.apenergy.2023.122249>; and Zimmermann & Ziel (2024) 
+  <doi:10.1016/j.apenergy.2025.125444> present a similar methodology. Real-time data, including power demand, weather conditions, and macroeconomic indicators, are provided through automated API integration with various institutions. The modular approach maintains transparency on the various model selection processes and encompasses the ability to be adapted to individual needs. 'oRaklE' tries to help facilitating robust decision-making in energy management and planning. 
 
 This vignette provides a comprehensive overview of the package's features and demonstrates how to use its functionalities. For better displaying quality we recommend visiting the readme on the   [official github site](https://github.com/Autarky-Power/oraklE_R).
 
@@ -21,13 +23,31 @@ This vignette provides a comprehensive overview of the package's features and de
 The package's functions can be used independently or combined using the `full_forecast()` function. Below is the flowchart that outlines the package workflow:
 
 ```{r, echo=FALSE, out.width='400px', fig.align='center'}
-knitr::include_graphics("https://github.com/user-attachments/assets/26ffb2f7-de0c-471e-8226-f133a095ee41")
+knitr::include_graphics("https://github.com/user-attachments/assets/11965c6d-df53-466b-bd0e-33bc8f4acd9d")
 ```
 
 
 ---
 
 # Usage
+
+## Usage recommendation and things to consider
+
+The package was originally designed to save the downloaded data, the models, the plots, and the predictions in a newly created folder with the country name in your working directory. The default option is to save the data in a temporal directory which will be deleted if R is shutdown.
+However, it is recommended to save the results in a permanent folder or your working directory. To do that you could specify the *data_directory* variable as:
+
+```r
+# Specify the current working directory as data directory
+data_directory = getwd()
+
+# Specify a designated folder as data directory
+data_directory = "some/path/demand_predictions"
+```
+
+If you keep the *data_directory* variable as the default, each function will display a prompt, asking if you want to keep the data directory as a tempdir, use your current working directory or choose a directory.
+
+It is also recommended to set the *verbose* argument to TRUE (it is FALSE by default) if a function uses it.  This way you can see a more detailed report of what's happening and see the resulting plots automatically.
+The plots will also be in the function output but will throw a warning when you open them (*Use of x$y is discouraged. Use y instead.*). You can safely ignore this message; nothing is wrong—it's only due to a necessity such that CRAN checks will pass. 
 
 ## Step 1: Data Acquisition and Preparation
 
@@ -42,7 +62,7 @@ demand_data <- get_entsoE_data(2017, 2021, "France", api_key="default")
 The next step checks for missing data and replaces NaN values with the load data one week prior at the same time. So a missing value on a Thursday at 8 pm will be filled with the load value at 8 pm the week before. It also adjusts the dataset to account for changes in time resolution, ensuring that the data is standardized to an hourly resolution. For example, French load data is reported at an hourly resolution from 2017 to 2021 and at a half-hourly resolution from 2022 onwards. Therefore, it is recommended to run this function, even if there are no missing values.
 
 ```r
-demand_data_filled <- fill_missing_data(demand_data)
+demand_data_filled <- fill_missing_data(demand_data, data_directory=getwd())
 ```
 
 ---
@@ -54,7 +74,7 @@ After the data is downloaded and standardized, the load time series is decompose
 
 
 ```r
-decomposed_data <- decompose_load_data(demand_data_filled)
+decomposed_data <- decompose_load_data(demand_data_filled, data_directory=getwd(), verbose=TRUE)
 ```
 
 The function returns a list of three dataframes —one for each time series component:
@@ -93,22 +113,22 @@ It should be noted that the average hourly demand (avg_hourly_demand) refers to 
 
 ### Derive Long-Term Prediction Models:
 
-After the dataset is fully prepared the best long-term prediction models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach are specified in the accompanying paper. The variable for test_set_steps defines how many years are used for the test set (also commonly referred to as validation set). The testquant variable defines how many of the initial best models are subjected to cross-validation.
+After the dataset is fully prepared the best long-term prediction models are derived with multiple linear regression and k-fold cross-validation. Details on the mathematical approach are specified in the accompanying paper. The variable for test_set_steps defines how many years are used for the test set (also commonly referred to as validation set). The testquant variable defines how many of the initial best models are subjected to cross-validation. The random seed used for cross validation can be fixed with *rdm_seed*. It is randomly generated by default.
 ```r
-longterm_predictions <- long_term_lm(longterm_all_data, test_set_steps = 2, testquant = 500)
+longterm_predictions <- long_term_lm(longterm_all_data, test_set_steps = 2, testquant = 500, rdm_seed=421 ,data_directory=getwd(), verbose=TRUE)
 ```
 The three best models as well as plots for each model are generated and saved.
 
 
 ### Generate Future Predictions:
 
-Once the best models are derived, future predictions can be made. Since these models rely on macroeconomic covariates, which are unknown for future years, forecasts for these indicators are needed. The library can obtain these forecasts from the [World Economic Outlook Database](https://www.imf.org/en/Publications/WEO/weo-database/2023/October) of the International Monetary Fund, or users can manually include predictions from other sources or specific scenarios.
+Once the best models are derived, future predictions can be made. Since these models rely on macroeconomic covariates, which are unknown for future years, forecasts for these indicators are needed. The library can obtain these forecasts from the [World Economic Outlook Database](https://www.imf.org/en/Publications/WEO/weo-database/2025/April) of the International Monetary Fund (April 2025 version), or users can manually include predictions from other sources or specific scenarios.
 
-The *end_year* variable specifies until which year the predictions will be made. If the *WEO* dataset is used, predictions can only be made up to 2028. If the dataset variable is set to any option other than WEO, the function will prepare the data frame structure and list the required macroeconomic indicators. 
+The *end_year* variable specifies until which year the predictions will be made. If the *WEO* dataset is used, predictions can only be made up to 2030. If the *dataset* variable is set to any option other than WEO, the function will prepare the data frame structure and list the required macroeconomic indicators. The *long_term_lm()* function will output a list with the data and the used models. You can simply put this list directly into the *long_term_future_data()* function. If you only supply the dataframe, either a list with the used models has to be specified for the *model_list* variable (NULL by default) or the *data_directory* needs to contain the used models as .R file.
 ```r
 ## Prepare dataset for future predictions
 # With the dataset option set to the default ("WEO")
-longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_year = 2028, dataset = "WEO")
+longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_year = 2028, dataset = "WEO", data_directory = getwd())
 tail(longterm_future_macro_data)
 #   country   year   avg_hourly_demand     population          GDP           industrial_value_added   ...
 #     FR      2021          53225.29        67764304      2.575192e+12               16.39563
@@ -133,9 +153,9 @@ longterm_future_macro_data <- long_term_future_data(longterm_predictions, end_ye
 #  GDP, industrial_value_added, rural_population, service_value_added for model 3 
 
 ```
-After the dataset for the future predictions is prepared, long-term forecasts until the designated time period can be made. One forecast with each of the three best models is calculated and the results are saved and plotted.
+After the dataset for the future predictions is prepared, long-term forecasts until the designated time period can be made. One forecast with each of the three best models is calculated and the results are saved and plotted. A list with the models derived by the *long_term_lm()* function has to be supplied in the *model_list* variable (NULL by default). Alternatively you can pass the *data_directory* which was used in the *long_term_lm()* function.
 ```r
-longterm_future_predictions <- long_term_future(longterm_future_macro_data)
+longterm_future_predictions <- long_term_future(longterm_future_macro_data, data_directory = getwd(), model_list = longterm_predictions$longterm_models, verbose = TRUE)
 ```
 
 ---
@@ -209,15 +229,16 @@ The variable for *test_set_steps* defines how many days are used for the test se
 ```r
 midterm_predictions <- mid_term_lm(midterm_demand_and_weather_data$demand, 
                                     test_set_steps = 730, Tref = 18, 
-                                    method = "temperature transformation")
+                                    method = "temperature transformation,
+                                    data_directory = getwd(), verbose = TRUE")
 ```
 
 ### Generate Future Predictions:
 
-After identifying the best mid-term model, future seasonality predictions can be generated. While the future calendar and holiday covariates are deterministic, the future daily average temperatures are impossible to know with certainty. To estimate these, the library calculates the average of the past three observations for the same day. For example, the average temperature for July 22, 2025, would be estimated by averaging the temperatures observed on July 22 in 2022, 2023, and 2024. The variable *end_year* specifies the final year up to which future predictions will be made and should be consistent over all three model components (long-, medium-, and short-term).
+After identifying the best mid-term model, future seasonality predictions can be generated. While the future calendar and holiday covariates are deterministic, the future daily average temperatures are impossible to know with certainty. To estimate these, the library calculates the average of the past three observations for the same day. For example, the average temperature for July 22, 2025, would be estimated by averaging the temperatures observed on July 22 in 2022, 2023, and 2024. The variable *end_year* specifies the final year up to which future predictions will be made and should be consistent over all three model components (long-, medium-, and short-term). The *mid_term_lm()* function will output a list with the data and the used model. You can simply put this list directly into the *mid_term_future()* function. If you only supply the dataframe, either the used model has to be specified for the *model_list* variable (NULL by default) or the *data_directory* needs to contain the used model as .R file.
 
 ```r
-midterm_future_predictions <- mid_term_future(midterm_predictions, end_year = 2028)
+midterm_future_predictions <- mid_term_future(midterm_predictions, end_year = 2028, data_directory = getwd(), verbose = TRUE)
 ```
 
 ---
@@ -243,30 +264,31 @@ A separate short-term model is generated for each combination of day type and mo
 The variable for *test_set_steps* defines how many hours are used for the test set. It should be consistent between all three model components. Because we set the test set steps for the long-term model to 2 years it should be set to 17520 in the short-term model (2 years × 8760 hours). 
 
 ```r
-shortterm_predictions <- short_term_lm(shortterm_demand_data, test_set_steps = 17520)
+shortterm_predictions <- short_term_lm(shortterm_demand_data, test_set_steps = 17520, data_directory = getwd(), verbose = TRUE)
 ```
 
 
 ### Generate Future Predictions:
 
-Because all used covariates are deterministic the future short-term seasonality forecast can easily be generated.
+Because all used covariates are deterministic the future short-term seasonality forecast can easily be generated. The *short_term_lm()* function will output a list with the data and the used model. You can simply put this list directly into the *short_term_future()* function. If you only supply the dataframe, either a list with the used models has to be specified for the *model_list* variable (NULL by default) or the *data_directory* needs to contain the used models as .R file.
 
 ```r
-shortterm_future_predictions <- short_term_future(shortterm_predictions, end_year = 2028)
+shortterm_future_predictions <- short_term_future(shortterm_predictions, end_year = 2028, data_directory = getwd(), verbose = TRUE)
 ```
 
 ---
 
 ## Step 5: Combine All Models
 
-After all three components have been modelled successfully, the predictions can be combined into the full demand series.
+After all three components have been modelled successfully, the predictions can be combined into the full demand series. The variables *longterm_predictions*, *midterm_predictions*, and *shortterm_predictions* correspond to the dataframes output by the *long_term_lm()*, *mid_term_lm()*, and *short_term_lm()* functions respectively. If you put in the complete output list of each function, the necessary dataframe will be extracted automatically. 
 The *longterm_model_number* option specifies which of the three best long-term models will be used. The function also prints four statistical metrics: MAPE, RMSE, Accuracy, and the R²-value of both the training and the validation set.
 
 ```r
-full_model_predictions <- combine_models(longterm_predictions, 
-                                         midterm_predictions, 
-                                         shortterm_predictions, 
-                                         longterm_model_number = 1)
+full_model_predictions <- combine_models( longterm_predictions$longterm_predictions,
+                        midterm_predictions$midterm_predictions,
+                        shortterm_predictions$shortterm_predictions,
+                                         longterm_model_number = 1,
+                                         data_directory = getwd(), verbose = TRUE)
                                          
 #   Output:
 #   *** Final Model Metrics ***
@@ -294,10 +316,12 @@ Note that the algorithm reaches a MAPE below 4% over the validation set of 17520
 Similarly, full future predictions up to the specified end year can be generated.
 
 ```r
-full_model_future_predictions <- combine_models_future(longterm_future_predictions, 
-                                                       midterm_future_predictions, 
-                                                       shortterm_future_predictions, 
-                                                       longterm_model_number = 1)
+full_model_future_predictions<-combine_models_future(
+        longterm_future_predictions$longterm_future_predictions,
+        midterm_future_predictions$midterm_future_predictions,
+        shortterm_future_predictions$shortterm_future_predictions,
+        longterm_model_number =1, data_directory = getwd(), 
+        verbose = TRUE)
 ```
 
 ---
@@ -306,10 +330,11 @@ full_model_future_predictions <- combine_models_future(longterm_future_predictio
 
 The `full_forecast()` function automates all the steps described above for a specified country.
 The *future* option determines whether future forecasts should be made, and if so, up to which *end_year*.
+NOTE: If you want to use this function instead of the individual forecasting functions, it is strongly recommended to set the data_directory to something other than a tempdir. Otherwise user prompts will be needed and the advantage of only specifying a country and a timeframe and getting a forecast without additional steps after 15-20 minutes won't be there.
 
 ```r
 forecast_data <- full_forecast(start_year = 2017, end_year = 2021, country = "France", 
-                               test_set_steps = 2, future = "yes", end_year = 2028)
+                               test_set_steps = 2, future = "yes", end_year = 2030, data_directory = getwd(), verbose = TRUE)
 ```
 
 

@@ -7,27 +7,27 @@
 \format{
 A data frame with 588 rows and 61 columns:
 \describe{
-\item{\code{WEO.Country.Code}}{Unique code assigned to each country by the WEO database.}
+\item{\code{WEO Country Code}}{Unique code assigned to each country by the WEO database.}
 \item{\code{ISO}}{The ISO3 country code (e.g., \code{FRA} for France).}
-\item{\code{WEO.Subject.Code}}{Unique code representing the economic indicator or subject in the WEO database.}
+\item{\code{WEO Subject Code}}{Unique code representing the economic indicator or subject in the WEO database.}
 \item{\code{Country}}{The name of the country.}
-\item{\code{Subject.Descriptor}}{Description of the economic indicator.}
-\item{\code{Subject.Notes}}{Additional notes or details about the economic indicator.}
+\item{\code{Subject Descriptor}}{Description of the economic indicator.}
+\item{\code{Subject Notes}}{Additional notes or details about the economic indicator.}
 \item{\code{Units}}{The unit of measurement for the indicator (e.g., percentage, persons, national currency).}
 \item{\code{Scale}}{The scaling factor for the indicator values (e.g., "Billions").}
-\item{\code{Country.Series.specific.Notes}}{Country-specific notes about the data series.}
-\item{\code{X1980}, \code{X1981}, \code{X1982}, \code{X1983}, \code{X1984},
-\code{X1985}, \code{X1986}, \code{X1987}, \code{X1988}, \code{X1989},
-\code{X1990}, \code{X1991}, \code{X1992}, \code{X1993}, \code{X1994},
-\code{X1995}, \code{X1996}, \code{X1997}, \code{X1998}, \code{X1999},
-\code{X2000}, \code{X2001}, \code{X2002}, \code{X2003}, \code{X2004},
-\code{X2005}, \code{X2006}, \code{X2007}, \code{X2008}, \code{X2009},
-\code{X2010}, \code{X2011}, \code{X2012}, \code{X2013}, \code{X2014},
-\code{X2015}, \code{X2016}, \code{X2017}, \code{X2018}, \code{X2019},
-\code{X2020}, \code{X2021}, \code{X2022}, \code{X2023}, \code{X2024},
-\code{X2025}, \code{X2026}, \code{X2027}, \code{X2028},
-\code{X2029}, \code{X2030}}{The annual value of the economic indicator for the respective year, starting from 1980 (\code{X1980}) to 2028 (\code{X2028}).}
-\item{\code{Estimates.Start.After}}{The year after which data values are based on projections instead of past values.}
+\item{\code{Country/Series-specific Notes}}{Country-specific notes about the data series.}
+\item{\code{1980}, \code{1981}, \code{1982}, \code{1983}, \code{1984},
+\code{1985}, \code{1986}, \code{1987}, \code{1988}, \code{1989},
+\code{1990}, \code{1991}, \code{1992}, \code{1993}, \code{1994},
+\code{1995}, \code{1996}, \code{1997}, \code{1998}, \code{1999},
+\code{2000}, \code{2001}, \code{2002}, \code{2003}, \code{2004},
+\code{2005}, \code{2006}, \code{2007}, \code{2008}, \code{2009},
+\code{2010}, \code{2011}, \code{2012}, \code{2013}, \code{2014},
+\code{2015}, \code{2016}, \code{2017}, \code{2018}, \code{2019},
+\code{2020}, \code{2021}, \code{2022}, \code{2023}, \code{2024},
+\code{2025}, \code{2026}, \code{2027}, \code{2028},
+\code{2029}, \code{2030}}{The annual value of the economic indicator for the respective year, starting from 1980 (\code{1980}) to 2028 (\code{2028}).}
+\item{\code{Estimates Start After}}{The year after which data values are based on projections instead of past values.}
 }
 }
 \source{

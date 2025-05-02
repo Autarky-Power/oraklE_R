@@ -22,11 +22,13 @@
 #' @import ggplot2
 #'
 #' @examples
-#'
+#'  print("Hi")
 #' example_decomposed_data <- decompose_load_data(example_demand_data_filled)
 decompose_load_data <- function(load_data, data_directory = tempdir(), verbose = FALSE) {
+
   if (!"example" %in% colnames(load_data)) {
     if (grepl("Rtmp", data_directory)) {
+
       message(paste(
         "\nThis function will try to save the decomposed load data and plots to a folder called", unique(load_data$country),
         "\nin the current data directory:", data_directory
@@ -205,13 +207,14 @@ decompose_load_data <- function(load_data, data_directory = tempdir(), verbose =
     if ("example" %in% colnames(load_data)) {
       if (unique(load_data$example) == TRUE) {
         expected_df <- oRaklE::example_decomposed_data
-        if (identical(longterm, expected_df$longterm[1, 1:3]) &
-          identical(midterm, expected_df$midterm[1:365, 1:8]) &
-          identical(shortterm, expected_df$shortterm[1:8760, 1:12])) {
+
+        if (all.equal(longterm, expected_df$longterm[1, 1:3]) &
+            all.equal(midterm, expected_df$midterm[1:365, 1:8]) &
+            all.equal(shortterm, expected_df$shortterm[1:8760, 1:12])) {
           message("Decomposing the load data into a long-term trend component, a mid-term seasonality component and a short-term seasonality component.")
           return(oRaklE::example_decomposed_data)
         } else {
-          stop()
+          stop("The example in decompose_load_data() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
         }
       }
     }

@@ -42,7 +42,7 @@ get_weather_data <- function(midterm_demand_data, api_key = "default", data_dire
       if (identical(temp_data[1:10, 2], expected_temp_data)) {
         return(oRaklE::example_midterm_demand_and_weather_data)
       } else {
-        stop()
+        stop("The example in get_weather_data() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
       }
     }
   }

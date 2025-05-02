@@ -23,7 +23,21 @@
 #' )
 combine_models <- function(longterm_predictions, midterm_predictions, shortterm_predictions, longterm_model_number = 1,
                            data_directory = tempdir(), verbose = FALSE) {
-  if ("example" %in% colnames(shortterm_predictions) &&
+
+  if (inherits(longterm_predictions, "list") && names(longterm_predictions)[1] == "longterm_predictions") {
+
+    longterm_predictions <- longterm_predictions$longterm_predictions
+  }
+  if (inherits(midterm_predictions, "list") && names(midterm_predictions)[1] == "midterm_predictions") {
+
+    midterm_predictions <- midterm_predictions$midterm_predictions
+  }
+  if (inherits(shortterm_predictions, "list") && names(shortterm_predictions)[1] == "shortterm_predictions") {
+
+    shortterm_predictions <- shortterm_predictions$shortterm_predictions
+  }
+
+   if ("example" %in% colnames(shortterm_predictions) &&
     "example" %in% colnames(midterm_predictions) &&
     "example" %in% colnames(longterm_predictions)) {
     if (unique(shortterm_predictions$example) == TRUE &&
@@ -53,7 +67,7 @@ combine_models <- function(longterm_predictions, midterm_predictions, shortterm_
       if (eval_sum < 1) {
         return(oRaklE::example_full_model_predictions)
       } else {
-        stop()
+        stop("The example in combine_models() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
       }
     }
   }

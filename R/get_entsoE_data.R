@@ -97,7 +97,7 @@ get_entsoE_data <- function(start_year, end_year, country, api_key = "default", 
       message("Getting data for each year from ENTSO-E Transparency Platform")
       return(oRaklE::example_demand_data)
     } else {
-      stop()
+      stop("The example in get_entsoe_data() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
     }
   }
   Sys.setlocale("LC_TIME", "English")

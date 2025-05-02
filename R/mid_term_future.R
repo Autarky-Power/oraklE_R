@@ -63,7 +63,7 @@ mid_term_future <- function(midterm_predictions, end_year, Tref = 18, data_direc
       if (length(unique(future_predictions - new_data$midterm_model_fit)) < 21) {
         return(oRaklE::example_longterm_predictions)
       } else {
-        stop()
+        stop("The example in mid_term_future() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
       }
     }
   }

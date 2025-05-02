@@ -125,7 +125,7 @@ long_term_lm <- function(longterm_and_macro_data, test_set_steps = 2, testquant 
       if (identical(variables, expected_vars)) {
         return(oRaklE::example_longterm_predictions)
       } else {
-        stop()
+        stop("The example in long_term_lm() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
       }
     }
   }

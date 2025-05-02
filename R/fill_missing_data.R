@@ -48,14 +48,14 @@ fill_missing_data <- function(load_data, data_directory = tempdir()) {
 
   if (grepl("Rtmp", data_directory)) {
     message(paste(
-      "\nThis function will try to save the load series to a folder called", unique(load_data$country),
+      "\nThis function will try to save the load series (as .csv) to a folder called", unique(load_data$country),
       "\nin the current data directory:", data_directory
     ))
     message("\nIt is recommended to save the data in a directory other than a tempdir, so that it is available after you finish the R Session.")
 
     message("\nPlease choose an option:")
     message("\n1: Keep it as a tempdir")
-    message(paste("2: Save data in the current working directory (", getwd(), ")", sep = ""))
+    message(paste("2: (Recommended) Save data in the current working directory (", getwd(), ")", sep = ""))
     message("3: Set the directory manually\n")
 
     choice <- readline(prompt = "Enter the option number (1, 2, or 3): ")

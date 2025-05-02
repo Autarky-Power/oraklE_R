@@ -26,6 +26,20 @@ combine_models_future <- function(
     longterm_future_predictions, midterm_future_predictions,
     shortterm_future_predictions, longterm_model_number = 1,
     data_directory = tempdir(), verbose = FALSE) {
+
+  if (inherits(longterm_future_predictions, "list") && names(longterm_future_predictions)[1] == "longterm_future_predictions") {
+
+    longterm_future_predictions <- longterm_future_predictions$longterm_future_predictions
+  }
+  if (inherits(midterm_future_predictions, "list") && names(midterm_future_predictions)[1] == "midterm_future_predictions") {
+
+    midterm_future_predictions <- midterm_future_predictions$midterm_future_predictions
+  }
+  if (inherits(shortterm_future_predictions, "list") && names(shortterm_future_predictions)[1] == "shortterm_future_predictions") {
+
+    shortterm_future_predictions <- shortterm_future_predictions$shortterm_future_predictions
+  }
+
   if ("example" %in% colnames(shortterm_future_predictions) &&
     "example" %in% colnames(midterm_future_predictions) &&
     "example" %in% colnames(longterm_future_predictions)) {
@@ -56,7 +70,7 @@ combine_models_future <- function(
       if (eval_sum < 1) {
         return(oRaklE::example_full_model_future_predictions)
       } else {
-        stop()
+        stop("The example in combine_models_future() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
       }
     }
   }

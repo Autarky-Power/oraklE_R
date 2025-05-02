@@ -49,7 +49,7 @@ short_term_lm <- function(shortterm_demand_data, test_set_steps = 17520, data_di
       if (test_sum < 1) {
         return(oRaklE::example_shortterm_predictions)
       } else {
-        stop()
+        stop("The example in short_term_lm() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
       }
     }
   }

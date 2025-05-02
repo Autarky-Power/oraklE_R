@@ -60,7 +60,7 @@ short_term_future <- function(shortterm_predictions, end_year, data_directory = 
       if (test_sum < 1) {
         return(oRaklE::example_shortterm_future_predictions)
       } else {
-        stop()
+        stop("The example in short_term_future() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
       }
     }
   }

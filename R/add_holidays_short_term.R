@@ -34,7 +34,7 @@ add_holidays_short_term <- function(shortterm) {
         return(oRaklE::example_shortterm_demand_data)
       }
     } else {
-      stop()
+      stop("The example in add_holidays_short_term() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
     }
   }
   years <- unique(shortterm$year)

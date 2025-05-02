@@ -120,7 +120,7 @@ mid_term_lm <- function(demand_and_weather_data, Tref = 18, test_set_steps = 730
         if (MLmetrics::RMSE(testlasso, y_test) < MLmetrics::RMSE(testlm, y_test)) {
           return(oRaklE::example_midterm_predictions)
         } else {
-          stop()
+          stop("The example in mid_term_lm() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
         }
       )
     }

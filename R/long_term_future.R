@@ -43,7 +43,7 @@ long_term_future <- function(longterm_future_macro_data, data_directory = tempdi
       if (all.equal(unname(LT), expected_LT)) {
         return(oRaklE::example_longterm_predictions)
       } else {
-        stop()
+        stop("The example in long_term_future() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
       }
     }
   }
