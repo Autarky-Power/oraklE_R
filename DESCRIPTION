@@ -1,6 +1,6 @@
 Package: oRaklE
 Title: Multi-Horizon Electricity Demand Forecasting in High Resolution
-Version: 1.0.0
+Version: 1.0.1
 Authors@R:
     c(
         person(given = "Johannes", family = "Schwenzer", email = "schwenzer@europa-uni.de", 
