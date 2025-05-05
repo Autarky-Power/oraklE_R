@@ -59,11 +59,11 @@ mid_term_future <- function(midterm_predictions, end_year, Tref = 18, data_direc
       new_data <- oRaklE::example_midterm_future_predictions
       future_predictions <- stats::predict(best_model, newx = as.matrix(new_data[, 9:43]))
 
-      length(unique(future_predictions - new_data$midterm_model_fit))
+      length(unique(round(future_predictions,2) - round(new_data$midterm_model_fit,2)))
       print(future_predictions[1:20])
       print(new_data$midterm_model_fit[1:20])
-      print(length(unique(future_predictions - new_data$midterm_model_fit)))
-      if (length(unique(future_predictions - new_data$midterm_model_fit)) < 21) {
+      print(length(unique(round(future_predictions,2) - round(new_data$midterm_model_fit,2))))
+      if (length(unique(round(future_predictions,2) - round(new_data$midterm_model_fit,2))) < 21) {
         return(oRaklE::example_longterm_predictions)
       } else {
         stop("The example in mid_term_future() failed. Please contact the package maintainer at schwenzer@europa-uni.de")
