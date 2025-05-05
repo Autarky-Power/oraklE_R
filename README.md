@@ -347,7 +347,7 @@ The *future* option determines whether future forecasts should be made, and if s
 NOTE: If you want to use this function instead of the individual forecasting functions, it is strongly recommended to set the data_directory to something other than a tempdir. Otherwise user prompts will be needed and the advantage of only specifying a country and a timeframe and getting a forecast without additional steps after 15-20 minutes won't be there.
 
 ```r
-forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
+forecast_data <- full_forecast(start_year=2017, end_year_data=2021, country="France", test_set_steps=2,
    future="yes", end_year=2028)
 ```
 
