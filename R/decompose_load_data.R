@@ -22,7 +22,6 @@
 #' @import ggplot2
 #'
 #' @examples
-#'  print("Hi")
 #' example_decomposed_data <- decompose_load_data(example_demand_data_filled)
 decompose_load_data <- function(load_data, data_directory = tempdir(), verbose = FALSE) {
 

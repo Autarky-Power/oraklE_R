@@ -32,6 +32,6 @@ A list of three data frames with
 This function decomposes the load data into three components: a yearly long-term trend, a daily mid-term seasonality, and an hourly short-term seasonality. If the data is available only at a daily resolution, the calculation of hourly seasonality is skipped. The results of the decomposition are returned as a list of dataframes. The series are plotted additionally.
 }
 \examples{
-
+ print("Hi")
 example_decomposed_data <- decompose_load_data(example_demand_data_filled)
 }

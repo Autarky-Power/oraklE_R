@@ -56,7 +56,7 @@ library(ggplot2)
 ## Without future predictions
 \donttest{
 forecast_data <- full_forecast(
-  start_year = 2017, end_year = 2021, country = "France", test_set_steps = 2,
+  start_year = 2017, end_year_data = 2021, country = "France", test_set_steps = 2,
   future = "no"
 )
 }
@@ -101,7 +101,7 @@ ggplot(example_full_model_predictions) +
 ## With future predictions
 \donttest{
 forecast_data <- full_forecast(
-  start_year = 2017, end_year = 2021, country = "France", test_set_steps = 2,
+  start_year = 2017, end_year_data = 2021, country = "France", test_set_steps = 2,
   future = "yes", end_year = 2028
 )
 }
