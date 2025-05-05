@@ -244,4 +244,4 @@ full_forecast <- function(start_year, end_year_data, country, test_set_steps = 2
       "shortterm" = short_term_data_predicted
     ))
   }
-}n
+}
