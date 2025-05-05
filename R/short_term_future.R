@@ -149,7 +149,9 @@ short_term_future <- function(shortterm_predictions, end_year, data_directory = 
         ))
       },
       error = function(e) {
-        stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
+        i=i-1
+        Sys.sleep(5)
+        #stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
       }
     )
     holiday_list[[i]] <- response$date

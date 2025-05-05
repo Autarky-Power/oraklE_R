@@ -143,7 +143,9 @@ mid_term_future <- function(midterm_predictions, end_year, Tref = 18, data_direc
         holiday_list[[i]] <- response$date
       },
       error = function(e) {
-        stop("Error during JSON request to date.nager.at for getting holidays : ", e$message, "\nPlease run the function again sometimes date.nager is unstable since of 2025.", call. = FALSE)
+        i=i-1
+        Sys.sleep(5)
+        #stop("Error during JSON request to date.nager.at for getting holidays : ", e$message, "\nPlease run the function again sometimes date.nager is unstable since of 2025.", call. = FALSE)
       }
     )
   }

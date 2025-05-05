@@ -58,7 +58,6 @@ add_holidays_mid_term <- function(midterm_data) {
       error = function(e) {
         i=i-1
         Sys.sleep(5)
-        print(year)
         #stop("Error during JSON request to date.nager.at : ", e$message, call. = FALSE)
       }
     )
