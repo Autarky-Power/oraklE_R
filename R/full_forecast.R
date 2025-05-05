@@ -28,12 +28,6 @@
 #' @examples
 #' library(ggplot2)
 #' ## Without future predictions
-#' \donttest{
-#' forecast_data <- full_forecast(
-#'   start_year = 2017, end_year_data = 2021, country = "France", test_set_steps = 2,
-#'   future = "no"
-#' )
-#' }
 #' ggplot(example_full_model_predictions) +
 #'   geom_line(aes(date, hourly_demand, color = "actual")) +
 #'   geom_line(aes(date, complete_model, color = "fitted")) +
@@ -73,12 +67,7 @@
 #'   theme(legend.title = element_blank())
 #'
 #' ## With future predictions
-#' \donttest{
-#' forecast_data <- full_forecast(
-#'   start_year = 2017, end_year_data = 2021, country = "France", test_set_steps = 2,
-#'   future = "yes", end_year = 2028
-#' )
-#' }
+#'
 #' suppressWarnings(
 #'   ggplot(example_full_model_future_predictions) +
 #'     geom_line(aes(1:nrow(example_full_model_future_predictions),
