@@ -83,7 +83,7 @@ After the data is downloaded and standardized, the load time series is decompose
 
 ```r
 # Decompose the load data
-demand_data_decomposed = fill_missing_data(demand_data_filled, data_directory=getwd(), verbose=TRUE )
+demand_data_decomposed = decompose_load_data(demand_data_filled, data_directory=getwd(), verbose=TRUE )
 ```
 
 ![Decomposed_load](https://github.com/user-attachments/assets/e5db1014-6e2b-4632-ab00-5923e8414553)
