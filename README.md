@@ -4,8 +4,6 @@ R package for Long-term Electricity Demand Forecasting in hourly resolution on a
 
 
 
-
-![Github All Releases](https://img.shields.io/github/downloads/Autarky-Power/orakle/total.svg)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/oRaklE)](https://cran.r-project.org/package=oRaklE) 
 [![CRAN downloads – total](https://cranlogs.r-pkg.org/badges/grand-total/oRaklE)](https://CRAN.R-project.org/package=oRaklE)
 
@@ -83,7 +81,7 @@ After the data is downloaded and standardized, the load time series is decompose
 
 ```r
 # Decompose the load data
-demand_data_decomposed = fill_missing_data(demand_data_filled, data_directory=getwd(), verbose=TRUE )
+demand_data_decomposed = decompose_load_data(demand_data_filled, data_directory=getwd(), verbose=TRUE )
 ```
 
 ![Decomposed_load](https://github.com/user-attachments/assets/e5db1014-6e2b-4632-ab00-5923e8414553)
@@ -347,7 +345,7 @@ The *future* option determines whether future forecasts should be made, and if s
 NOTE: If you want to use this function instead of the individual forecasting functions, it is strongly recommended to set the data_directory to something other than a tempdir. Otherwise user prompts will be needed and the advantage of only specifying a country and a timeframe and getting a forecast without additional steps after 15-20 minutes won't be there.
 
 ```r
-forecast_data <- full_forecast(start_year=2017, end_year=2021, country="France", test_set_steps=2,
+forecast_data <- full_forecast(start_year=2017, end_year_data=2021, country="France", test_set_steps=2,
    future="yes", end_year=2028)
 ```
 
