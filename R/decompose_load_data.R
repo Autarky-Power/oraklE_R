@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' example_decomposed_data <- decompose_load_data(example_demand_data_filled)
-decompose_load_data <- function(load_data, data_directory = tempdir(), verbose = FALSE) {
+decompose_load_data <- function(load_data, data_directory = tempdir(), verbose = FALSE, ) {
 
   if (!"example" %in% colnames(load_data)) {
     if (grepl("Rtmp", data_directory)) {

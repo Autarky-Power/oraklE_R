@@ -49,8 +49,8 @@ long_term_future_data <- function(longterm_predictions, end_year, dataset = "WEO
     longterm_predictions$population_growth_weo <- 0
 
     ngdp_r <- as.numeric(country_subset[1, col_year_first:col_year_end])
-    ngdp_d <- as.numeric(country_subset[6, col_year_first:col_year_end])
-    pl <- as.numeric(country_subset[27, col_year_first:col_year_end])
+    ngdp_d <- as.numeric(country_subset[2, col_year_first:col_year_end])
+    pl <- as.numeric(country_subset[3, col_year_first:col_year_end])
     # pcpipch <- as.numeric(country_subset[4,col_year_first:col_year_end])
     # longterm_predictions$consumer_price_pct_change_weo <-pcpipch
 
